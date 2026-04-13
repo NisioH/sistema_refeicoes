@@ -1,0 +1,40 @@
+# =========================
+# Variáveis de Ambiente (SEGURANÇA)
+# =========================
+.env
+.env.*
+
+# =========================
+# Ambientes Virtuais
+# =========================
+venv/
+env/
+.venv/
+
+# =========================
+# Arquivos compilados do Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Banco de Dados Local do Django
+# =========================
+# O Django tenta criar esse arquivo por padrão se perder a conexão com o MongoDB
+db.sqlite3
+db.sqlite3-journal
+
+# =========================
+# Arquivos de IDEs e Editores de Código
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Arquivos do Sistema Operacional
+# =========================
+.DS_Store
+Thumbs.db
