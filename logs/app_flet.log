@@ -1,0 +1,1161 @@
+2026-04-15 12:28:57,398 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:28:59,082 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:29:00,609 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:29:00,612 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:29:00,612 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:29:00,613 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:29:00,616 - flet - INFO - Flet app has started...
+2026-04-15 12:29:00,725 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:29:00,725 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:29:03,378 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmph4okupbe
+2026-04-15 12:29:03,378 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:29:03,378 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:29:03,378 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:29:06,593 - flet_web.fastapi - INFO - New FletApp: B2PUC5RA
+2026-04-15 12:29:06,744 - flet_web.fastapi - INFO - New session created (1 total): _IpD9pyfgfkGP2rPD_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:29:06,771 - flet_web.fastapi - INFO - Start session: IpD9pyfgfkGP2rPD
+2026-04-15 12:29:06,808 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:29:58,805 - flet_web.fastapi - INFO - New FletApp: AHUPhyzU
+2026-04-15 12:29:59,222 - flet_web.fastapi - INFO - New session created (2 total): _wvKdngMI6E4nhtY1_4b350ac03c5f54ed08844240fe1f921babfd9958
+2026-04-15 12:29:59,265 - flet_web.fastapi - INFO - Start session: wvKdngMI6E4nhtY1
+2026-04-15 12:29:59,298 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:30:33,243 - flet_web.fastapi - INFO - Session disconnected: _wvKdngMI6E4nhtY1_4b350ac03c5f54ed08844240fe1f921babfd9958
+2026-04-15 12:30:33,326 - flet_web.fastapi - INFO - Disposing FletApp: AHUPhyzU
+2026-04-15 12:30:33,330 - flet_web.fastapi - INFO - FletApp was garbage collected: AHUPhyzU
+2026-04-15 12:30:41,898 - flet_web.fastapi - INFO - Session disconnected: _IpD9pyfgfkGP2rPD_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:30:41,899 - flet_web.fastapi - INFO - Disposing FletApp: B2PUC5RA
+2026-04-15 12:30:41,902 - flet_web.fastapi - INFO - FletApp was garbage collected: B2PUC5RA
+2026-04-15 12:33:50,905 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:33:51,157 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:33:52,316 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:33:52,329 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:33:52,331 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:33:52,333 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:33:52,334 - flet - INFO - Flet app has started...
+2026-04-15 12:33:52,405 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:33:52,405 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:33:53,156 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:33:53,166 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:33:53,168 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 9999): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:33:53,282 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 9999): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 312, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:33:58,761 - flet_web.fastapi - INFO - New FletApp: 9JUCSRTO
+2026-04-15 12:33:58,869 - flet_web.fastapi - INFO - New session created (3 total): _BdRSwimlfWzDUwSR_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:33:58,896 - flet_web.fastapi - INFO - Start session: BdRSwimlfWzDUwSR
+2026-04-15 12:33:58,903 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:34:26,039 - flet_web.fastapi - INFO - New FletApp: EqhTDaNz
+2026-04-15 12:34:26,077 - flet_web.fastapi - INFO - New session created (4 total): _kNMeUJVTMb7GsNwV_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:34:26,085 - flet_web.fastapi - INFO - Start session: kNMeUJVTMb7GsNwV
+2026-04-15 12:34:26,088 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:35:13,416 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:35:13,698 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:35:14,562 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:35:14,562 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:35:14,562 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:35:14,562 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:35:14,562 - flet - INFO - Flet app has started...
+2026-04-15 12:35:14,636 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:35:14,637 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:35:15,416 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:35:15,421 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:35:15,423 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:35:15,784 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 316, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:35:19,789 - flet_web.fastapi - INFO - New FletApp: e1SvjLnP
+2026-04-15 12:35:19,838 - flet_web.fastapi - INFO - New session created (5 total): _AMKOd8iDaQpUcT4C_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:35:19,892 - flet_web.fastapi - INFO - Start session: AMKOd8iDaQpUcT4C
+2026-04-15 12:35:19,921 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:35:32,898 - flet_web.fastapi - INFO - Session disconnected: _AMKOd8iDaQpUcT4C_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:35:32,898 - flet_web.fastapi - INFO - Disposing FletApp: e1SvjLnP
+2026-04-15 12:35:32,898 - flet_web.fastapi - INFO - FletApp was garbage collected: e1SvjLnP
+2026-04-15 12:35:33,533 - flet_web.fastapi - INFO - New FletApp: PmYESDEi
+2026-04-15 12:35:33,591 - flet_web.fastapi - INFO - Session reconnected: _AMKOd8iDaQpUcT4C_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:35:41,317 - flet_web.fastapi - INFO - Session disconnected: _BdRSwimlfWzDUwSR_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:35:41,318 - flet_web.fastapi - INFO - Disposing FletApp: 9JUCSRTO
+2026-04-15 12:35:41,319 - flet_web.fastapi - INFO - FletApp was garbage collected: 9JUCSRTO
+2026-04-15 12:35:43,490 - flet_web.fastapi - INFO - New FletApp: 3aiKD6hW
+2026-04-15 12:35:43,538 - flet_web.fastapi - INFO - Session reconnected: _AMKOd8iDaQpUcT4C_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:35:43,571 - flet_web.fastapi - INFO - FletApp was garbage collected: PmYESDEi
+2026-04-15 12:36:10,097 - asyncio - ERROR - Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] Foi forçado o cancelamento de uma conexão existente pelo host remoto
+2026-04-15 12:36:10,111 - flet_web.fastapi - INFO - Session disconnected: _kNMeUJVTMb7GsNwV_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:36:10,112 - flet_web.fastapi - INFO - Disposing FletApp: EqhTDaNz
+2026-04-15 12:36:10,113 - flet_web.fastapi - INFO - FletApp was garbage collected: EqhTDaNz
+2026-04-15 12:36:11,315 - flet_web.fastapi - INFO - New FletApp: y1r85lh7
+2026-04-15 12:36:11,356 - flet_web.fastapi - INFO - Session reconnected: _kNMeUJVTMb7GsNwV_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:36:37,925 - flet_web.fastapi - INFO - Session disconnected: _kNMeUJVTMb7GsNwV_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:36:37,925 - flet_web.fastapi - INFO - Disposing FletApp: y1r85lh7
+2026-04-15 12:36:37,925 - flet_web.fastapi - INFO - FletApp was garbage collected: y1r85lh7
+2026-04-15 12:36:37,932 - flet_web.fastapi - INFO - Session disconnected: _AMKOd8iDaQpUcT4C_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:36:37,933 - flet_web.fastapi - INFO - Disposing FletApp: 3aiKD6hW
+2026-04-15 12:36:37,935 - flet_web.fastapi - INFO - FletApp was garbage collected: 3aiKD6hW
+2026-04-15 12:37:20,978 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:37:21,254 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:37:22,134 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:37:22,134 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:37:22,134 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:37:22,134 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:37:22,134 - flet - INFO - Flet app has started...
+2026-04-15 12:37:22,223 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:37:22,223 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:37:23,164 - flet_web.fastapi - INFO - New FletApp: 4CMWqXS2
+2026-04-15 12:37:23,222 - flet_web.fastapi - INFO - New session created (1 total): _3lwHRkHeS9XuSJuS_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:37:23,224 - flet_web.fastapi - INFO - Start session: 3lwHRkHeS9XuSJuS
+2026-04-15 12:37:23,224 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:37:23,607 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmpkyrxcpib
+2026-04-15 12:37:23,609 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:37:23,609 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:37:23,610 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:37:26,421 - flet_web.fastapi - INFO - New FletApp: MYMO6Fcr
+2026-04-15 12:37:26,776 - flet_web.fastapi - INFO - New session created (2 total): _Fh2RyYEcO7vjvF4r_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:37:26,884 - flet_web.fastapi - INFO - Start session: Fh2RyYEcO7vjvF4r
+2026-04-15 12:37:26,930 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:37:28,613 - flet_web.fastapi - INFO - Session disconnected: _3lwHRkHeS9XuSJuS_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:37:28,614 - flet_web.fastapi - INFO - Disposing FletApp: 4CMWqXS2
+2026-04-15 12:37:28,616 - flet_web.fastapi - INFO - FletApp was garbage collected: 4CMWqXS2
+2026-04-15 12:38:16,843 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:38:17,055 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:38:17,980 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:38:17,982 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:38:17,982 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:38:17,982 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:38:17,983 - flet - INFO - Flet app has started...
+2026-04-15 12:38:18,068 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:38:18,069 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:38:18,792 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:38:18,794 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:38:18,794 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:38:19,137 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 316, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:38:22,856 - flet_web.fastapi - INFO - New FletApp: gp9g33C8
+2026-04-15 12:38:23,364 - flet_web.fastapi - INFO - New session created (3 total): _Jg2ecKlXRWw59o0d_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:38:23,476 - flet_web.fastapi - INFO - Start session: Jg2ecKlXRWw59o0d
+2026-04-15 12:38:23,601 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:39:47,606 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:39:47,842 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:39:48,936 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:39:48,940 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:39:48,940 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:39:48,940 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:39:48,942 - flet - INFO - Flet app has started...
+2026-04-15 12:39:49,031 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:39:49,031 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:39:50,147 - flet_web.fastapi - INFO - New FletApp: ss1ehXDK
+2026-04-15 12:39:50,196 - flet_web.fastapi - INFO - New FletApp: AAgeNYLc
+2026-04-15 12:39:50,241 - flet_web.fastapi - INFO - New session created (1 total): _hG0fao7XFI2rNpoc_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:39:50,244 - flet_web.fastapi - INFO - Start session: hG0fao7XFI2rNpoc
+2026-04-15 12:39:50,244 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:39:50,251 - flet_web.fastapi - INFO - New session created (2 total): _fYsIfO3M7H2SaT2Z_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:39:50,263 - flet_web.fastapi - INFO - Start session: fYsIfO3M7H2SaT2Z
+2026-04-15 12:39:50,264 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:39:52,094 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmps56mqyna
+2026-04-15 12:39:52,094 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:39:52,100 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:39:52,110 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:39:56,854 - flet_web.fastapi - INFO - New FletApp: BUWBO21X
+2026-04-15 12:39:57,040 - flet_web.fastapi - INFO - New session created (3 total): _XChrfVGqP8FHJiax_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:39:57,055 - flet_web.fastapi - INFO - Start session: XChrfVGqP8FHJiax
+2026-04-15 12:39:57,066 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:39:58,174 - flet_web.fastapi - INFO - Session disconnected: _fYsIfO3M7H2SaT2Z_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:39:58,176 - flet_web.fastapi - INFO - Disposing FletApp: AAgeNYLc
+2026-04-15 12:39:58,178 - flet_web.fastapi - INFO - FletApp was garbage collected: AAgeNYLc
+2026-04-15 12:39:59,590 - flet_web.fastapi - INFO - Session disconnected: _hG0fao7XFI2rNpoc_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:39:59,590 - flet_web.fastapi - INFO - Disposing FletApp: ss1ehXDK
+2026-04-15 12:39:59,592 - flet_web.fastapi - INFO - FletApp was garbage collected: ss1ehXDK
+2026-04-15 12:40:44,159 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:40:44,503 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:40:45,761 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:40:45,763 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:40:45,763 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:40:45,765 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:40:45,766 - flet - INFO - Flet app has started...
+2026-04-15 12:40:45,830 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:40:45,830 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:40:50,322 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:40:50,323 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:40:50,325 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 9999): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:40:50,447 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 9999): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 282, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:40:54,020 - flet_web.fastapi - INFO - New FletApp: LgEzbD8X
+2026-04-15 12:40:54,195 - flet_web.fastapi - INFO - New session created (4 total): _5RphtroN6ZOauCdA_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:40:54,278 - flet_web.fastapi - INFO - Start session: 5RphtroN6ZOauCdA
+2026-04-15 12:40:54,289 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:41:02,368 - flet_web.fastapi - INFO - Session disconnected: _5RphtroN6ZOauCdA_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:41:02,370 - flet_web.fastapi - INFO - Disposing FletApp: LgEzbD8X
+2026-04-15 12:41:02,372 - flet_web.fastapi - INFO - FletApp was garbage collected: LgEzbD8X
+2026-04-15 12:41:03,794 - asyncio - ERROR - Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] Foi forçado o cancelamento de uma conexão existente pelo host remoto
+2026-04-15 12:41:03,881 - flet_web.fastapi - INFO - Session disconnected: _XChrfVGqP8FHJiax_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:41:03,881 - flet_web.fastapi - INFO - Disposing FletApp: BUWBO21X
+2026-04-15 12:41:03,884 - flet_web.fastapi - INFO - FletApp was garbage collected: BUWBO21X
+2026-04-15 12:42:20,828 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:42:21,011 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:42:22,161 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:42:22,161 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:42:22,161 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:42:22,176 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:42:22,178 - flet - INFO - Flet app has started...
+2026-04-15 12:42:22,230 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:42:22,230 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:42:24,390 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmpmuw18k48
+2026-04-15 12:42:24,396 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:42:24,398 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:42:24,400 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:42:28,468 - flet_web.fastapi - INFO - New FletApp: bpjY48IG
+2026-04-15 12:42:28,664 - flet_web.fastapi - INFO - New session created (1 total): _nYibfKvlDmeSAxKm_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:42:28,696 - flet_web.fastapi - INFO - Start session: nYibfKvlDmeSAxKm
+2026-04-15 12:42:28,704 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:42:35,938 - flet_web.fastapi - INFO - Session disconnected: _nYibfKvlDmeSAxKm_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:42:35,938 - flet_web.fastapi - INFO - Disposing FletApp: bpjY48IG
+2026-04-15 12:42:35,938 - flet_web.fastapi - INFO - FletApp was garbage collected: bpjY48IG
+2026-04-15 12:42:58,439 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:42:58,700 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:42:59,483 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:42:59,483 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:42:59,483 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:42:59,483 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:42:59,483 - flet - INFO - Flet app has started...
+2026-04-15 12:42:59,564 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:42:59,564 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:42:59,963 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:42:59,973 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:42:59,975 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:43:00,103 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 282, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:43:02,941 - flet_web.fastapi - INFO - New FletApp: bzC31GfM
+2026-04-15 12:43:03,006 - flet_web.fastapi - INFO - New session created (2 total): _maVQu9Oy0o51QFKh_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:43:03,032 - flet_web.fastapi - INFO - Start session: maVQu9Oy0o51QFKh
+2026-04-15 12:43:03,033 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:43:11,085 - flet_web.fastapi - INFO - Session disconnected: _maVQu9Oy0o51QFKh_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:43:11,086 - flet_web.fastapi - INFO - Disposing FletApp: bzC31GfM
+2026-04-15 12:43:11,087 - flet_web.fastapi - INFO - FletApp was garbage collected: bzC31GfM
+2026-04-15 12:43:55,986 - flet_web.fastapi - INFO - New FletApp: gzIA1pw6
+2026-04-15 12:43:56,037 - flet_web.fastapi - INFO - New session created (3 total): _mIuHHEPjIR00UEsO_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:43:56,083 - flet_web.fastapi - INFO - Start session: mIuHHEPjIR00UEsO
+2026-04-15 12:43:56,105 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:44:33,818 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:44:34,235 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:44:35,666 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:44:35,680 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:44:35,682 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:44:35,682 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:44:35,682 - flet - INFO - Flet app has started...
+2026-04-15 12:44:35,830 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:44:35,830 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:44:37,894 - flet_web.fastapi - INFO - New FletApp: o3nYUUy9
+2026-04-15 12:44:37,960 - flet_web.fastapi - INFO - New session created (1 total): _S6ORJWgawFCjFeXb_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:44:37,974 - flet_web.fastapi - INFO - Start session: S6ORJWgawFCjFeXb
+2026-04-15 12:44:37,976 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:44:42,787 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmpn8hv1g1t
+2026-04-15 12:44:42,789 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:44:42,789 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:44:42,789 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:44:48,609 - flet_web.fastapi - INFO - New FletApp: oUQmmhr5
+2026-04-15 12:44:48,799 - flet_web.fastapi - INFO - New session created (2 total): _LEI0kSrYB45M0GIG_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:44:48,858 - flet_web.fastapi - INFO - Start session: LEI0kSrYB45M0GIG
+2026-04-15 12:44:48,869 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:45:05,397 - flet_web.fastapi - INFO - Session disconnected: _LEI0kSrYB45M0GIG_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:45:05,402 - flet_web.fastapi - INFO - Disposing FletApp: oUQmmhr5
+2026-04-15 12:45:05,402 - flet_web.fastapi - INFO - FletApp was garbage collected: oUQmmhr5
+2026-04-15 12:46:18,280 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:46:18,929 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:46:21,335 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:46:21,335 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:46:21,335 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:46:21,335 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:46:21,335 - flet - INFO - Flet app has started...
+2026-04-15 12:46:21,484 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:46:21,484 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:46:24,825 - flet_web.fastapi - INFO - New FletApp: L6Iat1EA
+2026-04-15 12:46:24,858 - flet_web.fastapi - INFO - New session created (1 total): _zXX19TsYhHr25Ehl_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:46:24,863 - flet_web.fastapi - INFO - Start session: zXX19TsYhHr25Ehl
+2026-04-15 12:46:24,868 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:46:28,413 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmp_twrl4hc
+2026-04-15 12:46:28,413 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:46:28,416 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:46:28,416 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:46:31,435 - flet_web.fastapi - INFO - New FletApp: hduobJYt
+2026-04-15 12:46:31,543 - flet_web.fastapi - INFO - New session created (2 total): _dAB3YWqXFDJjojl2_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:46:31,549 - flet_web.fastapi - INFO - Start session: dAB3YWqXFDJjojl2
+2026-04-15 12:46:31,559 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:46:41,493 - flet_web.fastapi - INFO - Session disconnected: _dAB3YWqXFDJjojl2_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:46:41,502 - flet_web.fastapi - INFO - Disposing FletApp: hduobJYt
+2026-04-15 12:46:41,502 - flet_web.fastapi - INFO - FletApp was garbage collected: hduobJYt
+2026-04-15 12:47:05,475 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:47:05,724 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:47:06,583 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:47:06,583 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:47:06,583 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:47:06,583 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:47:06,583 - flet - INFO - Flet app has started...
+2026-04-15 12:47:06,646 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:47:06,646 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:47:07,171 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:47:07,177 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:47:07,180 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 9999): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:47:07,277 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 9999): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 280, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:47:09,864 - flet_web.fastapi - INFO - New FletApp: as8waxEu
+2026-04-15 12:47:09,984 - flet_web.fastapi - INFO - New session created (3 total): _rZ3qEEPZoC9194iB_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:47:10,102 - flet_web.fastapi - INFO - Start session: rZ3qEEPZoC9194iB
+2026-04-15 12:47:10,106 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:47:12,945 - flet_web.fastapi - INFO - Session disconnected: _rZ3qEEPZoC9194iB_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:47:12,945 - flet_web.fastapi - INFO - Disposing FletApp: as8waxEu
+2026-04-15 12:47:12,945 - flet_web.fastapi - INFO - FletApp was garbage collected: as8waxEu
+2026-04-15 12:48:03,054 - flet_web.fastapi - INFO - Session disconnected: _zXX19TsYhHr25Ehl_e7d317aa7fce94826fba0f132eb0778fe6113045
+2026-04-15 12:48:03,085 - flet_web.fastapi - INFO - Disposing FletApp: L6Iat1EA
+2026-04-15 12:48:03,125 - flet_web.fastapi - INFO - FletApp was garbage collected: L6Iat1EA
+2026-04-15 12:48:30,925 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:48:31,120 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:48:32,093 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:48:32,093 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:48:32,093 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:48:32,093 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:48:32,093 - flet - INFO - Flet app has started...
+2026-04-15 12:48:32,189 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:48:32,189 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:48:40,005 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmpbhfw5m1p
+2026-04-15 12:48:40,013 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:48:40,013 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:48:40,015 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:48:43,106 - flet_web.fastapi - INFO - New FletApp: tMv5d4Fz
+2026-04-15 12:48:43,201 - flet_web.fastapi - INFO - New session created (1 total): _dQsTiRnc9yuqJyeS_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:48:43,214 - flet_web.fastapi - INFO - Start session: dQsTiRnc9yuqJyeS
+2026-04-15 12:48:43,221 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:48:56,554 - asyncio - ERROR - Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] Foi forçado o cancelamento de uma conexão existente pelo host remoto
+2026-04-15 12:48:56,766 - flet_web.fastapi - INFO - Session disconnected: _dQsTiRnc9yuqJyeS_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:48:56,766 - flet_web.fastapi - INFO - Disposing FletApp: tMv5d4Fz
+2026-04-15 12:48:56,766 - flet_web.fastapi - INFO - FletApp was garbage collected: tMv5d4Fz
+2026-04-15 12:49:07,815 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:49:08,139 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:49:09,428 - flet - INFO - Starting Flet web server on port 9999...
+2026-04-15 12:49:09,433 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:49:09,433 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:49:09,433 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:49:09,439 - flet - INFO - Flet app has started...
+2026-04-15 12:49:09,519 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:49:09,519 - flet - INFO - App URL: http://127.0.0.1:9999
+2026-04-15 12:49:10,113 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:49:10,116 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:49:10,119 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run_async() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py:142> exception=AttributeError("'Server' object has no attribute 'servers'")>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 310, in run_async
+    await terminate.wait()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\locks.py", line 212, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 313, in run_async
+    await conn.close()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\fastapi\serve_fastapi_web_app.py", line 33, in close
+    await self.server.shutdown()
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 275, in shutdown
+    for server in self.servers:
+                  ^^^^^^^^^^^^
+AttributeError: 'Server' object has no attribute 'servers'. Did you mean: 'serve'?
+2026-04-15 12:49:10,231 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<Server.serve() done, defined at C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py:77> exception=SystemExit(1)>
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 172, in startup
+    server = await loop.create_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 10048] error while attempting to bind on address ('::', 9999, 0, 0): normalmente é permitida apenas uma utilização de cada endereço de soquete (protocolo/endereço de rede/porta)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 282, in <module>
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=9999)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 125, in run
+    return asyncio.run(
+           ^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "C:\Users\fazin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 94, in _serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\uvicorn\server.py", line 182, in startup
+    sys.exit(1)
+SystemExit: 1
+2026-04-15 12:49:12,618 - flet_web.fastapi - INFO - New FletApp: dnF3kojy
+2026-04-15 12:49:12,709 - flet_web.fastapi - INFO - New session created (2 total): _lll0yrJZpOWHmtBu_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:49:12,766 - flet_web.fastapi - INFO - Start session: lll0yrJZpOWHmtBu
+2026-04-15 12:49:12,771 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:49:17,199 - flet_web.fastapi - INFO - Session disconnected: _lll0yrJZpOWHmtBu_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:49:17,199 - flet_web.fastapi - INFO - Disposing FletApp: dnF3kojy
+2026-04-15 12:49:17,201 - flet_web.fastapi - INFO - FletApp was garbage collected: dnF3kojy
+2026-04-15 12:52:43,347 - __main__ - INFO - Iniciando servidor Flet na porta 9999
+2026-04-15 12:52:43,777 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:52:44,791 - flet - INFO - Starting Flet web server on port 8555...
+2026-04-15 12:52:44,791 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:52:44,791 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:52:44,791 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:52:44,807 - flet - INFO - Flet app has started...
+2026-04-15 12:52:44,880 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:52:44,880 - flet - INFO - App URL: http://127.0.0.1:8555
+2026-04-15 12:52:47,864 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmp5grf128g
+2026-04-15 12:52:47,864 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:52:47,864 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:52:47,864 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:52:51,400 - flet_web.fastapi - INFO - New FletApp: lqfTxlf4
+2026-04-15 12:52:51,550 - flet_web.fastapi - INFO - New session created (1 total): _KZmiBT5IPIWdsN3K_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:52:51,559 - flet_web.fastapi - INFO - Start session: KZmiBT5IPIWdsN3K
+2026-04-15 12:52:51,571 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:53:06,738 - flet_web.fastapi - INFO - Session disconnected: _KZmiBT5IPIWdsN3K_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:53:06,754 - flet_web.fastapi - INFO - Disposing FletApp: lqfTxlf4
+2026-04-15 12:53:06,754 - flet_web.fastapi - INFO - FletApp was garbage collected: lqfTxlf4
+2026-04-15 12:53:11,693 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 12:53:11,693 - flet_web.fastapi - INFO - Deleting temp dir: C:\Users\fazin\AppData\Local\Temp\tmp5grf128g
+2026-04-15 12:53:11,729 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 12:53:11,900 - flet - INFO - Session was garbage collected: KZmiBT5IPIWdsN3K
+2026-04-15 12:59:31,947 - __main__ - INFO - Iniciando servidor Flet na porta 8555
+2026-04-15 12:59:32,556 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:59:33,606 - flet - INFO - Starting Flet web server on port 8555...
+2026-04-15 12:59:33,606 - flet_web.fastapi - INFO - Web renderer configured: WebRenderer.AUTO
+2026-04-15 12:59:33,606 - flet_web.fastapi - INFO - Route URL strategy configured: RouteUrlStrategy.PATH
+2026-04-15 12:59:33,606 - flet_web.fastapi - INFO - No CDN configured: False
+2026-04-15 12:59:33,606 - flet - INFO - Flet app has started...
+2026-04-15 12:59:33,702 - flet_web.fastapi - INFO - Starting up Flet App Manager
+2026-04-15 12:59:33,702 - flet - INFO - App URL: http://127.0.0.1:8555
+2026-04-15 12:59:35,182 - flet_web.fastapi - INFO - Temp dir created for patched index and manifest: C:\Users\fazin\AppData\Local\Temp\tmp8dzj0w5h
+2026-04-15 12:59:35,182 - flet_web.fastapi - INFO - Web root: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet_web\web
+2026-04-15 12:59:35,183 - flet_web.fastapi - INFO - assets_dir does not exist: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 12:59:35,183 - flet_web.fastapi - INFO - Assets dir: None
+2026-04-15 12:59:38,037 - flet_web.fastapi - INFO - New FletApp: C7gHFFJ6
+2026-04-15 12:59:38,141 - flet_web.fastapi - INFO - New session created (1 total): _xuKReR50hSRQDvN3_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 12:59:38,149 - flet_web.fastapi - INFO - Start session: xuKReR50hSRQDvN3
+2026-04-15 12:59:38,166 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 12:59:58,551 - flet_web.fastapi - INFO - New FletApp: FPWo3ZQP
+2026-04-15 12:59:58,683 - flet_web.fastapi - INFO - Session reconnected: _xuKReR50hSRQDvN3_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 13:00:19,377 - flet_web.fastapi - INFO - Session disconnected: _xuKReR50hSRQDvN3_10b499f2f5988d7d30239eab2a57e73c74c845e0
+2026-04-15 13:00:19,392 - flet_web.fastapi - INFO - Disposing FletApp: FPWo3ZQP
+2026-04-15 13:00:19,418 - flet_web.fastapi - INFO - FletApp was garbage collected: FPWo3ZQP
+2026-04-15 13:01:54,731 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-04-15 13:01:54,755 - flet_web.fastapi - INFO - Deleting temp dir: C:\Users\fazin\AppData\Local\Temp\tmp8dzj0w5h
+2026-04-15 13:01:54,894 - flet_web.fastapi - INFO - Closing Flet web server...
+2026-04-15 13:01:55,194 - flet - INFO - Session was garbage collected: xuKReR50hSRQDvN3
+2026-04-15 13:01:55,205 - flet_web.fastapi - INFO - FletApp was garbage collected: C7gHFFJ6
+2026-04-15 13:02:02,983 - __main__ - INFO - Iniciando Flet em Modo Desktop Nativo
+2026-04-15 13:02:03,534 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:02:03,534 - flet - INFO - Starting up TCP server on localhost:58583
+2026-04-15 13:02:03,594 - flet - INFO - Flet app has started...
+2026-04-15 13:02:07,661 - flet - INFO - App URL: tcp://localhost:58583
+2026-04-15 13:02:07,661 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:02:07,670 - flet_desktop - INFO - Downloading Flet v0.84.0 from https://github.com/flet-dev/flet/releases/download/v0.84.0/flet-windows.zip
+2026-04-15 13:02:13,905 - flet_desktop - INFO - Extracting Flet client from C:\Users\fazin\AppData\Local\Temp\flet-windows.zip.K86kQW4h5I to C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0.5BVSgo7Z
+2026-04-15 13:02:20,135 - flet - INFO - App session started
+2026-04-15 13:02:20,154 - __main__ - INFO - Iniciando aplicação Flet
+2026-04-15 13:02:57,666 - flet - INFO - Session was garbage collected: AO423Z8gvOLHv9AW
+2026-04-15 13:05:35,058 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:05:35,062 - flet - INFO - Starting up TCP server on localhost:53712
+2026-04-15 13:05:35,086 - flet - INFO - Flet app has started...
+2026-04-15 13:05:35,128 - flet - INFO - App URL: tcp://localhost:53712
+2026-04-15 13:05:35,129 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:05:35,152 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:05:37,127 - flet - INFO - App session started
+2026-04-15 13:08:20,545 - flet - INFO - Session was garbage collected: iVX1l3MwLJ36l6KM
+2026-04-15 13:08:29,656 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:08:29,670 - flet - INFO - Starting up TCP server on localhost:59310
+2026-04-15 13:08:29,693 - flet - INFO - Flet app has started...
+2026-04-15 13:08:29,719 - flet - INFO - App URL: tcp://localhost:59310
+2026-04-15 13:08:29,719 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:08:29,731 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:08:30,810 - flet - INFO - App session started
+2026-04-15 13:08:30,812 - __main__ - INFO - Iniciando Flet - Modo Desktop
+2026-04-15 13:09:31,088 - flet - INFO - Session was garbage collected: 30TfnJkF3FiR6vlK
+2026-04-15 13:10:51,206 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:10:51,206 - flet - INFO - Starting up TCP server on localhost:52630
+2026-04-15 13:10:51,238 - flet - INFO - Flet app has started...
+2026-04-15 13:10:51,267 - flet - INFO - App URL: tcp://localhost:52630
+2026-04-15 13:10:51,267 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:10:51,281 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:10:52,568 - flet - INFO - App session started
+2026-04-15 13:10:52,572 - __main__ - INFO - Iniciando Flet - Modo Desktop Nativo
+2026-04-15 13:11:24,426 - flet - INFO - Session was garbage collected: oniSmcWxFRd3tzBc
+2026-04-15 13:14:49,571 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:14:49,588 - flet - INFO - Starting up TCP server on localhost:58403
+2026-04-15 13:14:49,658 - flet - INFO - Flet app has started...
+2026-04-15 13:14:49,684 - flet - INFO - App URL: tcp://localhost:58403
+2026-04-15 13:14:49,684 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:14:49,701 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:14:51,563 - flet - INFO - App session started
+2026-04-15 13:14:51,576 - flet - ERROR - Unhandled error in main() handler
+Traceback (most recent call last):
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\.venv\Lib\site-packages\flet\app.py", line 354, in on_session_created
+    main(session.page)
+  File "C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\app_flet.py", line 210, in main
+    alignment=ft.alignment.top_center # Garante que o painel fique alinhado no topo
+              ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'flet.controls.alignment' has no attribute 'top_center'
+2026-04-15 13:14:58,520 - flet - INFO - Session was garbage collected: 6QcD1J05wInL0LsI
+2026-04-15 13:17:25,353 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:17:25,362 - flet - INFO - Starting up TCP server on localhost:53150
+2026-04-15 13:17:25,392 - flet - INFO - Flet app has started...
+2026-04-15 13:17:25,417 - flet - INFO - App URL: tcp://localhost:53150
+2026-04-15 13:17:25,417 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:17:25,429 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:17:27,005 - flet - INFO - App session started
+2026-04-15 13:18:04,994 - flet - INFO - Session was garbage collected: 47VtGwiQOcYuEMdj
+2026-04-15 13:19:56,892 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:19:56,892 - flet - INFO - Starting up TCP server on localhost:55261
+2026-04-15 13:19:56,946 - flet - INFO - Flet app has started...
+2026-04-15 13:19:56,970 - flet - INFO - App URL: tcp://localhost:55261
+2026-04-15 13:19:56,970 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:19:56,980 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:19:58,214 - flet - INFO - App session started
+2026-04-15 13:20:07,734 - flet - INFO - Session was garbage collected: sIzA2ljXAiTReulh
+2026-04-15 13:20:15,512 - flet - INFO - Assets path configured: C:\Users\fazin\OneDrive\Documents\Nisio\sistema_refeicoes\assets
+2026-04-15 13:20:15,512 - flet - INFO - Starting up TCP server on localhost:51357
+2026-04-15 13:20:15,512 - flet - INFO - Flet app has started...
+2026-04-15 13:20:15,548 - flet - INFO - App URL: tcp://localhost:51357
+2026-04-15 13:20:15,548 - flet_desktop - INFO - Starting Flet View app...
+2026-04-15 13:20:15,558 - flet_desktop - INFO - Flet client found in cache: C:\Users\fazin\.flet\client\flet-desktop-full-0.84.0
+2026-04-15 13:20:16,318 - flet - INFO - App session started
+2026-04-15 13:20:24,849 - flet - INFO - Session was garbage collected: z32gtwWR6vXMfHCJ
