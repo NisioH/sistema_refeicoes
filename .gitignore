@@ -10,7 +10,7 @@
 venv/
 env/
 .venv/
-
+.venv_estavel/
 # =========================
 # Arquivos compilados do Python
 # =========================
