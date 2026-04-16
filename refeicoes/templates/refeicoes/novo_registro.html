@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Lançamento - Refeições</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}">
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="header" style="text-align: center;">
+            <h2><i class="fa-solid fa-plus"></i> Novo Lançamento</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Preencha os dados da refeição abaixo</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Data do Consumo (Competência)</label>
+                {{ form.data_consumo }}
+            </div>
+
+            <div class="form-group">
+                <label>Cantina</label>
+                {{ form.local }}
+            </div>
+
+            <div class="form-group">
+                <label>Setor do Colaborador</label>
+                {{ form.setor }}
+            </div>
+
+            <hr style="border-color: var(--border-color); margin: 30px 0;">
+            <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--primary-color);">Quantidades</h3>
+
+            <div class="grid-quantidades">
+                <div class="form-group">
+                    <label>☕ Café da Manhã</label>
+                    {{ form.qtd_cafe }}
+                </div>
+                <div class="form-group">
+                    <label>🍲 Almoço Buffet</label>
+                    {{ form.qtd_almoco_buffet }}
+                </div>
+                <div class="form-group">
+                    <label>🍱 Almoço Marmita</label>
+                    {{ form.qtd_almoco_marmita }}
+                </div>
+                <div class="form-group">
+                    <label>🌙 Janta</label>
+                    {{ form.qtd_janta }}
+                </div>
+                <div class="form-group">
+                    <label>🥪 Lanche</label>
+                    {{ form.qtd_lanche }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn-salvar">
+                <i class="fa-solid fa-check"></i> Salvar Lançamento
+            </button>
+            <a href="{% url 'painel_refeicoes' %}" class="btn-voltar">Cancelar e Voltar ao Painel</a>
+        </form>
+    </div>
+
+    <script src="{% static 'refeicoes/js/scripts.js' %}"></script>
+</body>
+</html>
