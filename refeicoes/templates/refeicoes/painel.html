@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Refeições</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* TEMA DARK BASEADO NAS SUAS IMAGENS */
+        :root {
+            --bg-color: #0f1116;
+            --container-bg: #1e2128;
+            --text-main: #ffffff;
+            --text-muted: #8b92a5;
+            --primary-color: #3b82f6; /* Azul neon igual ao do botão Novo Registro */
+            --primary-hover: #2563eb;
+            --border-color: #2a2e39;
+            --action-eye: #10b981; /* Verde */
+            --action-pen: #3b82f6; /* Azul */
+            --action-trash: #ef4444; /* Vermelho */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body { background-color: var(--bg-color); color: var(--text-main); padding: 40px; }
+
+        .dashboard-container { max-width: 1400px; margin: 0 auto; background-color: var(--container-bg); border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        /* CABEÇALHO */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .header h1 i { color: var(--primary-color); }
+
+        .btn-novo { background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-novo:hover { background-color: var(--primary-hover); }
+
+        /* TABELA */
+        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+
+        thead { background-color: rgba(0,0,0,0.2); }
+        th { padding: 16px; font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-color); }
+
+        td { padding: 16px; font-size: 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        tr:hover { background-color: rgba(255,255,255,0.02); }
+        tr:last-child td { border-bottom: none; }
+
+        .badge-setor { background-color: rgba(59, 130, 246, 0.1); color: var(--primary-color); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .valor-total { font-weight: bold; color: #10b981; } /* Verde para dinheiro */
+
+        /* BOTÕES DE AÇÃO NA TABELA */
+        .acoes-container { display: flex; gap: 10px; }
+        .btn-acao { background: none; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; padding: 5px; }
+        .btn-acao.view { color: var(--action-eye); }
+        .btn-acao.edit { color: var(--action-pen); }
+        .btn-acao.delete { color: var(--action-trash); }
+        .btn-acao:hover { transform: scale(1.2); }
+
+        /* ALINHAMENTO DE NÚMEROS */
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições</h1>
+            <a href="#" class="btn-novo"><i class="fa-solid fa-plus"></i> Novo Registro</a>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Cantina</th>
+                        <th>Setor / Categoria</th>
+                        <th class="text-center">Café</th>
+                        <th class="text-center">Buffet</th>
+                        <th class="text-center">Marmita</th>
+                        <th class="text-center">Janta</th>
+                        <th class="text-center">Lanche</th>
+                        <th>Total Gasto</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reg in registros %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ reg.data_formatada }}</td>
+                        <td>{{ reg.get_local_display }}</td>
+                        <td><span class="badge-setor">{{ reg.setor }}</span></td>
+                        <td class="text-center">{{ reg.qtd_cafe }}</td>
+                        <td class="text-center">{{ reg.qtd_almoco_buffet }}</td>
+                        <td class="text-center">{{ reg.qtd_almoco_marmita }}</td>
+                        <td class="text-center">{{ reg.qtd_janta }}</td>
+                        <td class="text-center">{{ reg.qtd_lanche }}</td>
+                        <td class="valor-total">R$ {{ reg.valor_total|floatformat:2 }}</td>
+                        <td>
+                            <div class="acoes-container">
+                                <button class="btn-acao view" title="Visualizar"><i class="fa-solid fa-eye"></i></button>
+                                <button class="btn-acao edit" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn-acao delete" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center" style="padding: 40px; color: var(--text-muted);">
+                            Nenhum registro de refeição encontrado. Clique em "Novo Registro" para começar.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

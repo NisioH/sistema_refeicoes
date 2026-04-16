@@ -1,10 +1,10 @@
-from rest_framework import viewsets
+from django.shortcuts import render
 from .models import RegistroRefeicao
-from .serializers import RegistroRefeicaoSerializer
 
-class RegistroRefeicaoViewSet(viewsets.ModelViewSet):
-    """Criação automática de Listar, Criar, Editar e Deletar refeições"""
+def painel_refeicoes(request):
+    registros = RegistroRefeicao.objects.all()
 
-    queryset = RegistroRefeicao.objects.all().order_by('-data_consumo')
-    serializer_class = RegistroRefeicaoSerializer
-
+    contexto = {
+        'registros': registros,
+    }
+    return render(request, 'refeicoes/painel.html', contexto)

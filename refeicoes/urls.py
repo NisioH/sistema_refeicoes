@@ -1,9 +1,6 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import RegistroRefeicaoViewSet
+from django.urls import path
+from . import views
 
-router = DefaultRouter()
-router.register(r'registros', RegistroRefeicaoViewSet,basename='registrorefeicao')
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', views.painel_refeicoes, name='painel_refeicoes'),
 ]
