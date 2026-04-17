@@ -66,10 +66,15 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-salvar">
-                <i class="fa-solid fa-check"></i> {% if registro %}Atualizar Registro{% else %}Salvar Lançamento{% endif %}
-            </button>
-            <a href="{% url 'painel_refeicoes' %}" class="btn-voltar">Cancelar e Voltar ao Painel</a>
+            <div class="botoes-form">
+                <a href="{% url 'painel_refeicoes' %}" class="btn-voltar">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+                </a>
+                
+                <button type="submit" class="btn-salvar">
+                    <i class="fa-solid fa-check"></i> {% if registro %}Atualizar Registro{% else %}Salvar Lançamento{% endif %}
+                </button>
+            </div>
         </form>
     </div>
 

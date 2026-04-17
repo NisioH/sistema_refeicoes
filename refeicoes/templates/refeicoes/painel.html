@@ -1,66 +1,63 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Refeições</title>
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=4">
 </head>
 <body>
 
     <div class="dashboard-container">
         <div class="dashboard-header">
             <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições</h1>
-            <a href="{% url 'novo_registro' %}" class="btn-novo"><i class="fa-solid fa-plus"></i> Novo Registro</a>
+            <a href="{% url 'novo_registro' %}" class="btn-novo">
+                <i class="fa-solid fa-plus"></i> Novo Registro
+            </a>
         </div>
 
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 25px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h3 style="color: #10b981; margin-bottom: 5px;"><i class="fa-solid fa-sack-dollar"></i> Custo Total do Período</h3>
-                <p style="color: var(--text-muted); font-size: 14px;">(Com base nos filtros aplicados abaixo)</p>
+                <p style="color: var(--text-muted); font-size: 14px;">Total calculado com base nos filtros abaixo</p>
             </div>
-            <div style="font-size: 32px; font-weight: bold; color: #10b981;">
+            <div style="font-size: 36px; font-weight: bold; color: #10b981;">
                 R$ {{ total_gasto|floatformat:2 }}
             </div>
         </div>
 
-        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color);">
-            <form method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: end;">
-
+        <div style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color);">
+            <form method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end;">
                 <div>
-                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Data Início</label>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA INÍCIO</label>
                     <input type="date" name="data_inicio" value="{{ filtros.data_inicio }}" class="input-dark">
                 </div>
-
                 <div>
-                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Data Fim</label>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA FIM</label>
                     <input type="date" name="data_fim" value="{{ filtros.data_fim }}" class="input-dark">
                 </div>
-
                 <div>
-                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Cantina</label>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">CANTINA</label>
                     <select name="local" class="input-dark">
                         <option value="">Todas</option>
                         <option value="SEDE" {% if filtros.local == 'SEDE' %}selected{% endif %}>Sede</option>
                         <option value="SECADOR" {% if filtros.local == 'SECADOR' %}selected{% endif %}>Secador</option>
                     </select>
                 </div>
-
                 <div>
-                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Buscar Setor/Categoria</label>
-                    <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Ex: Algodoeira" class="input-dark">
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">SETOR</label>
+                    <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Buscar..." class="input-dark">
                 </div>
-
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn-novo" style="flex: 1;"><i class="fa-solid fa-magnifying-glass"></i> Filtrar</button>
-                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color);"><i class="fa-solid fa-eraser"></i> Limpar</a>
+                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color); width: 50px; justify-content: center;"><i class="fa-solid fa-eraser"></i></a>
                 </div>
-
             </form>
         </div>
 
@@ -70,18 +67,18 @@
                     <tr>
                         <th>Data</th>
                         <th>Cantina</th>
-                        <th>Setor / Categoria</th>
+                        <th>Setor</th>
                         <th class="text-center">Café</th>
                         <th class="text-center">Buffet</th>
                         <th class="text-center">Marmita</th>
                         <th class="text-center">Janta</th>
                         <th class="text-center">Lanche</th>
-                        <th>Total Gasto</th>
-                        <th>Ações</th>
+                        <th>Total</th>
+                        <th class="text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for reg in registros %}
+                    {% for reg in page_obj %}
                     <tr>
                         <td style="font-weight: 600;">{{ reg.data_formatada }}</td>
                         <td>{{ reg.get_local_display }}</td>
@@ -93,29 +90,66 @@
                         <td class="text-center">{{ reg.qtd_lanche }}</td>
                         <td class="valor-total">R$ {{ reg.valor_total|floatformat:2 }}</td>
                         <td>
-                            <div class="acoes-container">
-                                <button class="btn-acao view" title="Visualizar"><i class="fa-solid fa-eye"></i></button>
-
-                                <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit" title="Editar"><i class="fa-solid fa-pen"></i></a>
-
-                                <a href="{% url 'excluir_registro' reg.id %}" class="btn-acao delete" title="Excluir"
-                                   onclick="return confirm('ATENÇÃO: Tem certeza que deseja excluir o registro do dia {{ reg.data_formatada }}?');">
-                                   <i class="fa-solid fa-trash"></i>
-                                </a>
+                            <div class="acoes-container" style="justify-content: center;">
+                                <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit"><i class="fa-solid fa-pen"></i></a>
+                                <a href="{% url 'excluir_registro' reg.id %}" class="btn-acao delete" onclick="return confirm('Excluir este registro?');"><i class="fa-solid fa-trash"></i></a>
                             </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center" style="padding: 40px; color: var(--text-muted);">
-                            Nenhum registro de refeição encontrado. Clique em "Novo Registro" para começar.
-                        </td>
+                        <td colspan="10" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="paginacao-container">
+            <div class="paginacao-botoes">
+                {% if page_obj.has_previous %}
+                    <a href="#" onclick="mudarPagina({{ page_obj.previous_page_number }})" class="page-link">Anterior</a>
+                {% endif %}
+                
+                <span class="page-active">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                
+                {% if page_obj.has_next %}
+                    <a href="#" onclick="mudarPagina({{ page_obj.next_page_number }})" class="page-link">Próxima</a>
+                {% endif %}
+            </div>
+
+            <div class="paginacao-ir-para">
+                <span>Ir para:</span>
+                <input type="number" id="input-pagina" min="1" max="{{ page_obj.paginator.num_pages }}" class="input-dark input-page" value="{{ page_obj.number }}">
+                <button onclick="irParaPaginaDigitada()" class="btn-ir">Ir</button>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
+    <script>
+        // Função que muda a página pela URL (mantendo os filtros!)
+        function mudarPagina(numeroDaPagina) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', numeroDaPagina);
+            window.location.href = url.toString();
+        }
+
+        // Nova função para o botão "Ir"
+        function irParaPaginaDigitada() {
+            const input = document.getElementById('input-pagina');
+            let num = parseInt(input.value);
+            const max = parseInt(input.max);
+            const min = parseInt(input.min);
+            
+            if (num >= min && num <= max) {
+                mudarPagina(num);
+            } else {
+                alert('Página inválida. Digite um número entre ' + min + ' e ' + max);
+                input.value = "{{ page_obj.number }}"; // Volta pro número atual se errar
+            }
+        }
+    </script>
 </body>
 </html>
