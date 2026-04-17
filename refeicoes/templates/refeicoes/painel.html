@@ -28,7 +28,7 @@
                 <p style="color: var(--text-muted); font-size: 14px;">Total calculado com base nos filtros abaixo</p>
             </div>
             <div style="font-size: 36px; font-weight: bold; color: #10b981;">
-                R$ {{ total_gasto|floatformat:2 }}
+                R$ {{ total_gasto|floatformat:"2g" }}
             </div>
         </div>
 
@@ -55,8 +55,17 @@
                     <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Buscar..." class="input-dark">
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn-novo" style="flex: 1;"><i class="fa-solid fa-magnifying-glass"></i> Filtrar</button>
-                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color); width: 50px; justify-content: center;"><i class="fa-solid fa-eraser"></i></a>
+                    <button type="submit" class="btn-novo" style="flex: 1; height: 45px;">
+                        <i class="fa-solid fa-magnifying-glass"></i> Filtrar
+                    </button>
+                    
+                    <button type="submit" formaction="{% url 'exportar_pdf' %}" class="btn-novo" style="background-color: #ef4444; flex: 1; height: 45px;">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+
+                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color); height: 45px; width: 50px; justify-content: center;">
+                        <i class="fa-solid fa-eraser"></i>
+                    </a>
                 </div>
             </form>
         </div>
@@ -88,7 +97,7 @@
                         <td class="text-center">{{ reg.qtd_almoco_marmita }}</td>
                         <td class="text-center">{{ reg.qtd_janta }}</td>
                         <td class="text-center">{{ reg.qtd_lanche }}</td>
-                        <td class="valor-total">R$ {{ reg.valor_total|floatformat:2 }}</td>
+                        <td class="valor-total">R$ {{ reg.valor_total|floatformat:"2g" }}</td>
                         <td>
                             <div class="acoes-container" style="justify-content: center;">
                                 <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit"><i class="fa-solid fa-pen"></i></a>
