@@ -19,6 +19,51 @@
             <a href="{% url 'novo_registro' %}" class="btn-novo"><i class="fa-solid fa-plus"></i> Novo Registro</a>
         </div>
 
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="color: #10b981; margin-bottom: 5px;"><i class="fa-solid fa-sack-dollar"></i> Custo Total do Período</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">(Com base nos filtros aplicados abaixo)</p>
+            </div>
+            <div style="font-size: 32px; font-weight: bold; color: #10b981;">
+                R$ {{ total_gasto|floatformat:2 }}
+            </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color);">
+            <form method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: end;">
+
+                <div>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Data Início</label>
+                    <input type="date" name="data_inicio" value="{{ filtros.data_inicio }}" class="input-dark">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Data Fim</label>
+                    <input type="date" name="data_fim" value="{{ filtros.data_fim }}" class="input-dark">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Cantina</label>
+                    <select name="local" class="input-dark">
+                        <option value="">Todas</option>
+                        <option value="SEDE" {% if filtros.local == 'SEDE' %}selected{% endif %}>Sede</option>
+                        <option value="SECADOR" {% if filtros.local == 'SECADOR' %}selected{% endif %}>Secador</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Buscar Setor/Categoria</label>
+                    <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Ex: Algodoeira" class="input-dark">
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn-novo" style="flex: 1;"><i class="fa-solid fa-magnifying-glass"></i> Filtrar</button>
+                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color);"><i class="fa-solid fa-eraser"></i> Limpar</a>
+                </div>
+
+            </form>
+        </div>
+
         <div class="table-wrapper">
             <table>
                 <thead>
