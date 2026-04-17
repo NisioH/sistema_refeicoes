@@ -118,13 +118,13 @@
         <div class="paginacao-container">
             <div class="paginacao-botoes">
                 {% if page_obj.has_previous %}
-                    <a href="#" onclick="mudarPagina({{ page_obj.previous_page_number }})" class="page-link">Anterior</a>
+                    <a href="#" data-page="{{ page_obj.previous_page_number }}" class="page-link">Anterior</a>
                 {% endif %}
                 
                 <span class="page-active">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
                 
                 {% if page_obj.has_next %}
-                    <a href="#" onclick="mudarPagina({{ page_obj.next_page_number }})" class="page-link">Próxima</a>
+                    <a href="#" data-page="{{ page_obj.next_page_number }}" class="page-link">Próxima</a>
                 {% endif %}
             </div>
 
@@ -144,6 +144,17 @@
             url.searchParams.set('page', numeroDaPagina);
             window.location.href = url.toString();
         }
+
+        // Adicionar event listeners para os links de paginação
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    mudarPagina(page);
+                });
+            });
+        });
 
         // Nova função para o botão "Ir"
         function irParaPaginaDigitada() {
