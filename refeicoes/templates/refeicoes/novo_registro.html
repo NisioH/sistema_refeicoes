@@ -11,10 +11,15 @@
 </head>
 <body>
 
-    <div class="form-container">
-        <div class="header" style="text-align: center;">
-            <h2><i class="fa-solid fa-plus"></i> Novo Lançamento</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Preencha os dados da refeição abaixo</p>
+        <div class="form-container">
+                <div class="header" style="text-align: center;">
+            {% if registro %}
+                <h2><i class="fa-solid fa-pen"></i> Editar Lançamento</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Alterando registro do dia {{ registro.data_formatada }}</p>
+            {% else %}
+                <h2><i class="fa-solid fa-plus"></i> Novo Lançamento</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Preencha os dados da refeição abaixo</p>
+            {% endif %}
         </div>
 
         <form method="POST">
@@ -62,7 +67,7 @@
             </div>
 
             <button type="submit" class="btn-salvar">
-                <i class="fa-solid fa-check"></i> Salvar Lançamento
+                <i class="fa-solid fa-check"></i> {% if registro %}Atualizar Registro{% else %}Salvar Lançamento{% endif %}
             </button>
             <a href="{% url 'painel_refeicoes' %}" class="btn-voltar">Cancelar e Voltar ao Painel</a>
         </form>

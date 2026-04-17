@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -49,8 +50,13 @@
                         <td>
                             <div class="acoes-container">
                                 <button class="btn-acao view" title="Visualizar"><i class="fa-solid fa-eye"></i></button>
-                                <button class="btn-acao edit" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn-acao delete" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+
+                                <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit" title="Editar"><i class="fa-solid fa-pen"></i></a>
+
+                                <a href="{% url 'excluir_registro' reg.id %}" class="btn-acao delete" title="Excluir"
+                                   onclick="return confirm('ATENÇÃO: Tem certeza que deseja excluir o registro do dia {{ reg.data_formatada }}?');">
+                                   <i class="fa-solid fa-trash"></i>
+                                </a>
                             </div>
                         </td>
                     </tr>
