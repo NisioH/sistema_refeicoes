@@ -2,7 +2,7 @@
 # Variáveis de Ambiente (SEGURANÇA)
 # =========================
 .env
-.env.*
+
 
 # =========================
 # Ambientes Virtuais
