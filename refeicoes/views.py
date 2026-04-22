@@ -14,6 +14,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 from collections import defaultdict
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from .models import RegistroRefeicao, TabelaPreco
+from .forms import RegistroRefeicaoForm, TabelaPrecoForm
 
 
 def painel_refeicoes(request):
@@ -57,7 +59,6 @@ def novo_registro(request):
         form = RegistroRefeicaoForm()
    
     return render(request, 'refeicoes/novo_registro.html', {'form': form})
-
 
 def editar_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
@@ -182,3 +183,19 @@ def exportar_pdf(request):
     doc.build(elementos)
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=f"Relatório do {setor}.pdf")
+
+def configurar_precos(request):
+    # Pega a tabela de preços existente ou cria uma nova com os valores padrão se for a primeira vez
+    tabela = TabelaPreco.objects.first()
+    if not tabela:
+        tabela = TabelaPreco.objects.create()
+
+    if request.method == 'POST':
+        form = TabelaPrecoForm(request.POST, instance=tabela)
+        if form.is_valid():
+            form.save()
+            return redirect('painel_refeicoes')
+    else:
+        form = TabelaPrecoForm(instance=tabela)
+
+    return render(request, 'refeicoes/configurar_precos.html', {'form': form, 'tabela': tabela})

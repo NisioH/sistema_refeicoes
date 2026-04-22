@@ -1,5 +1,6 @@
 from django import forms
 from .models import RegistroRefeicao
+from .models import TabelaPreco 
 
 class RegistroRefeicaoForm(forms.ModelForm):
     class Meta:
@@ -15,4 +16,17 @@ class RegistroRefeicaoForm(forms.ModelForm):
             'qtd_almoco_marmita': forms.NumberInput(attrs={'class': 'input-dark', 'min': '0'}),
             'qtd_janta': forms.NumberInput(attrs={'class': 'input-dark', 'min': '0'}),
             'qtd_lanche': forms.NumberInput(attrs={'class': 'input-dark', 'min': '0'}),
+        }
+
+
+class TabelaPrecoForm(forms.ModelForm):
+    class Meta:
+        model = TabelaPreco
+        fields = ['cafe', 'buffet', 'marmita', 'janta', 'lanche']
+        widgets = {
+            'cafe': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
+            'buffet': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
+            'marmita': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
+            'janta': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
+            'lanche': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
         }
