@@ -80,6 +80,74 @@
         </form>
     </div>
 
-    <script src="{% static 'refeicoes/js/scripts.js' %}"></script>
+    <script
+        src="{% static 'refeicoes/js/scripts.js' %}">
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Pega os dois campos do formulário (o Django cria eles com 'id_' na frente)
+            const campoCantina = document.getElementById("id_local");
+            const campoSetor = document.getElementById("id_setor");
+
+            if (!campoCantina || !campoSetor) return; // Segurança caso a tela mude
+
+            // Guarda todas as opções originais que vieram do banco
+            const todasAsOpcoes = Array.from(campoSetor.options);
+
+            // Dicionário com a regra de quem pertence a qual cantina (Copiado do seu models.py)
+            const regrasSetor = {
+                'SEDE': [
+                    'Colaborador sede',
+                    'Corporativo sede',
+                    'Terceiros Fazenda'
+                ],
+                'SECADOR': [
+                    'Colaborador secador',
+                    'Colaborador algodoeira',
+                    'Terceirizado algodoeira',
+                    'Safrista algodoeira',
+                    'Corporativo'
+                ]
+            };
+
+            function filtrarSetores() {
+                const cantinaEscolhida = campoCantina.value;
+                const valorSetorAtual = campoSetor.value; // Guarda o que estava selecionado
+
+                // Limpa a lista de setores
+                campoSetor.innerHTML = "";
+
+                // Adiciona de volta só os que pertencem à cantina escolhida
+                todasAsOpcoes.forEach(opcao => {
+                    const valorOpcao = opcao.value;
+
+                    // Se for a opção vazia "---------" do Django, deixa passar
+                    if (!valorOpcao) {
+                        campoSetor.appendChild(opcao);
+                        return;
+                    }
+
+                    // Se a cantina escolhida tem esse setor na lista dela, adiciona na tela
+                    if (regrasSetor[cantinaEscolhida] && regrasSetor[cantinaEscolhida].includes(valorOpcao)) {
+                        campoSetor.appendChild(opcao);
+                    }
+                });
+
+                // Se o setor que estava selecionado antes sumiu, reseta para vazio
+                if (!Array.from(campoSetor.options).find(opt => opt.value === valorSetorAtual)) {
+                    campoSetor.value = "";
+                } else {
+                    campoSetor.value = valorSetorAtual; // Mantém a seleção (útil na hora de editar um registro)
+                }
+            }
+
+            // Avisa o navegador: "Toda vez que a Cantina mudar, rode o filtro"
+            campoCantina.addEventListener("change", filtrarSetores);
+
+            // Roda uma vez assim que a tela abre, para já limpar a lista
+            filtrarSetores();
+        });
+
+    </script>
 </body>
 </html>

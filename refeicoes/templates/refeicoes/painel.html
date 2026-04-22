@@ -28,7 +28,8 @@
             </div>
         </div>
 
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 25px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 25px;
+        margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h3 style="color: #10b981; margin-bottom: 5px;"><i class="fa-solid fa-sack-dollar"></i> Custo Total do Período</h3>
                 <p style="color: var(--text-muted); font-size: 14px;">Total calculado com base nos filtros abaixo</p>
@@ -60,16 +61,16 @@
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">SETOR</label>
                     <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Buscar..." class="input-dark">
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn-novo" style="flex: 1; height: 45px;">
+                <div style="display: flex; gap: 10px; width: 100%;">
+                    <button type="submit" class="btn-novo" style="flex: 1; height: 45px; padding: 0 10px; font-size: 14px;">
                         <i class="fa-solid fa-magnifying-glass"></i> Filtrar
                     </button>
-                    
-                    <button type="submit" formaction="{% url 'exportar_pdf' %}" class="btn-novo" style="background-color: #ef4444; flex: 1; height: 45px;">
+
+                    <button type="submit" formaction="{% url 'exportar_pdf' %}" class="btn-novo" style="background-color: #ef4444; flex: 1; height: 45px; padding: 0 10px; font-size: 14px;" title="Exportar para PDF">
                         <i class="fa-solid fa-file-pdf"></i> PDF
                     </button>
 
-                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color); height: 45px; width: 50px; justify-content: center;">
+                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color); flex: 0 0 45px; height: 45px; padding: 0; display: flex; justify-content: center; align-items: center;" title="Limpar Filtros">
                         <i class="fa-solid fa-eraser"></i>
                     </a>
                 </div>
