@@ -5,31 +5,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Refeições</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=4">
+
+    <script>
+        if (localStorage.getItem('tema-refeicoes') === 'claro') {
+            document.documentElement.classList.add('theme-light');
+        }
+    </script>
 </head>
 <body>
 
     <div class="dashboard-container">
+
         <div class="dashboard-header">
             <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições</h1>
             <div style="display: flex; gap: 10px;">
+
+                <button id="btn-tema" class="btn-novo" style="background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--border-color); flex: 0 0 45px; height: 45px; padding: 0; display: flex; justify-content: center; align-items: center;" title="Mudar Tema">
+                    <i id="icone-tema" class="fa-solid fa-sun"></i>
+                </button>
+
                 <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-tags"></i> Preços
                 </a>
-                
+
                 <a href="{% url 'novo_registro' %}" class="btn-novo">
                     <i class="fa-solid fa-plus"></i> Novo Registro
                 </a>
             </div>
         </div>
 
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 25px;
-        margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 25px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h3 style="color: #10b981; margin-bottom: 5px;"><i class="fa-solid fa-sack-dollar"></i> Custo Total do Período</h3>
                 <p style="color: var(--text-muted); font-size: 14px;">Total calculado com base nos filtros abaixo</p>
@@ -39,7 +48,7 @@
             </div>
         </div>
 
-        <div style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color);">
+        <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color);">
             <form method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end;">
                 <div>
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA INÍCIO</label>
@@ -61,6 +70,7 @@
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">SETOR</label>
                     <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Buscar..." class="input-dark">
                 </div>
+
                 <div style="display: flex; gap: 10px; width: 100%;">
                     <button type="submit" class="btn-novo" style="flex: 1; height: 45px; padding: 0 10px; font-size: 14px;">
                         <i class="fa-solid fa-magnifying-glass"></i> Filtrar
@@ -89,7 +99,7 @@
                         <th class="text-center">Marmita</th>
                         <th class="text-center">Janta</th>
                         <th class="text-center">Lanche</th>
-                        <th>Total</th>
+                        <th class="text-right">Total</th>
                         <th class="text-center">Ações</th>
                     </tr>
                 </thead>
@@ -104,7 +114,7 @@
                         <td class="text-center">{{ reg.qtd_almoco_marmita }}</td>
                         <td class="text-center">{{ reg.qtd_janta }}</td>
                         <td class="text-center">{{ reg.qtd_lanche }}</td>
-                        <td class="valor-total">R$ {{ reg.valor_total|floatformat:"2g" }}</td>
+                        <td class="valor-total text-right">R$ {{ reg.valor_total|floatformat:"2g" }}</td>
                         <td>
                             <div class="acoes-container" style="justify-content: center;">
                                 <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit"><i class="fa-solid fa-pen"></i></a>
@@ -114,7 +124,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado.</td>
+                        <td colspan="10" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -127,9 +137,9 @@
                 {% if page_obj.has_previous %}
                     <a href="#" data-page="{{ page_obj.previous_page_number }}" class="page-link">Anterior</a>
                 {% endif %}
-                
+
                 <span class="page-active">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-                
+
                 {% if page_obj.has_next %}
                     <a href="#" data-page="{{ page_obj.next_page_number }}" class="page-link">Próxima</a>
                 {% endif %}
@@ -142,18 +152,32 @@
             </div>
         </div>
         {% endif %}
-    </div>
 
-    <script>
-        // Função que muda a página pela URL (mantendo os filtros!)
+    </div> <script>
+        // Função que muda a página pela URL mantendo os filtros
         function mudarPagina(numeroDaPagina) {
             const url = new URL(window.location.href);
             url.searchParams.set('page', numeroDaPagina);
             window.location.href = url.toString();
         }
 
-        // Adicionar event listeners para os links de paginação
+        // Função para o botão "Ir"
+        function irParaPaginaDigitada() {
+            const input = document.getElementById('input-pagina');
+            let num = parseInt(input.value);
+            const max = parseInt(input.max);
+            const min = parseInt(input.min);
+
+            if (num >= min && num <= max) {
+                mudarPagina(num);
+            } else {
+                alert('Página inválida. Digite um número entre ' + min + ' e ' + max);
+                input.value = "{{ page_obj.number }}";
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // 1. Listeners da Paginação
             document.querySelectorAll('.page-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -161,22 +185,31 @@
                     mudarPagina(page);
                 });
             });
-        });
 
-        // Nova função para o botão "Ir"
-        function irParaPaginaDigitada() {
-            const input = document.getElementById('input-pagina');
-            let num = parseInt(input.value);
-            const max = parseInt(input.max);
-            const min = parseInt(input.min);
-            
-            if (num >= min && num <= max) {
-                mudarPagina(num);
-            } else {
-                alert('Página inválida. Digite um número entre ' + min + ' e ' + max);
-                input.value = "{{ page_obj.number }}"; // Volta pro número atual se errar
+            // 2. Lógica do Tema Claro/Escuro
+            const btnTema = document.getElementById("btn-tema");
+            const iconeTema = document.getElementById("icone-tema");
+            const htmlTag = document.documentElement;
+
+            // Arruma o ícone inicial dependendo do que está na memória
+            if (localStorage.getItem('tema-refeicoes') === 'claro') {
+                iconeTema.classList.replace('fa-sun', 'fa-moon'); // Se tá claro, mostra a Lua
             }
-        }
+
+            // Ação de clicar no botão
+            btnTema.addEventListener("click", function() {
+                htmlTag.classList.toggle('theme-light');
+
+                // Verifica se ficou claro ou escuro e salva na memória
+                if (htmlTag.classList.contains('theme-light')) {
+                    localStorage.setItem('tema-refeicoes', 'claro');
+                    iconeTema.classList.replace('fa-sun', 'fa-moon');
+                } else {
+                    localStorage.setItem('tema-refeicoes', 'escuro');
+                    iconeTema.classList.replace('fa-moon', 'fa-sun');
+                }
+            });
+        });
     </script>
 </body>
 </html>

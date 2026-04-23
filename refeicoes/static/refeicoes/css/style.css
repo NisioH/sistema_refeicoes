@@ -1,62 +1,121 @@
 /* =========================================
-   VARIÁVEIS DO TEMA DARK
+   VARIÁVEIS DO TEMA (DINÂMICAS)
 ========================================= */
 
+/* TEMA ESCURO (PADRÃO) */
 :root {
     --bg-color: #0f1116;
     --container-bg: #1e2128;
-    --text-main: #ffffff;
-    --text-muted: #8b92a5;
+    --panel-bg: #1e293b;
+
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+
     --primary-color: #3b82f6;
     --primary-hover: #2563eb;
-    --border-color: #2a2e39;
+
     --action-eye: #10b981;
     --action-pen: #3b82f6;
     --action-trash: #ef4444;
+
+    /* Variáveis Específicas de Componentes */
+    --shadow-color: rgba(0,0,0,0.5);
+    --table-header-bg: rgba(0,0,0,0.2);
+    --table-hover-bg: rgba(255,255,255,0.02);
+    --color-scheme-mode: dark;
+    --calendar-icon-filter: invert(1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+/* TEMA CLARO (ATIVADO PELO JS) */
+html.theme-light {
+    --bg-color: #f1f5f9;
+    --container-bg: #ffffff;
+    --panel-bg: #ffffff;
 
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-main); 
-    padding: 40px; 
-    /* Centraliza se for um formulário, mas não quebra o painel */
-    display: flex; 
-    justify-content: center; 
+    --text-color: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+
+    /* Ajustes Finos para o Claro não ficar feio */
+    --shadow-color: rgba(0,0,0,0.05); /* Sombra mais suave */
+    --table-header-bg: #f8fafc; /* Cabeçalho da tabela cinza clarinho */
+    --table-hover-bg: #f1f5f9; /* Linha da tabela ao passar o mouse */
+    --color-scheme-mode: light; /* Avisa o navegador para mudar a cor da barra de rolagem */
+    --calendar-icon-filter: invert(0); /* Deixa o ícone do calendário preto */
+}
+
+/* =========================================
+   RESET E BASE
+========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color); /* Unificado para usar sempre a mesma variável */
+    padding: 40px;
+    display: flex;
+    justify-content: center;
     align-items: flex-start;
+    color-scheme: var(--color-scheme-mode); /* Rolagem e menus nativos acompanham o tema */
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* =========================================
    COMPONENTES GERAIS
 ========================================= */
-.btn-novo, .btn-salvar { 
-    background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; 
-    border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; 
-    display: flex; align-items: center; gap: 8px; text-decoration: none; justify-content: center;
+.btn-novo, .btn-salvar {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    justify-content: center;
 }
-.btn-novo:hover, .btn-salvar:hover { background-color: var(--primary-hover); }
+.btn-novo:hover, .btn-salvar:hover {
+    background-color: var(--primary-hover);
+}
 
 .header { margin-bottom: 30px; }
 .header h1, .header h2 { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
 .header i { color: var(--primary-color); }
 
 /* =========================================
-   PAINEL DE DADOS (TABELA)
+   PAINEL DE DADOS E TABELA
 ========================================= */
-.dashboard-container { 
-    width: 100%; max-width: 1400px; background-color: var(--container-bg); 
-    border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+.dashboard-container {
+    width: 100%;
+    max-width: 1400px;
+    background-color: var(--container-bg);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 30px var(--shadow-color); /* Sombra inteligente */
+    transition: background-color 0.3s;
 }
+
 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 
 .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
 table { width: 100%; border-collapse: collapse; text-align: left; }
-thead { background-color: rgba(0,0,0,0.2); }
+
+thead { background-color: var(--table-header-bg); } /* Fundo inteligente */
 th, td { padding: 16px; border-bottom: 1px solid var(--border-color); }
 th { font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
-td { font-size: 14px; vertical-align: middle; }
-tr:hover { background-color: rgba(255,255,255,0.02); }
+td { font-size: 14px; vertical-align: middle; color: var(--text-color); }
+tr:hover { background-color: var(--table-hover-bg); } /* Fundo inteligente ao passar o mouse */
 
 .badge-setor { background-color: rgba(59, 130, 246, 0.1); color: var(--primary-color); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
 .valor-total { font-weight: bold; color: #10b981; }
@@ -68,70 +127,82 @@ tr:hover { background-color: rgba(255,255,255,0.02); }
 .btn-acao.delete { color: var(--action-trash); }
 .btn-acao:hover { transform: scale(1.2); }
 .text-center { text-align: center; }
+.text-right { text-align: right; }
 
 /* =========================================
    FORMULÁRIOS
 ========================================= */
-.form-container { 
-    width: 100%; max-width: 600px; background-color: var(--container-bg); 
-    border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+.form-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--container-bg);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    transition: background-color 0.3s;
 }
+
 .form-group { margin-bottom: 20px; }
 .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-muted); }
 
-.input-dark { 
-    width: 100%; padding: 12px; background-color: #0f1116; 
-    border: 1px solid var(--border-color); border-radius: 8px; color: white; outline: none; transition: 0.3s; 
-    
-    /* AS DUAS LINHAS NOVAS ABAIXO: */
-    color-scheme: dark; /* Avisa o navegador que o tema é escuro */
+/* Os Inputs Livres da Maldição do Frankenstein! */
+.input-dark, select {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-color); /* Segue o fundo da tela */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color); /* Texto visível no claro e no escuro */
+    outline: none;
+    transition: 0.3s;
 }
 
-/*.input-dark:focus { border-color: var(--primary-color); }*/
+.input-dark:focus, select:focus { border-color: var(--primary-color); }
+
+/* Ícone do calendário inteligente */
 .input-dark::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+    filter: var(--calendar-icon-filter);
     cursor: pointer;
 }
+
 .grid-quantidades { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-/* O Novo Botão de Voltar */
+
 /* =========================================
-   RODAPÉ DO FORMULÁRIO (BOTÕES LADO A LADO)
+   RODAPÉ DO FORMULÁRIO E BOTÕES LADO A LADO
 ========================================= */
 .botoes-form {
     display: flex;
-    gap: 15px; /* O espaço certinho entre os dois botões */
+    gap: 15px;
     margin-top: 30px;
     width: 100%;
 }
 
-/* Ajuste no botão Salvar para ele crescer e ocupar metade da tela */
 .botoes-form .btn-salvar {
     flex: 1;
-    margin-top: 0; /* Tira a margem antiga */
+    margin-top: 0;
     font-size: 16px;
     padding: 15px;
 }
 
-/* O novo botão Voltar com visual Premium */
-.btn-voltar { 
-    flex: 1; /* Cresce igual ao Salvar */
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
+.btn-voltar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
-    background-color: #4b5563; /* Cinza Grafite elegante */
-    color: white; 
-    border: none; 
-    padding: 15px; 
-    border-radius: 8px; 
-    font-size: 16px; 
-    font-weight: bold; 
-    text-decoration: none; 
-    transition: 0.3s; 
+    background-color: #4b5563;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-.btn-voltar:hover { 
-    background-color: #374151; /* Fica mais escuro ao passar o mouse */
+.btn-voltar:hover {
+    background-color: #374151;
     color: white;
 }
 
@@ -149,11 +220,10 @@ tr:hover { background-color: rgba(255,255,255,0.02); }
     margin-top: 25px;
 }
 
-/* Grudando os botões da esquerda */
 .paginacao-botoes {
     display: flex;
     border-radius: 6px;
-    overflow: hidden; /* Corta as pontas quadradas pra ficar redondo */
+    overflow: hidden;
     border: 1px solid var(--border-color);
 }
 
@@ -179,15 +249,10 @@ tr:hover { background-color: rgba(255,255,255,0.02); }
     transition: 0.2s;
 }
 
-.paginacao-botoes > :first-child {
-    border-left: none; /* Tira a borda dupla do primeiro item */
-}
+.paginacao-botoes > :first-child { border-left: none; }
 
-.page-link:hover {
-    background-color: rgba(59, 130, 246, 0.1);
-}
+.page-link:hover { background-color: rgba(59, 130, 246, 0.1); }
 
-/* O grupo da direita (Ir para) */
 .paginacao-ir-para {
     display: flex;
     align-items: center;
@@ -196,14 +261,12 @@ tr:hover { background-color: rgba(255,255,255,0.02); }
     color: var(--text-muted);
 }
 
-/* Ajustando a caixinha de input só pra paginação */
 .input-page {
     width: 65px;
     padding: 6px 10px;
     text-align: center;
 }
 
-/* Botão de Ir com borda azul */
 .btn-ir {
     background-color: transparent;
     color: var(--primary-color);
