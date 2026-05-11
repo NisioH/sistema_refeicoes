@@ -1,11 +1,12 @@
 from django import forms
-from .models import RegistroRefeicao
-from .models import TabelaPreco 
+from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, SetorColaborador
+
 
 class RegistroRefeicaoForm(forms.ModelForm):
     class Meta:
         model = RegistroRefeicao
-        fields = ['data_consumo', 'local', 'setor', 'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche']
+        fields = ['data_consumo', 'local', 'setor', 'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta',
+                  'qtd_lanche']
 
         widgets = {
             'data_consumo': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'input-dark'}),
@@ -17,6 +18,18 @@ class RegistroRefeicaoForm(forms.ModelForm):
             'qtd_janta': forms.NumberInput(attrs={'class': 'input-dark', 'min': '0'}),
             'qtd_lanche': forms.NumberInput(attrs={'class': 'input-dark', 'min': '0'}),
         }
+
+    def clean(self):
+        """ Validação para impedir Terceiros Sede no Secador """
+        cleaned_data = super().clean()
+        local = cleaned_data.get('local')
+        setor = cleaned_data.get('setor')
+
+        # Regra: Se local for SECADOR, não pode ser TERCEIROS_FAZENDA (que agora aparece como Terceiros Sede)
+        if local == LocalRefeicao.SECADOR and setor == SetorColaborador.TERCEIROS_FAZENDA:
+            self.add_error('setor', "A opção 'Terceiros Sede' não é permitida para a Cantina do Secador.")
+
+        return cleaned_data
 
 
 class TabelaPrecoForm(forms.ModelForm):

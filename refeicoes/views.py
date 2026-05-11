@@ -16,6 +16,7 @@ from collections import defaultdict
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from .models import RegistroRefeicao, TabelaPreco
 from .forms import RegistroRefeicaoForm, TabelaPrecoForm
+from datetime import date
 
 
 def painel_refeicoes(request):
@@ -26,10 +27,19 @@ def painel_refeicoes(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
-    if data_inicio:
-        registros = registros.filter(data_consumo__gte=data_inicio)  
-    if data_fim:
-        registros = registros.filter(data_consumo__lte=data_fim)  
+    if not data_inicio and not data_fim:
+        hoje = date.today()
+        registros = registros.filter(
+            data_consumo__year=hoje.year,
+            data_consumo__month=hoje.month
+        )
+    else:
+        if data_inicio:
+            registros = registros.filter(data_consumo__gte=data_inicio)
+        if data_fim:
+            registros = registros.filter(data_consumo__lte=data_fim)
+
+
     if local_busca:
         registros = registros.filter(local=local_busca)
     if setor_busca:

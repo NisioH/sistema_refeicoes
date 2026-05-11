@@ -17,7 +17,7 @@
         }
     </script>
 </head>
-</head>
+
 <body>
 
         <div class="form-container">
@@ -87,74 +87,71 @@
         </form>
     </div>
 
-    <script
-        src="{% static 'refeicoes/js/scripts.js' %}">
+   <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const campoCantina = document.getElementById("dropLocal");
+    const campoSetor = document.getElementById("dropSetor");
 
+    if (!campoCantina || !campoSetor) return;
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Pega os dois campos do formulário (o Django cria eles com 'id_' na frente)
-            const campoCantina = document.getElementById("id_local");
-            const campoSetor = document.getElementById("id_setor");
+    // --- BACKUP DE DADOS REAL ---
+    // Guardamos apenas os textos e valores, sem depender dos elementos do HTML
+    const backupDados = Array.from(campoSetor.options).map(opt => ({
+        value: opt.value,
+        text: opt.text
+    }));
 
-            if (!campoCantina || !campoSetor) return; // Segurança caso a tela mude
+    function filtrarSetores() {
+        const cantinaEscolhida = campoCantina.value;
+        const valorSetorAnterior = campoSetor.value;
 
-            // Guarda todas as opções originais que vieram do banco
-            const todasAsOpcoes = Array.from(campoSetor.options);
+        // Limpa o select completamente
+        campoSetor.innerHTML = "";
 
-            // Dicionário com a regra de quem pertence a qual cantina (Copiado do seu models.py)
-            const regrasSetor = {
-                'SEDE': [
-                    'Colaborador sede',
-                    'Corporativo sede',
-                    'Terceiros Fazenda'
-                ],
-                'SECADOR': [
-                    'Colaborador secador',
-                    'Colaborador algodoeira',
-                    'Terceirizado algodoeira',
-                    'Safrista algodoeira',
-                    'Corporativo'
-                ]
-            };
+        // Regras (Chaves em minúsculo para evitar erro de digitação)
+        const setoresSede = ['colaborador sede', 'corporativo sede', 'terceiros fazenda'];
+        const setoresSecador = [
+            'colaborador secador',
+            'colaborador algodoeira',
+            'terceirizado algodoeira',
+            'safrista algodoeira',
+            'corporativo'
+        ];
 
-            function filtrarSetores() {
-                const cantinaEscolhida = campoCantina.value;
-                const valorSetorAtual = campoSetor.value; // Guarda o que estava selecionado
+        // Reconstruímos as opções do zero usando os dados salvos
+        backupDados.forEach(dado => {
+            const valorMinusculo = dado.value.toLowerCase();
 
-                // Limpa a lista de setores
-                campoSetor.innerHTML = "";
-
-                // Adiciona de volta só os que pertencem à cantina escolhida
-                todasAsOpcoes.forEach(opcao => {
-                    const valorOpcao = opcao.value;
-
-                    // Se for a opção vazia "---------" do Django, deixa passar
-                    if (!valorOpcao) {
-                        campoSetor.appendChild(opcao);
-                        return;
-                    }
-
-                    // Se a cantina escolhida tem esse setor na lista dela, adiciona na tela
-                    if (regrasSetor[cantinaEscolhida] && regrasSetor[cantinaEscolhida].includes(valorOpcao)) {
-                        campoSetor.appendChild(opcao);
-                    }
-                });
-
-                // Se o setor que estava selecionado antes sumiu, reseta para vazio
-                if (!Array.from(campoSetor.options).find(opt => opt.value === valorSetorAtual)) {
-                    campoSetor.value = "";
-                } else {
-                    campoSetor.value = valorSetorAtual; // Mantém a seleção (útil na hora de editar um registro)
-                }
+            // Sempre mantém o "---------" (opção vazia)
+            if (!dado.value) {
+                const novaOpcao = new Option(dado.text, dado.value);
+                campoSetor.add(novaOpcao);
+                return;
             }
 
-            // Avisa o navegador: "Toda vez que a Cantina mudar, rode o filtro"
-            campoCantina.addEventListener("change", filtrarSetores);
+            let mostrar = false;
+            if (cantinaEscolhida === 'SEDE' && setoresSede.includes(valorMinusculo)) {
+                mostrar = true;
+            } else if (cantinaEscolhida === 'SECADOR' && setoresSecador.includes(valorMinusculo)) {
+                mostrar = true;
+            }
 
-            // Roda uma vez assim que a tela abre, para já limpar a lista
-            filtrarSetores();
+            if (mostrar) {
+                // Cria um novo elemento <option> do zero
+                const novaOpcao = new Option(dado.text, dado.value);
+                campoSetor.add(novaOpcao);
+            }
         });
 
-    </script>
+        // Tenta restaurar o valor que estava antes
+        campoSetor.value = valorSetorAnterior;
+    }
+
+    campoCantina.addEventListener("change", filtrarSetores);
+
+    // Roda ao carregar a página
+    filtrarSetores();
+});
+</script>
 </body>
 </html>

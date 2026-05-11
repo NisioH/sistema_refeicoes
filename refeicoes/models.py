@@ -31,7 +31,7 @@ class SetorColaborador(models.TextChoices):
     # Sede / Comuns
     COLAB_SEDE = 'Colaborador sede', 'Colaborador sede'
     CORPORATIVO_SEDE = 'Corporativo sede', 'Corporativo sede'
-    TERCEIROS_FAZENDA = 'Terceiros Fazenda', 'Terceiros Fazenda'
+    TERCEIROS_FAZENDA = 'Terceiros Fazenda', 'Terceiros Sede'
 
 class RegistroRefeicao(models.Model):
     data_consumo = models.DateField("Data Consumo", default=timezone.now)
