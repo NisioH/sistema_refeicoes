@@ -23,14 +23,14 @@ class LocalRefeicao(models.TextChoices):
     SECADOR = 'SECADOR', 'Cantina da Secador'
 
 class SetorColaborador(models.TextChoices):
-    COLAB_SECADOR = 'Colaborador Secador', 'Colaborador Secador'
-    COLAB_ALGODOEIRA = 'Colaborador Algodoeira', 'Colaborador Algodoeira'
-    TERC_ALGODOEIRA = 'Terceirizado Algodoeira', 'Terceirizado Algodoeira'
-    SAFRISTA_ALGODOEIRA = 'Safrista Algodoeira', 'Safrista Algodoeira'
+    COLAB_SECADOR = 'Colaborador secador', 'Colaborador Secador'
+    COLAB_ALGODOEIRA = 'Colaborador algodoeira', 'Colaborador Algodoeira'
+    TERC_ALGODOEIRA = 'Terceirizado algodoeira', 'Terceirizado Algodoeira'
+    SAFRISTA_ALGODOEIRA = 'Safrista algodoeira', 'Safrista Algodoeira'
     CORPORATIVO = 'Corporativo', 'Corporativo'
     # Sede / Comuns
     COLAB_SEDE = 'Colaborador Sede', 'Colaborador Sede'
-    CORPORATIVO_SEDE = 'Corporativo Sede', 'Corporativo Sede'
+    CORPORATIVO_SEDE = 'Corporativo sede', 'Corporativo Sede'
     TERCEIROS_FAZENDA = 'Terceiros Fazenda', 'Terceirizado Sede'
 
 class RegistroRefeicao(models.Model):
