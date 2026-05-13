@@ -30,7 +30,7 @@ class SetorColaborador(models.TextChoices):
     CORPORATIVO = 'Corporativo', 'Corporativo'
     # Sede / Comuns
     COLAB_SEDE = 'Colaborador Sede', 'Colaborador Sede'
-    CORPORATIVO_SEDE = 'Corporativo sede', 'Corporativo Sede'
+    CORPORATIVO_SEDE = 'Corporativo sede', '(Não utilizar) Corporativo Sede'
     TERCEIROS_FAZENDA = 'Terceiros Fazenda', 'Terceirizado Sede'
 
 class RegistroRefeicao(models.Model):

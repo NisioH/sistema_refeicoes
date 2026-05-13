@@ -19,15 +19,24 @@ class RegistroRefeicaoForm(forms.ModelForm):
             'qtd_lanche': forms.NumberInput(attrs={'class': 'input-dark', 'min': '0'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super(RegistroRefeicaoForm, self).__init__(*args, **kwargs)
+        # Filtra as escolhas do campo 'setor' para excluir o CORPORATIVO_SEDE
+        # O Django mantém os dados antigos no banco, mas remove a opção da lista de seleção (dropdown)
+        self.fields['setor'].choices = [
+            choice for choice in SetorColaborador.choices
+            if choice[0] != SetorColaborador.CORPORATIVO_SEDE
+        ]
+
     def clean(self):
-        """ Validação para impedir Terceiros Sede no Secador """
+        """ Validação para impedir Terceirizado Sede no Secador """
         cleaned_data = super().clean()
         local = cleaned_data.get('local')
         setor = cleaned_data.get('setor')
 
-        # Regra: Se local for SECADOR, não pode ser TERCEIROS_FAZENDA (que agora aparece como Terceiros Sede)
+        # Regra: Se local for SECADOR, não pode ser TERCEIROS_FAZENDA (que agora aparece como Terceirizado Sede)
         if local == LocalRefeicao.SECADOR and setor == SetorColaborador.TERCEIROS_FAZENDA:
-            self.add_error('setor', "A opção 'Terceiros Sede' não é permitida para a Cantina do Secador.")
+            self.add_error('setor', "A opção 'Terceirizado Sede' não é permitida para a Cantina do Secador.")
 
         return cleaned_data
 
