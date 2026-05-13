@@ -23,15 +23,15 @@ class LocalRefeicao(models.TextChoices):
     SECADOR = 'SECADOR', 'Cantina da Secador'
 
 class SetorColaborador(models.TextChoices):
-    COLAB_SECADOR = 'Colaborador secador', 'Colaborador secador'
-    COLAB_ALGODOEIRA = 'Colaborador algodoeira', 'Colaborador algodoeira'
-    TERC_ALGODOEIRA = 'Terceirizado algodoeira', 'Terceirizado algodoeira'
-    SAFRISTA_ALGODOEIRA = 'Safrista algodoeira', 'Safrista algodoeira'
+    COLAB_SECADOR = 'Colaborador Secador', 'Colaborador Secador'
+    COLAB_ALGODOEIRA = 'Colaborador Algodoeira', 'Colaborador Algodoeira'
+    TERC_ALGODOEIRA = 'Terceirizado Algodoeira', 'Terceirizado Algodoeira'
+    SAFRISTA_ALGODOEIRA = 'Safrista Algodoeira', 'Safrista Algodoeira'
     CORPORATIVO = 'Corporativo', 'Corporativo'
     # Sede / Comuns
-    COLAB_SEDE = 'Colaborador sede', 'Colaborador sede'
-    CORPORATIVO_SEDE = 'Corporativo sede', 'Corporativo sede'
-    TERCEIROS_FAZENDA = 'Terceiros Fazenda', 'Terceiros Sede'
+    COLAB_SEDE = 'Colaborador Sede', 'Colaborador Sede'
+    CORPORATIVO_SEDE = 'Corporativo Sede', 'Corporativo Sede'
+    TERCEIROS_FAZENDA = 'Terceiros Fazenda', 'Terceirizado Sede'
 
 class RegistroRefeicao(models.Model):
     data_consumo = models.DateField("Data Consumo", default=timezone.now)
