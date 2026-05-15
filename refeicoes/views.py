@@ -1,3 +1,6 @@
+import pandas as pd
+from django.http import HttpResponse
+from .models import RegistroRefeicao
 from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
@@ -213,6 +216,30 @@ def exportar_pdf(request):
     # Nome do arquivo ajustado para não confundir
     nome_arquivo = f"Relatorio_Refeicoes_{hoje.strftime('%m_%Y') if 'hoje' in locals() else 'Filtro'}.pdf"
     return FileResponse(buffer, as_attachment=True, filename=nome_arquivo)
+
+def exportr_refeicoes_excel(request):
+    queryset = RegistroRefeicao.objects.all().values(
+        'data_consumo', 'local', 'setor', 'qtd_cafe',
+        'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche'
+    )
+
+    df = pd.DataFrame(list(queryset))
+
+    df.columns = [
+        'Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
+        'Almoço Marmita', 'Janta', 'Lanche'
+    ]
+
+    # Cria o arquivo na memória
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Relatorio_Refeicoes.xlsx'
+
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Lançamentos')
+
+    return response
+
+
 def configurar_precos(request):
     # Pega a tabela de preços existente ou cria uma nova com os valores padrão se for a primeira vez
     tabela = TabelaPreco.objects.first()
