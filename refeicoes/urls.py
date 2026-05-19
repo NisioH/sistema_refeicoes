@@ -8,4 +8,5 @@ urlpatterns = [
     path('deletar/<int:id>', views.excluir_registro, name='excluir_registro'),
     path('exportar-pdf/', views.exportar_pdf, name='exportar_pdf'),
     path('precos/', views.configurar_precos, name='configurar_precos'),
+    path('exportar-excel/', views.exportar_refeicoes_excel, name='exportar_excel'),
 ]

@@ -38,11 +38,11 @@ html.theme-light {
     --border-color: #cbd5e1;
 
     /* Ajustes Finos para o Claro não ficar feio */
-    --shadow-color: rgba(0,0,0,0.05); /* Sombra mais suave */
-    --table-header-bg: #f8fafc; /* Cabeçalho da tabela cinza clarinho */
-    --table-hover-bg: #f1f5f9; /* Linha da tabela ao passar o mouse */
-    --color-scheme-mode: light; /* Avisa o navegador para mudar a cor da barra de rolagem */
-    --calendar-icon-filter: invert(0); /* Deixa o ícone do calendário preto */
+    --shadow-color: rgba(0,0,0,0.05);
+    --table-header-bg: #f8fafc;
+    --table-hover-bg: #f1f5f9;
+    --color-scheme-mode: light;
+    --calendar-icon-filter: invert(0);
 }
 
 /* =========================================
@@ -57,12 +57,12 @@ html.theme-light {
 
 body {
     background-color: var(--bg-color);
-    color: var(--text-color); /* Unificado para usar sempre a mesma variável */
+    color: var(--text-color);
     padding: 40px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    color-scheme: var(--color-scheme-mode); /* Rolagem e menus nativos acompanham o tema */
+    color-scheme: var(--color-scheme-mode);
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -102,7 +102,7 @@ body {
     background-color: var(--container-bg);
     border-radius: 16px;
     padding: 30px;
-    box-shadow: 0 10px 30px var(--shadow-color); /* Sombra inteligente */
+    box-shadow: 0 10px 30px var(--shadow-color);
     transition: background-color 0.3s;
 }
 
@@ -111,11 +111,11 @@ body {
 .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
 table { width: 100%; border-collapse: collapse; text-align: left; }
 
-thead { background-color: var(--table-header-bg); } /* Fundo inteligente */
+thead { background-color: var(--table-header-bg); }
 th, td { padding: 16px; border-bottom: 1px solid var(--border-color); }
 th { font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
 td { font-size: 14px; vertical-align: middle; color: var(--text-color); }
-tr:hover { background-color: var(--table-hover-bg); } /* Fundo inteligente ao passar o mouse */
+tr:hover { background-color: var(--table-hover-bg); }
 
 .badge-setor { background-color: rgba(59, 130, 246, 0.1); color: var(--primary-color); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
 .valor-total { font-weight: bold; color: #10b981; }
@@ -145,21 +145,20 @@ tr:hover { background-color: var(--table-hover-bg); } /* Fundo inteligente ao pa
 .form-group { margin-bottom: 20px; }
 .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-muted); }
 
-/* Os Inputs Livres da Maldição do Frankenstein! */
 .input-dark, select {
     width: 100%;
+    height: 42px; /* Força altura padrão batendo com os botões */
     padding: 12px;
-    background-color: var(--bg-color); /* Segue o fundo da tela */
+    background-color: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    color: var(--text-color); /* Texto visível no claro e no escuro */
+    color: var(--text-color);
     outline: none;
     transition: 0.3s;
 }
 
 .input-dark:focus, select:focus { border-color: var(--primary-color); }
 
-/* Ícone do calendário inteligente */
 .input-dark::-webkit-calendar-picker-indicator {
     filter: var(--calendar-icon-filter);
     cursor: pointer;
@@ -250,7 +249,6 @@ tr:hover { background-color: var(--table-hover-bg); } /* Fundo inteligente ao pa
 }
 
 .paginacao-botoes > :first-child { border-left: none; }
-
 .page-link:hover { background-color: rgba(59, 130, 246, 0.1); }
 
 .paginacao-ir-para {
@@ -265,6 +263,10 @@ tr:hover { background-color: var(--table-hover-bg); } /* Fundo inteligente ao pa
     width: 65px;
     padding: 6px 10px;
     text-align: center;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 4px;
 }
 
 .btn-ir {
@@ -281,4 +283,52 @@ tr:hover { background-color: var(--table-hover-bg); } /* Fundo inteligente ao pa
 .btn-ir:hover {
     background-color: var(--primary-color);
     color: white;
+}
+
+/* =========================================
+   ESTILIZAÇÃO DOS BOTÕES DE FILTRO (CORRIGIDO)
+========================================= */
+.filter-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    height: 42px !important;
+    margin-top: auto !important;
+}
+
+.filter-actions button, .filter-actions .btn-clear {
+    height: 42px !important;
+    padding: 0 12px !important; /* Redução cirúrgica para dar espaço no Grid */
+    border: none !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-size: 13px !important; /* Fonte ligeiramente menor para os 4 botões caberem juntos */
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-filtrar { background-color: #3b82f6 !important; }
+.btn-pdf { background-color: #ef4444 !important; }
+.btn-excel { background-color: #10b981 !important; }
+
+/* Correção definitiva para o reset da borracha */
+button.btn-clear, .btn-clear {
+    background-color: #334155 !important; /* Cor idêntica ao painel superior */
+    color: white !important;
+    min-width: 42px !important;
+    width: 42px !important;
+    padding: 0 !important;
+}
+
+.filter-actions button:hover, .filter-actions .btn-clear:hover {
+    filter: brightness(1.15) !important;
+    transform: translateY(-1px) !important;
 }

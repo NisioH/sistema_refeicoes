@@ -8,7 +8,7 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=5">
 
     <script>
         if (localStorage.getItem('tema-refeicoes') === 'claro') {
@@ -24,7 +24,9 @@
             <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições</h1>
             <div style="display: flex; gap: 10px;">
 
-                <button id="btn-tema" class="btn-novo" style="background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--border-color); flex: 0 0 45px; height: 45px; padding: 0; display: flex; justify-content: center; align-items: center;" title="Mudar Tema">
+                <button id="btn-tema" class="btn-novo" style="background-color: var(--panel-bg);
+                color: var(--text-color); border: 1px solid var(--border-color); flex: 0 0 45px; height: 45px;
+                padding: 0; display: flex; justify-content: center; align-items: center;" title="Mudar Tema">
                     <i id="icone-tema" class="fa-solid fa-sun"></i>
                 </button>
 
@@ -48,17 +50,20 @@
             </div>
         </div>
 
-        <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color);">
-            <form method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end;">
-                <div>
+        <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color); overflow: hidden;">
+            <form method="GET" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: end; width: 100%;">
+
+                <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA INÍCIO</label>
                     <input type="date" name="data_inicio" value="{{ filtros.data_inicio }}" class="input-dark">
                 </div>
-                <div>
+
+                <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA FIM</label>
                     <input type="date" name="data_fim" value="{{ filtros.data_fim }}" class="input-dark">
                 </div>
-                <div>
+
+                <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">CANTINA</label>
                     <select name="local" class="input-dark">
                         <option value="">Todas</option>
@@ -66,23 +71,25 @@
                         <option value="SECADOR" {% if filtros.local == 'SECADOR' %}selected{% endif %}>Secador</option>
                     </select>
                 </div>
-                <div>
+
+                <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">SETOR</label>
                     <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Buscar..." class="input-dark">
                 </div>
 
-                <div style="display: flex; gap: 10px; width: 100%;">
-                    <button type="submit" class="btn-novo" style="flex: 1; height: 45px; padding: 0 10px; font-size: 14px;">
-                        <i class="fa-solid fa-magnifying-glass"></i> Filtrar
+                <div class="filter-actions" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; white-space: nowrap !important; flex: 0 0 auto;">
+                    <button type="submit" name="formato" value="filtrar" class="btn-filtrar">
+                        <i class="fas fa-search"></i> Filtrar
                     </button>
-
-                    <button type="submit" formaction="{% url 'exportar_pdf' %}" class="btn-novo" style="background-color: #ef4444; flex: 1; height: 45px; padding: 0 10px; font-size: 14px;" title="Exportar para PDF">
-                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    <button type="submit" name="formato" value="pdf" class="btn-pdf">
+                        <i class="fas fa-file-pdf"></i> PDF
                     </button>
-
-                    <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color); flex: 0 0 45px; height: 45px; padding: 0; display: flex; justify-content: center; align-items: center;" title="Limpar Filtros">
-                        <i class="fa-solid fa-eraser"></i>
-                    </a>
+                    <button type="submit" name="formato" value="excel" class="btn-excel">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                    <button type="reset" class="btn-clear" style="background-color: #334155 !important; color: white !important; border: none !important; border-radius: 6px !important; height: 42px !important; width: 42px !important; min-width: 42px !important; padding: 0 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+                        <i class="fas fa-eraser"></i>
+                    </button>
                 </div>
             </form>
         </div>
@@ -153,15 +160,15 @@
         </div>
         {% endif %}
 
-    </div> <script>
-        // Função que muda a página pela URL mantendo os filtros
+    </div>
+
+    <script>
         function mudarPagina(numeroDaPagina) {
             const url = new URL(window.location.href);
             url.searchParams.set('page', numeroDaPagina);
             window.location.href = url.toString();
         }
 
-        // Função para o botão "Ir"
         function irParaPaginaDigitada() {
             const input = document.getElementById('input-pagina');
             let num = parseInt(input.value);
@@ -177,7 +184,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Listeners da Paginação
             document.querySelectorAll('.page-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -186,21 +192,17 @@
                 });
             });
 
-            // 2. Lógica do Tema Claro/Escuro
             const btnTema = document.getElementById("btn-tema");
             const iconeTema = document.getElementById("icone-tema");
             const htmlTag = document.documentElement;
 
-            // Arruma o ícone inicial dependendo do que está na memória
             if (localStorage.getItem('tema-refeicoes') === 'claro') {
-                iconeTema.classList.replace('fa-sun', 'fa-moon'); // Se tá claro, mostra a Lua
+                iconeTema.classList.replace('fa-sun', 'fa-moon');
             }
 
-            // Ação de clicar no botão
             btnTema.addEventListener("click", function() {
                 htmlTag.classList.toggle('theme-light');
 
-                // Verifica se ficou claro ou escuro e salva na memória
                 if (htmlTag.classList.contains('theme-light')) {
                     localStorage.setItem('tema-refeicoes', 'claro');
                     iconeTema.classList.replace('fa-sun', 'fa-moon');

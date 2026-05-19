@@ -1,9 +1,9 @@
 import pandas as pd
 from django.http import HttpResponse
-from .models import RegistroRefeicao
 from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
+from django.db.models.functions import TruncDay
 
 import io
 from django.http import FileResponse
@@ -20,7 +20,18 @@ from datetime import date
 
 
 def painel_refeicoes(request):
-    registros = RegistroRefeicao.objects.all().order_by('-data_consumo', '-id') 
+    # 1. PEGA QUAL BOTÃO FOI CLICADO (se não for nenhum, assume 'filtrar')
+    formato_clicado = request.GET.get('formato', 'filtrar')
+
+    # Se o botão clicado foi PDF ou Excel, redireciona a chamada
+    # passando os mesmos filtros para a função de exportação correspondente
+    if formato_clicado == 'pdf':
+        return exportar_pdf(request)
+    elif formato_clicado == 'excel':
+        return exportar_refeicoes_excel(request)
+
+    # 2. SE FOI O BOTÃO FILTRAR (OU ACESSO NORMAL), SEGUE O FLUXO PADRÃO
+    registros = RegistroRefeicao.objects.all().order_by('-data_consumo', '-id')
 
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
@@ -39,25 +50,25 @@ def painel_refeicoes(request):
         if data_fim:
             registros = registros.filter(data_consumo__lte=data_fim)
 
-
     if local_busca:
         registros = registros.filter(local=local_busca)
     if setor_busca:
-        registros = registros.filter(setor__icontains=setor_busca)  
+        registros = registros.filter(setor__icontains=setor_busca)
 
     soma = registros.aggregate(Sum('valor_total'))['valor_total__sum']
-    total_gasto = soma if soma else 0.00  
+    total_gasto = soma if soma else 0.00
 
-    paginator = Paginator(registros, 7) 
-    numero_pagina = request.GET.get('page') 
+    paginator = Paginator(registros, 7)
+    numero_pagina = request.GET.get('page')
     page_obj = paginator.get_page(numero_pagina)
 
     contexto = {
         'page_obj': page_obj,
         'total_gasto': total_gasto,
-        'filtros': request.GET  
+        'filtros': request.GET
     }
     return render(request, 'refeicoes/painel.html', contexto)
+
 
 def novo_registro(request):
     if request.method == "POST":
@@ -67,8 +78,9 @@ def novo_registro(request):
             return redirect('painel_refeicoes')
     else:
         form = RegistroRefeicaoForm()
-   
+
     return render(request, 'refeicoes/novo_registro.html', {'form': form})
+
 
 def editar_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
@@ -84,6 +96,7 @@ def editar_registro(request, id):
     contexto = {'form': form, 'registro': registro}
     return render(request, 'refeicoes/novo_registro.html', contexto)
 
+
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
     registro.delete()
@@ -96,14 +109,18 @@ def exportar_pdf(request):
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
 
-    if data_inicio and data_fim:
-        registros = registros.filter(data_consumo__range=[data_inicio, data_fim])
-    else:
+    # Usar __gte e __lte em vez de __range para lidar melhor com datas que só tem um dos campos preenchidos
+    if not data_inicio and not data_fim:
         hoje = date.today()
         registros = registros.filter(
             data_consumo__year=hoje.year,
             data_consumo__month=hoje.month
         )
+    else:
+        if data_inicio:
+            registros = registros.filter(data_consumo__gte=data_inicio)
+        if data_fim:
+            registros = registros.filter(data_consumo__lte=data_fim)
 
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
@@ -148,7 +165,6 @@ def exportar_pdf(request):
 
     # Loop pelos setores
     for setor, lista_refeicoes in dados_por_setor.items():
-        # Criamos uma lista temporária para agrupar tudo deste setor
         bloco_setor = []
 
         bloco_setor.append(Paragraph(f"Setor: {setor}", estilo_nome_setor))
@@ -181,7 +197,6 @@ def exportar_pdf(request):
             ('FONTSIZE', (0, 0), (-1, -1), 10),
             ('TOPPADDING', (0, 0), (-1, -1), 5),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
-            # Impede que a tabela se quebre no meio de uma linha
             ('NOSPLIT', (0, 0), (-1, -1)),
         ])
 
@@ -195,8 +210,6 @@ def exportar_pdf(request):
         bloco_setor.append(Spacer(1, 5))
         bloco_setor.append(Paragraph(texto_subtotal, estilo_total_setor))
 
-        # O KeepTogether força o ReportLab a manter o Nome do Setor + Tabela + Subtotal na mesma página
-        # Se não couber no fim da página, ele joga o bloco inteiro para a próxima
         elementos.append(KeepTogether(bloco_setor))
         elementos.append(Spacer(1, 20))
 
@@ -213,24 +226,60 @@ def exportar_pdf(request):
     doc.build(elementos)
     buffer.seek(0)
 
-    # Nome do arquivo ajustado para não confundir
+    hoje = date.today()
     nome_arquivo = f"Relatorio_Refeicoes_{hoje.strftime('%m_%Y') if 'hoje' in locals() else 'Filtro'}.pdf"
     return FileResponse(buffer, as_attachment=True, filename=nome_arquivo)
 
-def exportr_refeicoes_excel(request):
-    queryset = RegistroRefeicao.objects.all().values(
+
+def exportar_refeicoes_excel(request):
+    # Pega os mesmos filtros usados na visualização para o Excel sair certinho
+    registros = RegistroRefeicao.objects.all()
+
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+    if not data_inicio and not data_fim:
+        hoje = date.today()
+        registros = registros.filter(
+            data_consumo__year=hoje.year,
+            data_consumo__month=hoje.month
+        )
+    else:
+        if data_inicio:
+            registros = registros.filter(data_consumo__gte=data_inicio)
+        if data_fim:
+            registros = registros.filter(data_consumo__lte=data_fim)
+
+    local_busca = request.GET.get('local')
+    setor_busca = request.GET.get('setor')
+
+    if local_busca: registros = registros.filter(local=local_busca)
+    if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
+
+    # Extrai só os valores necessários para a planilha
+    queryset = registros.values(
         'data_consumo', 'local', 'setor', 'qtd_cafe',
-        'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche'
+        'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche', 'valor_total'
     )
 
     df = pd.DataFrame(list(queryset))
 
-    df.columns = [
-        'Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
-        'Almoço Marmita', 'Janta', 'Lanche'
-    ]
+    # Se a tabela não estiver vazia, arruma os nomes das colunas
+    if not df.empty:
+        df.columns = [
+            'Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
+            'Almoço Marmita', 'Janta', 'Lanche', 'Valor Total'
+        ]
 
-    # Cria o arquivo na memória
+        # Garante que as datas fiquem bonitas (sem horas zeradas atrapalhando) no Excel
+        df['Data'] = pd.to_datetime(df['Data']).dt.date
+    else:
+        # Cria colunas vazias se não tiver dados para não dar erro no pandas
+        df = pd.DataFrame(columns=[
+            'Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
+            'Almoço Marmita', 'Janta', 'Lanche', 'Valor Total'
+        ])
+
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Relatorio_Refeicoes.xlsx'
 
@@ -241,7 +290,6 @@ def exportr_refeicoes_excel(request):
 
 
 def configurar_precos(request):
-    # Pega a tabela de preços existente ou cria uma nova com os valores padrão se for a primeira vez
     tabela = TabelaPreco.objects.first()
     if not tabela:
         tabela = TabelaPreco.objects.create()
