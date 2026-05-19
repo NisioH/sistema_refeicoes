@@ -1,9 +1,6 @@
 import pandas as pd
 from django.http import HttpResponse
-from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.paginator import Paginator
-from django.db.models.functions import TruncDay
 
 import io
 from django.http import FileResponse
@@ -12,12 +9,17 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, KeepTogether, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
-from collections import defaultdict
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from .models import RegistroRefeicao, TabelaPreco
 from .forms import RegistroRefeicaoForm, TabelaPrecoForm
-from datetime import date
 
+from collections import defaultdict
+
+import json
+from django.db.models import Sum
+from datetime import date
+from django.shortcuts import render
+from django.core.paginator import Paginator
 
 def painel_refeicoes(request):
     # 1. PEGA QUAL BOTÃO FOI CLICADO (se não for nenhum, assume 'filtrar')
@@ -68,6 +70,109 @@ def painel_refeicoes(request):
         'filtros': request.GET
     }
     return render(request, 'refeicoes/painel.html', contexto)
+
+
+
+
+
+# Mantenha os seus outros imports normais lá em cima...
+
+def dashboard_refeicoes(request):
+    """Nova view focada exclusivamente nos indicadores e gráficos neon"""
+    registros = RegistroRefeicao.objects.all()
+
+    # Filtros opcionais também para o Dashboard (caso queira ver gráficos de meses específicos)
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+    if not data_inicio and not data_fim:
+        hoje = date.today()
+        registros = registros.filter(data_consumo__year=hoje.year, data_consumo__month=hoje.month)
+    else:
+        if data_inicio:
+            registros = registros.filter(data_consumo__gte=data_inicio)
+        if data_fim:
+            registros = registros.filter(data_consumo__lte=data_fim)
+
+    # 1. Agregações para os Cards Superiores
+    soma_total = registros.aggregate(
+        total=Sum('valor_total'),
+        cafe=Sum('qtd_cafe'),
+        buffet=Sum('qtd_almoco_buffet'),
+        marmita=Sum('qtd_almoco_marmita'),
+        janta=Sum('qtd_janta'),
+        lanche=Sum('qtd_lanche')
+    )
+
+    total_gasto = float(soma_total['total'] or 0.00)
+    total_refeicoes = (
+            (soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) +
+            (soma_total['marmita'] or 0) + (soma_total['janta'] or 0) + (soma_total['lanche'] or 0)
+    )
+    total_buffet = soma_total['buffet'] or 0
+    total_janta = soma_total['janta'] or 0
+
+    # ===============================================================
+    # 2. Dados da Pizza (Distribuição por Setor) - AGRUPANDO NOMES
+    # ===============================================================
+    setores_dados = registros.values('setor').annotate(total_setor=Sum('valor_total'))
+
+    agrupamento_setores = {}
+    temp_registro = RegistroRefeicao()
+
+    for s in setores_dados:
+        temp_registro.setor = s['setor']
+        nome_original = temp_registro.get_setor_display()
+
+        # Cria uma chave toda em minúsculo para unificar (ex: "colaborador sede")
+        chave_padrao = nome_original.lower().strip()
+
+        # Formata o nome para ficar bonito na legenda do gráfico (ex: "Colaborador Sede")
+        # O .title() transforma "Colaborador sede" em "Colaborador Sede"
+        nome_bonito = nome_original.title()
+
+        # Se já existe essa chave no dicionário, apenas soma o valor
+        if chave_padrao in agrupamento_setores:
+            agrupamento_setores[chave_padrao]['valor'] += float(s['total_setor'] or 0)
+        else:
+            # Se for a primeira vez, cria a entrada no dicionário
+            agrupamento_setores[chave_padrao] = {
+                'nome': nome_bonito,
+                'valor': float(s['total_setor'] or 0)
+            }
+
+    # Desempacota o dicionário unificado para as listas do gráfico
+    labels_setores = [item['nome'] for item in agrupamento_setores.values()]
+    valores_setores = [item['valor'] for item in agrupamento_setores.values()]
+
+    # 3. Dados da Ocupação por Local (Sede vs Secador)
+    locais_dados = registros.values('local').annotate(total_local=Sum('valor_total'))
+
+    labels_locais = []
+    valores_locais = []
+    for l in locais_dados:
+        temp_registro.local = l['local']
+        labels_locais.append(temp_registro.get_local_display())
+        valores_locais.append(float(l['total_local'] or 0))
+
+    # Pegamos todos os registros ordenados para enviar para o HTML (para o Modal ler)
+    todos_registros_filtrados = registros.order_by('-data_consumo', '-id')
+
+    contexto = {
+        'total_gasto': total_gasto,
+        'total_refeicoes': total_refeicoes,
+        'total_buffet': total_buffet,
+        'total_janta': total_janta,
+        'todos_registros': todos_registros_filtrados,
+
+        # Passamos as listas convertidas em JSON para o JavaScript
+        'setores_labels_json': json.dumps(labels_setores),
+        'setores_valores_json': json.dumps(valores_setores),
+        'locais_labels_json': json.dumps(labels_locais),
+        'locais_valores_json': json.dumps(valores_locais),
+        'filtros': request.GET
+    }
+    return render(request, 'refeicoes/dashboard.html', contexto)
 
 
 def novo_registro(request):
