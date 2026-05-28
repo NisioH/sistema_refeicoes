@@ -19,6 +19,7 @@ __pycache__/
 *$py.class
 
 staticfiles/
+*.json
 
 # =========================
 # Banco de Dados Local do Django
