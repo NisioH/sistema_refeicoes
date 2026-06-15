@@ -35,7 +35,6 @@ def painel_refeicoes(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
-    # A página inicial MANTÉM a trava do mês atual por padrão
     if not data_inicio and not data_fim:
         hoje = date.today()
         registros = registros.filter(
@@ -53,8 +52,32 @@ def painel_refeicoes(request):
     if setor_busca:
         registros = registros.filter(setor__icontains=setor_busca)
 
-    soma = registros.aggregate(Sum('valor_total'))['valor_total__sum']
-    total_gasto = soma if soma else 0.00
+    # 1. Soma Geral das Quantidades e Totais
+    soma_total = registros.aggregate(
+        total=Sum('valor_total'),
+        cafe=Sum('qtd_cafe'),
+        buffet=Sum('qtd_almoco_buffet'),
+        marmita=Sum('qtd_almoco_marmita'),
+        janta=Sum('qtd_janta'),
+        lanche=Sum('qtd_lanche')
+    )
+
+    # 2. NOVO: Soma detalhada do valor em dinheiro de cada item usando a função F()
+    detalhes = registros.aggregate(
+        v_cafe=Sum(F('qtd_cafe') * F('valor_cafe')),
+        v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
+        v_marmita=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
+        v_janta=Sum(F('qtd_janta') * F('valor_janta')),
+        v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
+    )
+
+    total_gasto = float(soma_total['total'] or 0.00)
+    total_refeicoes = (
+            (soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) +
+            (soma_total['marmita'] or 0) + (soma_total['janta'] or 0) + (soma_total['lanche'] or 0)
+    )
+    total_buffet = soma_total['buffet'] or 0
+    total_janta = soma_total['janta'] or 0
 
     paginator = Paginator(registros, 7)
     numero_pagina = request.GET.get('page')
@@ -63,6 +86,22 @@ def painel_refeicoes(request):
     contexto = {
         'page_obj': page_obj,
         'total_gasto': total_gasto,
+        'total_refeicoes': total_refeicoes,
+        'total_buffet': total_buffet,
+        'total_janta': total_janta,
+
+        # --- DADOS PARA A NOVA FAIXA DE DETALHES ---
+        'det_q_cafe': soma_total['cafe'] or 0,
+        'det_v_cafe': float(detalhes['v_cafe'] or 0),
+        'det_q_buffet': soma_total['buffet'] or 0,
+        'det_v_buffet': float(detalhes['v_buffet'] or 0),
+        'det_q_marmita': soma_total['marmita'] or 0,
+        'det_v_marmita': float(detalhes['v_marmita'] or 0),
+        'det_q_janta': soma_total['janta'] or 0,
+        'det_v_janta': float(detalhes['v_janta'] or 0),
+        'det_q_lanche': soma_total['lanche'] or 0,
+        'det_v_lanche': float(detalhes['v_lanche'] or 0),
+
         'filtros': request.GET
     }
     return render(request, 'refeicoes/painel.html', contexto)
@@ -248,11 +287,15 @@ def exportar_pdf(request):
                                       textColor=colors.black, spaceAfter=25)
     estilo_nome_setor = ParagraphStyle('NomeSetor', parent=estilos['Heading2'], fontSize=14, textColor=colors.black,
                                        spaceBefore=10, spaceAfter=10, fontName='Helvetica-Bold')
-    estilo_total_setor = ParagraphStyle('TotalSetor', parent=estilos['Normal'], alignment=TA_RIGHT, fontSize=11,
-                                        fontName='Helvetica-Bold', textColor=colors.black, spaceTop=5)
 
     elementos.append(Paragraph("Relatório de Refeições", estilo_titulo))
     elementos.append(Paragraph("Extrato analítico gerado pelo sistema.", estilo_subtitulo))
+
+    # Função auxiliar para formatar os Reais
+    def formata_rs(valor):
+        if valor and valor > 0:
+            return f"R$ {float(valor):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+        return '-'
 
     for setor, lista_refeicoes in dados_por_setor.items():
         bloco_setor = []
@@ -262,7 +305,19 @@ def exportar_pdf(request):
         dados_tabela = [cabecalho]
 
         total_deste_setor = 0
+        # Variáveis para somar os VALORES FINANCEIROS de cada item
+        v_cafe = v_buffet = v_marmita = v_janta = v_lanche = 0
+
         for r in lista_refeicoes:
+            # Multiplica a quantidade pelo preço para saber o valor gasto naquele dia
+            v_cafe += float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
+            v_buffet += float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
+            v_marmita += float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
+            v_janta += float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
+            v_lanche += float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
+
+            total_deste_setor += r.valor_total
+
             linha = [
                 r.data_formatada(),
                 r.get_local_display(),
@@ -271,10 +326,22 @@ def exportar_pdf(request):
                 r.qtd_almoco_marmita or '-',
                 r.qtd_janta or '-',
                 r.qtd_lanche or '-',
-                f"R$ {r.valor_total:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                formata_rs(r.valor_total)
             ]
             dados_tabela.append(linha)
-            total_deste_setor += r.valor_total
+
+        # Adicionando a linha final formatada em Reais (R$)
+        linha_total = [
+            '',  # Data em branco
+            'SUBTOTAL DO SETOR:',  # Nome
+            formata_rs(v_cafe),
+            formata_rs(v_buffet),
+            formata_rs(v_marmita),
+            formata_rs(v_janta),
+            formata_rs(v_lanche),
+            formata_rs(total_deste_setor)
+        ]
+        dados_tabela.append(linha_total)
 
         estilo_tabela_minimalista = TableStyle([
             ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
@@ -287,18 +354,18 @@ def exportar_pdf(request):
             ('TOPPADDING', (0, 0), (-1, -1), 5),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
             ('NOSPLIT', (0, 0), (-1, -1)),
+
+            # --- Estilo para a última linha (Totais) ---
+            ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (2, -1), (-2, -1), 9),  # Fonte pouquíssimo menor para as colunas do meio acomodarem bem o R$
         ])
 
-        tabela = Table(dados_tabela, colWidths=[70, 180, 50, 50, 50, 50, 50, 90])
+        # ATENÇÃO AQUI: Alarguei as colunas do meio de 50 para 65 para o texto 'R$ 1.500,00' caber sem quebrar
+        tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90])
         tabela.setStyle(estilo_tabela_minimalista)
 
         bloco_setor.append(tabela)
-
-        texto_subtotal = f"Subtotal do Setor: R$ {total_deste_setor:,.2f}".replace(',', 'X').replace('.', ',').replace(
-            'X', '.')
-        bloco_setor.append(Spacer(1, 5))
-        bloco_setor.append(Paragraph(texto_subtotal, estilo_total_setor))
-
         elementos.append(KeepTogether(bloco_setor))
         elementos.append(Spacer(1, 20))
 

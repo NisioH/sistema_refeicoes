@@ -53,6 +53,66 @@
             </div>
         </div>
 
+        <!-- Faixa de Detalhes Dinâmicos (Separados em Cards Menores) -->
+        <div style="display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; width: 100%;">
+
+            <!-- Café -->
+            <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #a855f7; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(168, 85, 247, 0.1); color: #a855f7; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Café ({{ det_q_cafe }} un)</div>
+                    <div style="font-size: 15px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_cafe|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <!-- Buffet -->
+            <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #06b6d4; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(6, 182, 212, 0.1); color: #06b6d4; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Buffet ({{ det_q_buffet }} un)</div>
+                    <div style="font-size: 15px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_buffet|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <!-- Marmita -->
+            <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #3b82f6; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Marmita ({{ det_q_marmita }} un)</div>
+                    <div style="font-size: 15px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_marmita|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <!-- Janta -->
+            <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #f97316; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(249, 115, 22, 0.1); color: #f97316; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Janta ({{ det_q_janta }} un)</div>
+                    <div style="font-size: 15px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_janta|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <!-- Lanche -->
+            <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #10b981; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fa-solid fa-burger"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Lanche ({{ det_q_lanche }} un)</div>
+                    <div style="font-size: 15px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_lanche|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+        </div>
+
         <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color); overflow: hidden;">
             <form method="GET" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: end; width: 100%;">
 
