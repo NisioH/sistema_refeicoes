@@ -25,7 +25,7 @@
         <div class="dashboard-header">
             <h1><i class="fa-solid fa-chart-line" style="color: #a855f7;"></i> Resumo Geral de Indicadores</h1>
             <div style="display: flex; gap: 10px;">
-                <a href="{% url 'painel_refeicoes' %}" class="btn-novo" style="background-color: var(--border-color);">
+                <a href="{% url 'painel' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-arrow-left"></i> Voltar pro Painel
                 </a>
             </div>
@@ -71,328 +71,212 @@
             </div>
         </div>
 
+        <div style="background: var(--panel-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 20px; margin-bottom: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px;">
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(168, 85, 247, 0.1); color: #a855f7; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Café ({{ det_q_cafe }} un)</div>
+                    <div style="font-size: 16px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_cafe|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(6, 182, 212, 0.1); color: #06b6d4; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Buffet ({{ det_q_buffet }} un)</div>
+                    <div style="font-size: 16px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_buffet|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Marmita ({{ det_q_marmita }} un)</div>
+                    <div style="font-size: 16px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_marmita|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(249, 115, 22, 0.1); color: #f97316; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Janta ({{ det_q_janta }} un)</div>
+                    <div style="font-size: 16px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_janta|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-burger"></i>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Lanche ({{ det_q_lanche }} un)</div>
+                    <div style="font-size: 16px; font-weight: bold; color: var(--text-color);">R$ {{ det_v_lanche|floatformat:"2g" }}</div>
+                </div>
+            </div>
+
+        </div>
+
         <div style="display: flex; gap: 20px; flex-wrap: wrap; width: 100%;">
 
             <div style="flex: 1; min-width: 350px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
                 <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase; margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
-                    <i class="fa-solid fa-pie-chart" style="color: #a855f7; margin-right: 6px;"></i> Distribuição de Custo por Setor
+                    <i class="fa-solid fa-chart-column" style="color: #3b82f6; margin-right: 6px;"></i> Custo Acumulado do Período
                 </h3>
                 <div style="position: relative; height: 320px; width: 100%;">
-                    <canvas id="chartSetores"></canvas>
+                    <canvas id="chartAcumuladoPeriodo"></canvas>
                 </div>
             </div>
 
             <div style="flex: 1; min-width: 350px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
                 <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase; margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
-                    <i class="fa-solid fa-bar-chart" style="color: #06b6d4; margin-right: 6px;"></i> Consumo Financeiro por Local
+                    <i class="fa-solid fa-bar-chart" style="color: #10b981; margin-right: 6px;"></i> Evolução: Colab. x Terc. (3 Meses)
                 </h3>
                 <div style="position: relative; height: 320px; width: 100%;">
-                    <canvas id="chartLocais"></canvas>
+                    <canvas id="graficoComparativoBarras"></canvas>
                 </div>
             </div>
 
         </div>
 
-    </div>
-
-    <div id="modalDetalhes" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.25); pointer-events: none; align-items: center; justify-content: center;">
-        <div id="modalConteudo" style="background-color: var(--panel-bg); opacity: 0.95; border: 2px solid var(--border-color); width: 85%; max-width: 1000px; max-height: 85vh; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 25px 60px rgba(0,0,0,0.45); overflow: hidden; position: absolute; pointer-events: auto;">
-
-            <div id="modalCabecalho" style="background-color: #00c4ee; display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; cursor: move; user-select: none;">
-                <h2 id="modalTitulo" style="font-size: 18px; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-circle-info"></i> Detalhes do Setor
-                </h2>
-                <button onclick="fecharModal()" style="background: none; border: none; color: #ffffff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div style="padding: 25px; flex: 1; display: flex; flex-direction: column; background-color: var(--panel-bg); overflow: hidden;">
-
-                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; width: 100%;">
-
-                    <div style="flex: 1; min-width: 220px; display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 6px; padding: 12px 20px;">
-                        <div>
-                            <h4 style="color: #10b981; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 2px;">Custo Total Acumulado</h4>
-                            <p style="color: var(--text-muted); font-size: 11px;">Soma financeira das despesas</p>
-                        </div>
-                        <div id="modalSomaTotal" style="font-size: 22px; font-weight: bold; color: #10b981;">
-                            R$ 0,00
-                        </div>
-                    </div>
-
-                    <div style="flex: 1; min-width: 220px; display: flex; justify-content: space-between; align-items: center; background: rgba(249, 115, 22, 0.12); border: 1px solid #f97316; border-radius: 6px; padding: 12px 20px;">
-                        <div>
-                            <h4 style="color: #f97316; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 2px;">Total de Refeições</h4>
-                            <p style="color: var(--text-muted); font-size: 11px;">Volume físico consumido no período</p>
-                        </div>
-                        <div id="modalRefeicoesTotal" style="font-size: 22px; font-weight: bold; color: #f97316;">
-                            0
-                        </div>
-                    </div>
-
-                </div>
-
-                <div style="overflow-y: auto; flex: 1; border-radius: 6px; border: 1px solid var(--border-color);">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left;" id="tabelaModal">
-                        <thead>
-                            <tr style="background-color: var(--border-color); border-bottom: 1px solid var(--border-color);">
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">DATA</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">CANTINA</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; text-align: center;">CAFÉ</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; text-align: center;">BUFFET</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; text-align: center;">MARM.</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; text-align: center;">JANTA</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; text-align: center;">LANCHE</th>
-                                <th style="padding: 14px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; text-align: right;">TOTAL</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalCorpoTabela">
-                            </tbody>
-                    </table>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <button onclick="fecharModal()" class="btn-novo" style="background-color: #64748b; color: white; padding: 10px 24px; height: auto; font-size: 14px; border-radius: 6px; font-weight: 600;">
-                        Fechar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="data-storage-refeicoes" style="display: none;">
-        {% for reg in todos_registros %}
-        <div class="raw-record"
-             data-setor="{{ reg.get_setor_display }}"
-             data-data="{{ reg.data_formatada }}"
-             data-local="{{ reg.get_local_display }}"
-             data-cafe="{{ reg.qtd_cafe }}"
-             data-buffet="{{ reg.qtd_almoco_buffet }}"
-             data-marmita="{{ reg.qtd_almoco_marmita }}"
-             data-janta="{{ reg.qtd_janta }}"
-             data-lanche="{{ reg.qtd_lanche }}"
-             data-total="{{ reg.valor_total|stringformat:'.2f' }}"> </div>
-        {% endfor %}
     </div>
 
     <script>
-        function fecharModal() {
-            document.getElementById('modalDetalhes').style.display = 'none';
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            const labelsSetores = JSON.parse('{{ setores_labels_json|safe }}');
-            const valoresSetores = JSON.parse('{{ setores_valores_json|safe }}');
 
-            const labelsLocais = JSON.parse('{{ locais_labels_json|safe }}');
-            const valoresLocais = JSON.parse('{{ locais_valores_json|safe }}');
+            // --- 1. CONFIGURAÇÃO GRÁFICO BARRA (ACUMULADO DO PERÍODO) ---
+            const totalColabPeriodo = {{ total_colab_periodo|default:"0"|safe }};
+            const totalTercPeriodo = {{ total_terc_periodo|default:"0"|safe }};
 
-            const modalConteudo = document.getElementById("modalConteudo");
-            const modalDetalhesWrapper = document.getElementById("modalDetalhes");
-
-            // --- 1. CONFIGURAÇÃO GRÁFICO PIZZA (SETORES) COERENTE E INTEGRADO ---
-            const ctxSetores = document.getElementById('chartSetores').getContext('2d');
-            const chartSetoresInstance = new Chart(ctxSetores, {
-                type: 'pie',
-                data: {
-                    labels: labelsSetores,
-                    datasets: [{
-                        data: valoresSetores,
-                        backgroundColor: ['#a855f7', '#f97316', '#06b6d4', '#ef4444', '#10b981', '#3b82f6'],
-                        borderWidth: 2,
-                        borderColor: '#1e2128'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    onClick: function(event, elements) {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const nomeSetor = labelsSetores[index];
-
-                            document.getElementById('modalTitulo').innerHTML = `<i class="fa-solid fa-circle-info"></i> Detalhes do Setor: ${nomeSetor}`;
-
-                            const todosRegistros = document.querySelectorAll('.raw-record');
-                            const corpoTabela = document.getElementById('modalCorpoTabela');
-                            corpoTabela.innerHTML = '';
-
-                            let rowsAdicionadas = 0;
-                            let acumuladoSetor = 0;
-                            let acumuladoRefeicoes = 0;
-
-                            todosRegistros.forEach(function(rec) {
-                                // AGORA SIM: Convertendo ambos para minúsculo para bater com o agrupamento do Python!
-                                let setorRegistro = (rec.getAttribute('data-setor') || '').toLowerCase().trim();
-                                let setorClicado = (nomeSetor || '').toLowerCase().trim();
-
-                                if (setorRegistro === setorClicado) {
-                                    rowsAdicionadas++;
-                                    let totalBruto = parseFloat(rec.getAttribute('data-total') || 0);
-                                    acumuladoSetor += totalBruto;
-
-                                    // Soma cada uma das quantidades numéricas do registro
-                                    let qCafe = parseInt(rec.getAttribute('data-cafe') || 0);
-                                    let qBuffet = parseInt(rec.getAttribute('data-buffet') || 0);
-                                    let qMarmita = parseInt(rec.getAttribute('data-marmita') || 0);
-                                    let qJanta = parseInt(rec.getAttribute('data-janta') || 0);
-                                    let qLanche = parseInt(rec.getAttribute('data-lanche') || 0);
-                                    acumuladoRefeicoes += (qCafe + qBuffet + qMarmita + qJanta + qLanche);
-
-                                    let totalFormatado = totalBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                                    let tr = document.createElement('tr');
-                                    tr.style.borderBottom = '1px solid var(--border-color)';
-                                    tr.innerHTML = `
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-color); font-weight:600;">${rec.getAttribute('data-data')}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-muted);">${rec.getAttribute('data-local')}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-color); text-align: center;">${rec.getAttribute('data-cafe') || '-'}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-color); text-align: center;">${rec.getAttribute('data-buffet') || '-'}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-color); text-align: center;">${rec.getAttribute('data-marmita') || '-'}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-color); text-align: center;">${rec.getAttribute('data-janta') || '-'}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: var(--text-color); text-align: center;">${rec.getAttribute('data-lanche') || '-'}</td>
-                                        <td style="padding: 14px; font-size: 13px; color: #10b981; text-align: right; font-weight: bold;">${totalFormatado}</td>
-                                    `;
-                                    corpoTabela.appendChild(tr);
-                                }
-                            });
-
-                            document.getElementById('modalSomaTotal').innerText = acumuladoSetor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                            document.getElementById('modalRefeicoesTotal').innerText = acumuladoRefeicoes.toLocaleString('pt-BR');
-
-                            if (rowsAdicionadas === 0) {
-                                corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">Nenhum detalhe encontrado para o período selecionado.</td></tr>`;
-                            }
-
-                            if (modalDetalhesWrapper.style.display === 'none' || modalDetalhesWrapper.style.display === '') {
-                                modalConteudo.style.top = "50%";
-                                modalConteudo.style.left = "50%";
-                                modalConteudo.style.transform = "translate(-50%, -50%)";
-                            }
-
-                            modalDetalhesWrapper.style.display = 'flex';
-                        }
-                    },
-                    onHover: function(event, chartElement) {
-                        event.native.target.style.cursor = chartElement.length ? 'pointer' : 'default';
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                color: '#94a3b8',
-                                font: { family: 'Segoe UI', size: 12, weight: '600' }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    let valor = context.raw || 0;
-                                    let valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                                    return ` ${label}: ${valorFormatado}`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // --- 2. CONFIGURAÇÃO GRÁFICO BARRA (LOCAIS) ---
-            const ctxLocais = document.getElementById('chartLocais').getContext('2d');
-            new Chart(ctxLocais, {
+            const ctxAcumulado = document.getElementById('chartAcumuladoPeriodo').getContext('2d');
+            new Chart(ctxAcumulado, {
                 type: 'bar',
                 data: {
-                    labels: labelsLocais,
-                    datasets: [{
-                        label: 'Gasto Total',
-                        data: valoresLocais,
-                        backgroundColor: ['#06b6d4', '#f97316', '#a855f7'],
-                        borderRadius: 6,
-                        borderWidth: 0
-                    }]
+                    labels: ['Total Acumulado Histórico'],
+                    datasets: [
+                        {
+                            label: 'Colaboradores',
+                            data: [totalColabPeriodo],
+                            backgroundColor: '#10b981',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Terceirizados',
+                            data: [totalTercPeriodo],
+                            backgroundColor: '#a855f7',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#94a3b8', font: { family: 'Segoe UI' } }
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#94a3b8', font: { weight: '600' } }
                         },
-                        y: {
-                            grid: { color: '#334155' },
-                            ticks: {
-                                color: '#94a3b8',
-                                font: { family: 'Segoe UI' },
-                                callback: function(value) {
-                                    return value.toLocaleString('pt-BR', {
-                                        style: 'currency',
-                                        currency: 'BRL',
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0
-                                    });
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.raw || 0;
+                                    return context.dataset.label + ': R$ ' + val.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                                 }
                             }
                         }
                     },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let valor = context.raw || 0;
-                                    let valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                                    return ` Gasto: ${valorFormatado}`;
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 0});
                                 }
-                            }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
                         }
                     }
                 }
             });
 
-            // --- 3. SCRIPT PARA TORNAR O MODAL ARRASTÁVEL (DRAG & DROP) ---
-            const cabecalho = document.getElementById("modalCabecalho");
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            // --- 2. CONFIGURAÇÃO GRÁFICO BARRA (COMPARATIVO 3 MESES) ---
+            const labelsMeses = {{ meses_labels|default:"[]"|safe }};
+            const dadosColaborador = {{ dados_colaboradores|default:"[]"|safe }};
+            const dadosTerceirizado = {{ dados_terceirizados|default:"[]"|safe }};
 
-            if (cabecalho) {
-                cabecalho.onmousedown = dragMouseDown;
-            }
-
-            function dragMouseDown(e) {
-                e = e || window.event;
-                e.preventDefault();
-
-                if (modalConteudo.style.transform && modalConteudo.style.transform !== "none") {
-                    const rect = modalConteudo.getBoundingClientRect();
-                    modalConteudo.style.transform = "none";
-                    modalConteudo.style.top = rect.top + "px";
-                    modalConteudo.style.left = rect.left + "px";
+            const ctxComparativo = document.getElementById('graficoComparativoBarras').getContext('2d');
+            new Chart(ctxComparativo, {
+                type: 'bar',
+                data: {
+                    labels: labelsMeses,
+                    datasets: [
+                        {
+                            label: 'Colaboradores (Sede + Secador)',
+                            data: dadosColaborador,
+                            backgroundColor: '#10b981',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Terceirizados (Sede + Secador)',
+                            data: dadosTerceirizado,
+                            backgroundColor: '#a855f7',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#94a3b8', font: { weight: '600' } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.raw || 0;
+                                    return context.dataset.label + ': R$ ' + val.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 0});
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
+                        }
+                    }
                 }
+            });
 
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-
-                modalConteudo.style.top = (modalConteudo.offsetTop - pos2) + "px";
-                modalConteudo.style.left = (modalConteudo.offsetLeft - pos1) + "px";
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
         });
     </script>
 </body>

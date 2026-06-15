@@ -1,38 +1,33 @@
-import pandas as pd
-from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
-
 import io
-from django.http import FileResponse
+import json
+from datetime import date
+from collections import defaultdict
+import pandas as pd
+from dateutil.relativedelta import relativedelta
+
+from django.http import HttpResponse, FileResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum, Q, F
+from django.core.paginator import Paginator
+
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, KeepTogether, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+
 from .models import RegistroRefeicao, TabelaPreco
 from .forms import RegistroRefeicaoForm, TabelaPrecoForm
 
-from collections import defaultdict
-
-import json
-from django.db.models import Sum
-from datetime import date
-from django.shortcuts import render
-from django.core.paginator import Paginator
 
 def painel_refeicoes(request):
-    # 1. PEGA QUAL BOTÃO FOI CLICADO (se não for nenhum, assume 'filtrar')
     formato_clicado = request.GET.get('formato', 'filtrar')
 
-    # Se o botão clicado foi PDF ou Excel, redireciona a chamada
-    # passando os mesmos filtros para a função de exportação correspondente
     if formato_clicado == 'pdf':
         return exportar_pdf(request)
     elif formato_clicado == 'excel':
         return exportar_refeicoes_excel(request)
 
-    # 2. SE FOI O BOTÃO FILTRAR (OU ACESSO NORMAL), SEGUE O FLUXO PADRÃO
     registros = RegistroRefeicao.objects.all().order_by('-data_consumo', '-id')
 
     data_inicio = request.GET.get('data_inicio')
@@ -40,6 +35,7 @@ def painel_refeicoes(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
+    # A página inicial MANTÉM a trava do mês atual por padrão
     if not data_inicio and not data_fim:
         hoje = date.today()
         registros = registros.filter(
@@ -72,29 +68,21 @@ def painel_refeicoes(request):
     return render(request, 'refeicoes/painel.html', contexto)
 
 
-
-
-
-# Mantenha os seus outros imports normais lá em cima...
-
 def dashboard_refeicoes(request):
-    """Nova view focada exclusivamente nos indicadores e gráficos neon"""
+    # Puxa absolutamente tudo do banco para o Dashboard
     registros = RegistroRefeicao.objects.all()
+    hoje = date.today()
 
-    # Filtros opcionais também para o Dashboard (caso queira ver gráficos de meses específicos)
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
 
-    if not data_inicio and not data_fim:
-        hoje = date.today()
-        registros = registros.filter(data_consumo__year=hoje.year, data_consumo__month=hoje.month)
-    else:
-        if data_inicio:
-            registros = registros.filter(data_consumo__gte=data_inicio)
-        if data_fim:
-            registros = registros.filter(data_consumo__lte=data_fim)
+    # AGORA SEM RESTRIÇÃO: Se não houver filtro de data, ele calcula TODO o período histórico
+    if data_inicio:
+        registros = registros.filter(data_consumo__gte=data_inicio)
+    if data_fim:
+        registros = registros.filter(data_consumo__lte=data_fim)
 
-    # 1. Agregações para os Cards Superiores
+    # 1. Agregações para os Cards Superiores (refletindo todo o período ou o filtro)
     soma_total = registros.aggregate(
         total=Sum('valor_total'),
         cafe=Sum('qtd_cafe'),
@@ -112,65 +100,78 @@ def dashboard_refeicoes(request):
     total_buffet = soma_total['buffet'] or 0
     total_janta = soma_total['janta'] or 0
 
-    # ===============================================================
-    # 2. Dados da Pizza (Distribuição por Setor) - AGRUPANDO NOMES
-    # ===============================================================
-    setores_dados = registros.values('setor').annotate(total_setor=Sum('valor_total'))
+    # 2. Gráfico Acumulado (Soma real de todo o histórico/período filtrado)
+    total_colab_periodo = registros.filter(
+        setor__icontains='Colaborador'
+    ).aggregate(total=Sum('valor_total'))['total'] or 0
 
-    agrupamento_setores = {}
-    temp_registro = RegistroRefeicao()
+    total_terc_periodo = registros.filter(
+        Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
+    ).aggregate(total=Sum('valor_total'))['total'] or 0
 
-    for s in setores_dados:
-        temp_registro.setor = s['setor']
-        nome_original = temp_registro.get_setor_display()
+    # 3. Gráfico de Evolução dos Últimos 3 Meses (Janela fixa comparativa)
+    meses_labels = []
+    dados_colaboradores = []
+    dados_terceirizados = []
 
-        # Cria uma chave toda em minúsculo para unificar (ex: "colaborador sede")
-        chave_padrao = nome_original.lower().strip()
+    for i in range(2, -1, -1):
+        mes_alvo = hoje - relativedelta(months=i)
+        meses_labels.append(mes_alvo.strftime('%m/%Y'))
 
-        # Formata o nome para ficar bonito na legenda do gráfico (ex: "Colaborador Sede")
-        # O .title() transforma "Colaborador sede" em "Colaborador Sede"
-        nome_bonito = nome_original.title()
+        refeicoes_mes = RegistroRefeicao.objects.filter(
+            data_consumo__month=mes_alvo.month,
+            data_consumo__year=mes_alvo.year
+        )
 
-        # Se já existe essa chave no dicionário, apenas soma o valor
-        if chave_padrao in agrupamento_setores:
-            agrupamento_setores[chave_padrao]['valor'] += float(s['total_setor'] or 0)
-        else:
-            # Se for a primeira vez, cria a entrada no dicionário
-            agrupamento_setores[chave_padrao] = {
-                'nome': nome_bonito,
-                'valor': float(s['total_setor'] or 0)
-            }
+        total_colab = refeicoes_mes.filter(
+            setor__icontains='Colaborador'
+        ).aggregate(total=Sum('valor_total'))['total'] or 0
 
-    # Desempacota o dicionário unificado para as listas do gráfico
-    labels_setores = [item['nome'] for item in agrupamento_setores.values()]
-    valores_setores = [item['valor'] for item in agrupamento_setores.values()]
+        total_terc = refeicoes_mes.filter(
+            Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
+        ).aggregate(total=Sum('valor_total'))['total'] or 0
 
-    # 3. Dados da Ocupação por Local (Sede vs Secador)
-    locais_dados = registros.values('local').annotate(total_local=Sum('valor_total'))
+        dados_colaboradores.append(float(total_colab))
+        dados_terceirizados.append(float(total_terc))
 
-    labels_locais = []
-    valores_locais = []
-    for l in locais_dados:
-        temp_registro.local = l['local']
-        labels_locais.append(temp_registro.get_local_display())
-        valores_locais.append(float(l['total_local'] or 0))
-
-    # Pegamos todos os registros ordenados para enviar para o HTML (para o Modal ler)
-    todos_registros_filtrados = registros.order_by('-data_consumo', '-id')
+        # NOVO: Detalhamento financeiro em Reais para cada tipo de refeição
+    detalhes = registros.aggregate(
+        v_cafe=Sum(F('qtd_cafe') * F('valor_cafe')),
+        v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
+        v_marmita=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
+        v_janta=Sum(F('qtd_janta') * F('valor_janta')),
+        v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
+    )
 
     contexto = {
         'total_gasto': total_gasto,
         'total_refeicoes': total_refeicoes,
         'total_buffet': total_buffet,
         'total_janta': total_janta,
-        'todos_registros': todos_registros_filtrados,
 
-        # Passamos as listas convertidas em JSON para o JavaScript
-        'setores_labels_json': json.dumps(labels_setores),
-        'setores_valores_json': json.dumps(valores_setores),
-        'locais_labels_json': json.dumps(labels_locais),
-        'locais_valores_json': json.dumps(valores_locais),
+        # Valores acumulados de todo o período
+        'total_colab_periodo': float(total_colab_periodo),
+        'total_terc_periodo': float(total_terc_periodo),
+
+        # Listas dos 3 meses de evolução
+        'meses_labels': json.dumps(meses_labels),
+        'dados_colaboradores': json.dumps(dados_colaboradores),
+        'dados_terceirizados': json.dumps(dados_terceirizados),
+
+        # --- INÍCIO DOS DADOS DA NOVA FAIXA DE DETALHES ---
+        'det_q_cafe': soma_total['cafe'] or 0,
+        'det_v_cafe': float(detalhes['v_cafe'] or 0),
+        'det_q_buffet': soma_total['buffet'] or 0,
+        'det_v_buffet': float(detalhes['v_buffet'] or 0),
+        'det_q_marmita': soma_total['marmita'] or 0,
+        'det_v_marmita': float(detalhes['v_marmita'] or 0),
+        'det_q_janta': soma_total['janta'] or 0,
+        'det_v_janta': float(detalhes['v_janta'] or 0),
+        'det_q_lanche': soma_total['lanche'] or 0,
+        'det_v_lanche': float(detalhes['v_lanche'] or 0),
+
         'filtros': request.GET
+
     }
     return render(request, 'refeicoes/dashboard.html', contexto)
 
@@ -180,32 +181,28 @@ def novo_registro(request):
         form = RegistroRefeicaoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('painel_refeicoes')
+            return redirect('painel')
     else:
         form = RegistroRefeicaoForm()
-
     return render(request, 'refeicoes/novo_registro.html', {'form': form})
 
 
 def editar_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
-
     if request.method == 'POST':
         form = RegistroRefeicaoForm(request.POST, instance=registro)
         if form.is_valid():
             form.save()
-            return redirect('painel_refeicoes')
+            return redirect('painel')
     else:
         form = RegistroRefeicaoForm(instance=registro)
-
-    contexto = {'form': form, 'registro': registro}
-    return render(request, 'refeicoes/novo_registro.html', contexto)
+    return render(request, 'refeicoes/novo_registro.html', {'form': form, 'registro': registro})
 
 
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
     registro.delete()
-    return redirect('painel_refeicoes')
+    return redirect('painel')
 
 
 def exportar_pdf(request):
@@ -214,7 +211,6 @@ def exportar_pdf(request):
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
 
-    # Usar __gte e __lte em vez de __range para lidar melhor com datas que só tem um dos campos preenchidos
     if not data_inicio and not data_fim:
         hoje = date.today()
         registros = registros.filter(
@@ -244,34 +240,22 @@ def exportar_pdf(request):
     doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=40, leftMargin=40, topMargin=40,
                             bottomMargin=40)
     elementos = []
-
     estilos = getSampleStyleSheet()
 
-    # --- Estilos ---
-    estilo_titulo = ParagraphStyle(
-        'TituloModerno', parent=estilos['Heading1'], alignment=TA_CENTER,
-        fontSize=20, textColor=colors.black, spaceAfter=5, fontName='Helvetica-Bold'
-    )
-    estilo_subtitulo = ParagraphStyle(
-        'Subtitulo', parent=estilos['Normal'], alignment=TA_CENTER,
-        fontSize=11, textColor=colors.black, spaceAfter=25
-    )
-    estilo_nome_setor = ParagraphStyle(
-        'NomeSetor', parent=estilos['Heading2'], fontSize=14,
-        textColor=colors.black, spaceBefore=10, spaceAfter=10, fontName='Helvetica-Bold'
-    )
-    estilo_total_setor = ParagraphStyle(
-        'TotalSetor', parent=estilos['Normal'], alignment=TA_RIGHT,
-        fontSize=11, fontName='Helvetica-Bold', textColor=colors.black, spaceTop=5
-    )
+    estilo_titulo = ParagraphStyle('TituloModerno', parent=estilos['Heading1'], alignment=TA_CENTER, fontSize=20,
+                                   textColor=colors.black, spaceAfter=5, fontName='Helvetica-Bold')
+    estilo_subtitulo = ParagraphStyle('Subtitulo', parent=estilos['Normal'], alignment=TA_CENTER, fontSize=11,
+                                      textColor=colors.black, spaceAfter=25)
+    estilo_nome_setor = ParagraphStyle('NomeSetor', parent=estilos['Heading2'], fontSize=14, textColor=colors.black,
+                                       spaceBefore=10, spaceAfter=10, fontName='Helvetica-Bold')
+    estilo_total_setor = ParagraphStyle('TotalSetor', parent=estilos['Normal'], alignment=TA_RIGHT, fontSize=11,
+                                        fontName='Helvetica-Bold', textColor=colors.black, spaceTop=5)
 
     elementos.append(Paragraph("Relatório de Refeições", estilo_titulo))
     elementos.append(Paragraph("Extrato analítico gerado pelo sistema.", estilo_subtitulo))
 
-    # Loop pelos setores
     for setor, lista_refeicoes in dados_por_setor.items():
         bloco_setor = []
-
         bloco_setor.append(Paragraph(f"Setor: {setor}", estilo_nome_setor))
 
         cabecalho = ['Data', 'Cantina', 'Café', 'Buffet', 'Marm.', 'Janta', 'Lanche', 'Valor Total']
@@ -318,12 +302,9 @@ def exportar_pdf(request):
         elementos.append(KeepTogether(bloco_setor))
         elementos.append(Spacer(1, 20))
 
-    # Total Geral
     elementos.append(Spacer(1, 10))
-    estilo_total_geral = ParagraphStyle(
-        'TotalGeral', parent=estilos['Heading2'], alignment=TA_RIGHT,
-        textColor=colors.black, spaceTop=10, fontName='Helvetica-Bold', fontSize=14
-    )
+    estilo_total_geral = ParagraphStyle('TotalGeral', parent=estilos['Heading2'], alignment=TA_RIGHT,
+                                        textColor=colors.black, spaceTop=10, fontName='Helvetica-Bold', fontSize=14)
     texto_total_geral = f"CUSTO TOTAL DO PERÍODO: R$ {total_geral:,.2f}".replace(',', 'X').replace('.', ',').replace(
         'X', '.')
     elementos.append(Paragraph(texto_total_geral, estilo_total_geral))
@@ -337,7 +318,6 @@ def exportar_pdf(request):
 
 
 def exportar_refeicoes_excel(request):
-    # Pega os mesmos filtros usados na visualização para o Excel sair certinho
     registros = RegistroRefeicao.objects.all()
 
     data_inicio = request.GET.get('data_inicio')
@@ -361,7 +341,6 @@ def exportar_refeicoes_excel(request):
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
-    # Extrai só os valores necessários para a planilha
     queryset = registros.values(
         'data_consumo', 'local', 'setor', 'qtd_cafe',
         'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche', 'valor_total'
@@ -369,21 +348,14 @@ def exportar_refeicoes_excel(request):
 
     df = pd.DataFrame(list(queryset))
 
-    # Se a tabela não estiver vazia, arruma os nomes das colunas
     if not df.empty:
-        df.columns = [
-            'Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
-            'Almoço Marmita', 'Janta', 'Lanche', 'Valor Total'
-        ]
-
-        # Garante que as datas fiquem bonitas (sem horas zeradas atrapalhando) no Excel
+        df.columns = ['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet', 'Almoço Marmita', 'Janta', 'Lanche',
+                      'Valor Total']
         df['Data'] = pd.to_datetime(df['Data']).dt.date
     else:
-        # Cria colunas vazias se não tiver dados para não dar erro no pandas
-        df = pd.DataFrame(columns=[
-            'Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
-            'Almoço Marmita', 'Janta', 'Lanche', 'Valor Total'
-        ])
+        df = pd.DataFrame(
+            columns=['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet', 'Almoço Marmita', 'Janta', 'Lanche',
+                     'Valor Total'])
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Relatorio_Refeicoes.xlsx'
@@ -403,7 +375,7 @@ def configurar_precos(request):
         form = TabelaPrecoForm(request.POST, instance=tabela)
         if form.is_valid():
             form.save()
-            return redirect('painel_refeicoes')
+            return redirect('painel')
     else:
         form = TabelaPrecoForm(instance=tabela)
 
