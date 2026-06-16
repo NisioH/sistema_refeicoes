@@ -20,7 +20,7 @@ class TabelaPreco(models.Model):
 
 class LocalRefeicao(models.TextChoices):
     SEDE = 'SEDE', 'Cantina da Sede'
-    SECADOR = 'SECADOR', 'Cantina da Secador'
+    SECADOR = 'SECADOR', 'Cantina do Secador'
 
 class SetorColaborador(models.TextChoices):
     COLAB_SECADOR = 'Colaborador secador', 'Colaborador Secador'
