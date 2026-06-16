@@ -152,6 +152,8 @@ def dashboard_refeicoes(request):
     meses_labels = []
     dados_colaboradores = []
     dados_terceirizados = []
+    qtds_colaboradores = []  # NOVO: Para guardar as quantidades físicas
+    qtds_terceirizados = []  # NOVO: Para guardar as quantidades físicas
 
     for i in range(2, -1, -1):
         mes_alvo = hoje - relativedelta(months=i)
@@ -162,6 +164,7 @@ def dashboard_refeicoes(request):
             data_consumo__year=mes_alvo.year
         )
 
+        # VALORES FINANCEIROS (R$)
         total_colab = refeicoes_mes.filter(
             setor__icontains='Colaborador'
         ).aggregate(total=Sum('valor_total'))['total'] or 0
@@ -170,47 +173,47 @@ def dashboard_refeicoes(request):
             Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
         ).aggregate(total=Sum('valor_total'))['total'] or 0
 
+        # QUANTIDADES FÍSICAS (Unidades)
+        agg_colab = refeicoes_mes.filter(setor__icontains='Colaborador').aggregate(
+            c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
+            l=Sum('qtd_lanche')
+        )
+        q_colab = (agg_colab['c'] or 0) + (agg_colab['b'] or 0) + (agg_colab['m'] or 0) + (agg_colab['j'] or 0) + (
+                    agg_colab['l'] or 0)
+
+        agg_terc = refeicoes_mes.filter(Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')).aggregate(
+            c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
+            l=Sum('qtd_lanche')
+        )
+        q_terc = (agg_terc['c'] or 0) + (agg_terc['b'] or 0) + (agg_terc['m'] or 0) + (agg_terc['j'] or 0) + (
+                    agg_terc['l'] or 0)
+
+        # Guardando nas listas
         dados_colaboradores.append(float(total_colab))
         dados_terceirizados.append(float(total_terc))
+        qtds_colaboradores.append(q_colab)
+        qtds_terceirizados.append(q_terc)
 
-        # NOVO: Detalhamento financeiro em Reais para cada tipo de refeição
-    detalhes = registros.aggregate(
-        v_cafe=Sum(F('qtd_cafe') * F('valor_cafe')),
-        v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
-        v_marmita=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
-        v_janta=Sum(F('qtd_janta') * F('valor_janta')),
-        v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
-    )
+    # ... (o resto da função continua igual)
 
     contexto = {
         'total_gasto': total_gasto,
         'total_refeicoes': total_refeicoes,
         'total_buffet': total_buffet,
         'total_janta': total_janta,
-
-        # Valores acumulados de todo o período
         'total_colab_periodo': float(total_colab_periodo),
         'total_terc_periodo': float(total_terc_periodo),
 
-        # Listas dos 3 meses de evolução
+        # Variáveis do Gráfico de Barras de 3 Meses
         'meses_labels': json.dumps(meses_labels),
         'dados_colaboradores': json.dumps(dados_colaboradores),
         'dados_terceirizados': json.dumps(dados_terceirizados),
 
-        # --- INÍCIO DOS DADOS DA NOVA FAIXA DE DETALHES ---
-        'det_q_cafe': soma_total['cafe'] or 0,
-        'det_v_cafe': float(detalhes['v_cafe'] or 0),
-        'det_q_buffet': soma_total['buffet'] or 0,
-        'det_v_buffet': float(detalhes['v_buffet'] or 0),
-        'det_q_marmita': soma_total['marmita'] or 0,
-        'det_v_marmita': float(detalhes['v_marmita'] or 0),
-        'det_q_janta': soma_total['janta'] or 0,
-        'det_v_janta': float(detalhes['v_janta'] or 0),
-        'det_q_lanche': soma_total['lanche'] or 0,
-        'det_v_lanche': float(detalhes['v_lanche'] or 0),
+        # NOVAS VARIÁVEIS DE QUANTIDADE ENVIADAS AO HTML
+        'qtds_colaboradores': json.dumps(qtds_colaboradores),
+        'qtds_terceirizados': json.dumps(qtds_terceirizados),
 
         'filtros': request.GET
-
     }
     return render(request, 'refeicoes/dashboard.html', contexto)
 

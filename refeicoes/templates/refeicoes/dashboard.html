@@ -242,6 +242,34 @@
             const dadosColaborador = {{ dados_colaboradores|default:"[]"|safe }};
             const dadosTerceirizado = {{ dados_terceirizados|default:"[]"|safe }};
 
+            // Recebendo as quantidades calculadas
+            const qtdsColab = {{ qtds_colaboradores|default:"[]"|safe }};
+            const qtdsTerc = {{ qtds_terceirizados|default:"[]"|safe }};
+
+            // Plugin nativo customizado: Desenha a quantidade sobre as barras
+            const pluginTextoNasBarras = {
+                id: 'pluginTextoNasBarras',
+                afterDatasetsDraw(chart, args, pluginOptions) {
+                    const { ctx } = chart;
+                    ctx.save();
+                    ctx.font = 'bold 11px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+
+                    chart.data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        meta.data.forEach((bar, index) => {
+                            const qtd = i === 0 ? qtdsColab[index] : qtdsTerc[index];
+                            if (qtd > 0) {
+                                ctx.fillStyle = '#e2e8f0'; // Cor clara que contrasta com o fundo escuro
+                                ctx.fillText(qtd + ' un', bar.x, bar.y - 5); // 5 pixels acima da barra
+                            }
+                        });
+                    });
+                    ctx.restore();
+                }
+            };
+
             const ctxComparativo = document.getElementById('graficoComparativoBarras').getContext('2d');
             new Chart(ctxComparativo, {
                 type: 'bar',
@@ -264,19 +292,33 @@
                         }
                     ]
                 },
+                plugins: [pluginTextoNasBarras], // Ativando nosso plugin
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 10 // Espaço fino no topo do canvas
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'top',
-                            labels: { color: '#94a3b8', font: { weight: '600' } }
+                            labels: {
+                                color: '#94a3b8',
+                                font: { weight: '600' },
+                                padding: 25 // <-- EMPURRA O GRÁFICO PARA BAIXO DA LEGENDA
+                            }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
                                     let val = context.raw || 0;
-                                    return context.dataset.label + ': R$ ' + val.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                                    let datasetIndex = context.datasetIndex;
+                                    let itemIndex = context.dataIndex;
+                                    let qtd = datasetIndex === 0 ? qtdsColab[itemIndex] : qtdsTerc[itemIndex];
+
+                                    return `${context.dataset.label}: R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${qtd} refeições)`;
                                 }
                             }
                         }
@@ -284,6 +326,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            grace: '20%', // <-- FAZ O TETO SER SEMPRE 20% MAIOR QUE A BARRA MAIS ALTA
                             ticks: {
                                 color: '#94a3b8',
                                 callback: function(value) {
