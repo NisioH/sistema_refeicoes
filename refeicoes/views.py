@@ -47,12 +47,12 @@ def painel_refeicoes(request):
         if data_fim:
             registros = registros.filter(data_consumo__lte=data_fim)
 
+    # VOLTOU AO NORMAL (Sem o __nome)
     if local_busca:
         registros = registros.filter(local=local_busca)
     if setor_busca:
         registros = registros.filter(setor__icontains=setor_busca)
 
-    # 1. Soma Geral das Quantidades e Totais
     soma_total = registros.aggregate(
         total=Sum('valor_total'),
         cafe=Sum('qtd_cafe'),
@@ -62,7 +62,6 @@ def painel_refeicoes(request):
         lanche=Sum('qtd_lanche')
     )
 
-    # 2. NOVO: Soma detalhada do valor em dinheiro de cada item usando a função F()
     detalhes = registros.aggregate(
         v_cafe=Sum(F('qtd_cafe') * F('valor_cafe')),
         v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
@@ -71,7 +70,12 @@ def painel_refeicoes(request):
         v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
     )
 
-    total_gasto = float(soma_total['total'] or 0.00)
+    # Usando o cálculo dinâmico da função F() para garantir o valor mesmo nos importados
+    total_gasto = (
+            (detalhes['v_cafe'] or 0) + (detalhes['v_buffet'] or 0) +
+            (detalhes['v_marmita'] or 0) + (detalhes['v_janta'] or 0) + (detalhes['v_lanche'] or 0)
+    )
+
     total_refeicoes = (
             (soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) +
             (soma_total['marmita'] or 0) + (soma_total['janta'] or 0) + (soma_total['lanche'] or 0)
@@ -85,12 +89,11 @@ def painel_refeicoes(request):
 
     contexto = {
         'page_obj': page_obj,
-        'total_gasto': total_gasto,
+        'total_gasto': float(total_gasto),
         'total_refeicoes': total_refeicoes,
         'total_buffet': total_buffet,
         'total_janta': total_janta,
 
-        # --- DADOS PARA A NOVA FAIXA DE DETALHES ---
         'det_q_cafe': soma_total['cafe'] or 0,
         'det_v_cafe': float(detalhes['v_cafe'] or 0),
         'det_q_buffet': soma_total['buffet'] or 0,
@@ -108,20 +111,17 @@ def painel_refeicoes(request):
 
 
 def dashboard_refeicoes(request):
-    # Puxa absolutamente tudo do banco para o Dashboard
     registros = RegistroRefeicao.objects.all()
     hoje = date.today()
 
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
 
-    # AGORA SEM RESTRIÇÃO: Se não houver filtro de data, ele calcula TODO o período histórico
     if data_inicio:
         registros = registros.filter(data_consumo__gte=data_inicio)
     if data_fim:
         registros = registros.filter(data_consumo__lte=data_fim)
 
-    # 1. Agregações para os Cards Superiores (refletindo todo o período ou o filtro)
     soma_total = registros.aggregate(
         total=Sum('valor_total'),
         cafe=Sum('qtd_cafe'),
@@ -131,7 +131,19 @@ def dashboard_refeicoes(request):
         lanche=Sum('qtd_lanche')
     )
 
-    total_gasto = float(soma_total['total'] or 0.00)
+    detalhes = registros.aggregate(
+        v_cafe=Sum(F('qtd_cafe') * F('valor_cafe')),
+        v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
+        v_marmita=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
+        v_janta=Sum(F('qtd_janta') * F('valor_janta')),
+        v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
+    )
+
+    total_gasto = (
+            (detalhes['v_cafe'] or 0) + (detalhes['v_buffet'] or 0) +
+            (detalhes['v_marmita'] or 0) + (detalhes['v_janta'] or 0) + (detalhes['v_lanche'] or 0)
+    )
+
     total_refeicoes = (
             (soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) +
             (soma_total['marmita'] or 0) + (soma_total['janta'] or 0) + (soma_total['lanche'] or 0)
@@ -139,21 +151,28 @@ def dashboard_refeicoes(request):
     total_buffet = soma_total['buffet'] or 0
     total_janta = soma_total['janta'] or 0
 
-    # 2. Gráfico Acumulado (Soma real de todo o histórico/período filtrado)
-    total_colab_periodo = registros.filter(
-        setor__icontains='Colaborador'
-    ).aggregate(total=Sum('valor_total'))['total'] or 0
+    def calc_financeiro(queryset):
+        agg = queryset.aggregate(
+            vc=Sum(F('qtd_cafe') * F('valor_cafe')),
+            vb=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
+            vm=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
+            vj=Sum(F('qtd_janta') * F('valor_janta')),
+            vl=Sum(F('qtd_lanche') * F('valor_lanche'))
+        )
+        return (agg['vc'] or 0) + (agg['vb'] or 0) + (agg['vm'] or 0) + (agg['vj'] or 0) + (agg['vl'] or 0)
 
-    total_terc_periodo = registros.filter(
-        Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
-    ).aggregate(total=Sum('valor_total'))['total'] or 0
+    # 1. CRIAMOS A REGRA DO QUE É TERCEIRO
+    filtro_terceiros = Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
 
-    # 3. Gráfico de Evolução dos Últimos 3 Meses (Janela fixa comparativa)
+    # 2. COLABORADOR PASSA A SER TUDO QUE "NÃO É TERCEIRO" (Usando o .exclude)
+    total_colab_periodo = calc_financeiro(registros.exclude(filtro_terceiros))
+    total_terc_periodo = calc_financeiro(registros.filter(filtro_terceiros))
+
     meses_labels = []
     dados_colaboradores = []
     dados_terceirizados = []
-    qtds_colaboradores = []  # NOVO: Para guardar as quantidades físicas
-    qtds_terceirizados = []  # NOVO: Para guardar as quantidades físicas
+    qtds_colaboradores = []
+    qtds_terceirizados = []
 
     for i in range(2, -1, -1):
         mes_alvo = hoje - relativedelta(months=i)
@@ -164,58 +183,59 @@ def dashboard_refeicoes(request):
             data_consumo__year=mes_alvo.year
         )
 
-        # VALORES FINANCEIROS (R$)
-        total_colab = refeicoes_mes.filter(
-            setor__icontains='Colaborador'
-        ).aggregate(total=Sum('valor_total'))['total'] or 0
+        # APLICAMOS A MESMA LÓGICA MÊS A MÊS
+        total_colab = calc_financeiro(refeicoes_mes.exclude(filtro_terceiros))
+        total_terc = calc_financeiro(refeicoes_mes.filter(filtro_terceiros))
 
-        total_terc = refeicoes_mes.filter(
-            Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
-        ).aggregate(total=Sum('valor_total'))['total'] or 0
-
-        # QUANTIDADES FÍSICAS (Unidades)
-        agg_colab = refeicoes_mes.filter(setor__icontains='Colaborador').aggregate(
+        agg_colab = refeicoes_mes.exclude(filtro_terceiros).aggregate(
             c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
             l=Sum('qtd_lanche')
         )
         q_colab = (agg_colab['c'] or 0) + (agg_colab['b'] or 0) + (agg_colab['m'] or 0) + (agg_colab['j'] or 0) + (
                     agg_colab['l'] or 0)
 
-        agg_terc = refeicoes_mes.filter(Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')).aggregate(
+        agg_terc = refeicoes_mes.filter(filtro_terceiros).aggregate(
             c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
             l=Sum('qtd_lanche')
         )
         q_terc = (agg_terc['c'] or 0) + (agg_terc['b'] or 0) + (agg_terc['m'] or 0) + (agg_terc['j'] or 0) + (
                     agg_terc['l'] or 0)
 
-        # Guardando nas listas
         dados_colaboradores.append(float(total_colab))
         dados_terceirizados.append(float(total_terc))
         qtds_colaboradores.append(q_colab)
         qtds_terceirizados.append(q_terc)
 
-    # ... (o resto da função continua igual)
-
     contexto = {
-        'total_gasto': total_gasto,
+        'total_gasto': float(total_gasto),
         'total_refeicoes': total_refeicoes,
         'total_buffet': total_buffet,
         'total_janta': total_janta,
+
+        # ---> AGORA AS VARIÁVEIS ESTÃO INDO PARA O DASHBOARD <---
+        'det_q_cafe': soma_total['cafe'] or 0,
+        'det_v_cafe': float(detalhes['v_cafe'] or 0),
+        'det_q_buffet': soma_total['buffet'] or 0,
+        'det_v_buffet': float(detalhes['v_buffet'] or 0),
+        'det_q_marmita': soma_total['marmita'] or 0,
+        'det_v_marmita': float(detalhes['v_marmita'] or 0),
+        'det_q_janta': soma_total['janta'] or 0,
+        'det_v_janta': float(detalhes['v_janta'] or 0),
+        'det_q_lanche': soma_total['lanche'] or 0,
+        'det_v_lanche': float(detalhes['v_lanche'] or 0),
+        # --------------------------------------------------------
+
         'total_colab_periodo': float(total_colab_periodo),
         'total_terc_periodo': float(total_terc_periodo),
-
-        # Variáveis do Gráfico de Barras de 3 Meses
         'meses_labels': json.dumps(meses_labels),
         'dados_colaboradores': json.dumps(dados_colaboradores),
         'dados_terceirizados': json.dumps(dados_terceirizados),
-
-        # NOVAS VARIÁVEIS DE QUANTIDADE ENVIADAS AO HTML
         'qtds_colaboradores': json.dumps(qtds_colaboradores),
         'qtds_terceirizados': json.dumps(qtds_terceirizados),
-
         'filtros': request.GET
     }
     return render(request, 'refeicoes/dashboard.html', contexto)
+
 
 
 def novo_registro(request):
@@ -268,6 +288,7 @@ def exportar_pdf(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
+    # VOLTOU AO NORMAL
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
@@ -275,8 +296,18 @@ def exportar_pdf(request):
     total_geral = 0
 
     for r in registros:
-        dados_por_setor[r.get_setor_display()].append(r)
-        total_geral += r.valor_total
+        # VOLTOU AO NORMAL (Lendo como display para evitar erro no ReportLab)
+        dados_por_setor[r.get_setor_display() if hasattr(r, 'get_setor_display') else r.setor].append(r)
+
+        # O PDF recalcula somando linha a linha, então podemos usar a mesma lógica
+        valor_da_linha = (
+                (float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0) +
+                (float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0) +
+                (float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0) +
+                (float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0) +
+                (float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0)
+        )
+        total_geral += valor_da_linha
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=40, leftMargin=40, topMargin=40,
@@ -294,49 +325,53 @@ def exportar_pdf(request):
     elementos.append(Paragraph("Relatório de Refeições", estilo_titulo))
     elementos.append(Paragraph("Extrato analítico gerado pelo sistema.", estilo_subtitulo))
 
-    # Função auxiliar para formatar os Reais
     def formata_rs(valor):
         if valor and valor > 0:
             return f"R$ {float(valor):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
         return '-'
 
-    for setor, lista_refeicoes in dados_por_setor.items():
+    for setor_nome, lista_refeicoes in dados_por_setor.items():
         bloco_setor = []
-        bloco_setor.append(Paragraph(f"Setor: {setor}", estilo_nome_setor))
+        bloco_setor.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
 
         cabecalho = ['Data', 'Cantina', 'Café', 'Buffet', 'Marm.', 'Janta', 'Lanche', 'Valor Total']
         dados_tabela = [cabecalho]
 
         total_deste_setor = 0
-        # Variáveis para somar os VALORES FINANCEIROS de cada item
         v_cafe = v_buffet = v_marmita = v_janta = v_lanche = 0
 
         for r in lista_refeicoes:
-            # Multiplica a quantidade pelo preço para saber o valor gasto naquele dia
-            v_cafe += float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
-            v_buffet += float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
-            v_marmita += float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
-            v_janta += float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
-            v_lanche += float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
+            c_v = float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
+            b_v = float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
+            m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
+            j_v = float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
+            l_v = float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
 
-            total_deste_setor += r.valor_total
+            v_cafe += c_v
+            v_buffet += b_v
+            v_marmita += m_v
+            v_janta += j_v
+            v_lanche += l_v
 
+            valor_linha = c_v + b_v + m_v + j_v + l_v
+            total_deste_setor += valor_linha
+
+            # VOLTOU AO NORMAL (Lendo local_display)
             linha = [
-                r.data_formatada(),
-                r.get_local_display(),
+                r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
+                r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
                 r.qtd_cafe or '-',
                 r.qtd_almoco_buffet or '-',
                 r.qtd_almoco_marmita or '-',
                 r.qtd_janta or '-',
                 r.qtd_lanche or '-',
-                formata_rs(r.valor_total)
+                formata_rs(valor_linha)
             ]
             dados_tabela.append(linha)
 
-        # Adicionando a linha final formatada em Reais (R$)
         linha_total = [
-            '',  # Data em branco
-            'SUBTOTAL DO SETOR:',  # Nome
+            '',
+            'SUBTOTAL DO SETOR:',
             formata_rs(v_cafe),
             formata_rs(v_buffet),
             formata_rs(v_marmita),
@@ -357,14 +392,11 @@ def exportar_pdf(request):
             ('TOPPADDING', (0, 0), (-1, -1), 5),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
             ('NOSPLIT', (0, 0), (-1, -1)),
-
-            # --- Estilo para a última linha (Totais) ---
             ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
             ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (2, -1), (-2, -1), 9),  # Fonte pouquíssimo menor para as colunas do meio acomodarem bem o R$
+            ('FONTSIZE', (2, -1), (-2, -1), 9),
         ])
 
-        # ATENÇÃO AQUI: Alarguei as colunas do meio de 50 para 65 para o texto 'R$ 1.500,00' caber sem quebrar
         tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90])
         tabela.setStyle(estilo_tabela_minimalista)
 
@@ -383,7 +415,7 @@ def exportar_pdf(request):
     buffer.seek(0)
 
     hoje = date.today()
-    nome_arquivo = f"Relatorio_Refeicoes_{hoje.strftime('%m_%Y') if 'hoje' in locals() else 'Filtro'}.pdf"
+    nome_arquivo = f"Relatorio_Refeicoes_{hoje.strftime('%m_%Y')}.pdf"
     return FileResponse(buffer, as_attachment=True, filename=nome_arquivo)
 
 
@@ -408,9 +440,11 @@ def exportar_refeicoes_excel(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
+    # VOLTOU AO NORMAL
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
+    # VOLTOU AO NORMAL
     queryset = registros.values(
         'data_consumo', 'local', 'setor', 'qtd_cafe',
         'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche', 'valor_total'
