@@ -381,6 +381,7 @@ def exportar_pdf(request):
         ]
         dados_tabela.append(linha_total)
 
+        # Removemos o ('NOSPLIT', (0, 0), (-1, -1)) daqui de dentro
         estilo_tabela_minimalista = TableStyle([
             ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
@@ -391,17 +392,18 @@ def exportar_pdf(request):
             ('FONTSIZE', (0, 0), (-1, -1), 10),
             ('TOPPADDING', (0, 0), (-1, -1), 5),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
-            ('NOSPLIT', (0, 0), (-1, -1)),
             ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
             ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
             ('FONTSIZE', (2, -1), (-2, -1), 9),
         ])
 
-        tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90])
+        # Adicionamos o repeatRows=1 para repetir o cabeçalho se a tabela quebrar de página
+        tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90], repeatRows=1)
         tabela.setStyle(estilo_tabela_minimalista)
 
-        bloco_setor.append(tabela)
-        elementos.append(KeepTogether(bloco_setor))
+        # Removemos o KeepTogether e adicionamos os itens diretamente aos elementos do PDF
+        elementos.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
+        elementos.append(tabela)
         elementos.append(Spacer(1, 20))
 
     elementos.append(Spacer(1, 10))
