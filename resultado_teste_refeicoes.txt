@@ -1,0 +1,279 @@
+Data: 01/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:0 | Lanche:0
+-----------------------------------------------------------------
+Data: 02/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 03/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 04/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 05/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 06/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 07/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 08/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 09/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:14 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 10/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:13 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 11/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:1 | Buffet:1 | Marmita:1 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 12/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 13/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 14/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 15/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 16/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 17/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:14 | Buffet:13 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 18/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:2 | Buffet:0 | Marmita:2 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 19/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:13 | Buffet:12 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 20/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:13 | Buffet:12 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 21/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 22/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 23/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 24/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 25/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:0 | Buffet:0 | Marmita:1 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 26/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 27/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 28/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 29/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 30/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 31/01/2026 | Cantina do Secador | Setor: Colaborador Algodoeira
+  -> Café:12 | Buffet:11 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 01/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:15 | Buffet:0 | Marmita:15 | Janta:15 | Lanche:4
+-----------------------------------------------------------------
+Data: 02/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:16 | Buffet:12 | Marmita:6 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 03/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 04/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 05/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 06/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 07/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 08/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 09/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 10/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 11/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 12/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 13/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 14/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 15/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 16/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 17/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 18/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 19/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 20/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 21/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 22/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 23/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 24/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 25/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 26/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 27/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 28/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 29/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 30/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:1 | Marmita:1 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 31/01/2026 | Cantina do Secador | Setor: Safrista Algodoeira
+  -> Café:2 | Buffet:2 | Marmita:0 | Janta:1 | Lanche:0
+-----------------------------------------------------------------
+Data: 01/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:1 | Janta:0 | Lanche:1
+-----------------------------------------------------------------
+Data: 02/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:5 | Marmita:0 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 03/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:0 | Marmita:2 | Janta:2 | Lanche:1
+-----------------------------------------------------------------
+Data: 04/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:5 | Janta:5 | Lanche:1
+-----------------------------------------------------------------
+Data: 05/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:28 | Janta:14 | Lanche:1
+-----------------------------------------------------------------
+Data: 06/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:26 | Janta:16 | Lanche:1
+-----------------------------------------------------------------
+Data: 07/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:23 | Janta:19 | Lanche:1
+-----------------------------------------------------------------
+Data: 08/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:28 | Janta:14 | Lanche:1
+-----------------------------------------------------------------
+Data: 09/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:20 | Janta:17 | Lanche:2
+-----------------------------------------------------------------
+Data: 10/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:0 | Marmita:33 | Janta:10 | Lanche:2
+-----------------------------------------------------------------
+Data: 11/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:23 | Janta:13 | Lanche:1
+-----------------------------------------------------------------
+Data: 12/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:22 | Janta:23 | Lanche:2
+-----------------------------------------------------------------
+Data: 13/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:26 | Janta:13 | Lanche:2
+-----------------------------------------------------------------
+Data: 14/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:3 | Marmita:28 | Janta:21 | Lanche:2
+-----------------------------------------------------------------
+Data: 15/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:3 | Marmita:40 | Janta:17 | Lanche:2
+-----------------------------------------------------------------
+Data: 16/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:39 | Janta:13 | Lanche:2
+-----------------------------------------------------------------
+Data: 17/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:36 | Janta:17 | Lanche:2
+-----------------------------------------------------------------
+Data: 18/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:31 | Janta:17 | Lanche:1
+-----------------------------------------------------------------
+Data: 19/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:36 | Janta:20 | Lanche:2
+-----------------------------------------------------------------
+Data: 20/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:31 | Janta:17 | Lanche:2
+-----------------------------------------------------------------
+Data: 21/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:35 | Janta:14 | Lanche:1
+-----------------------------------------------------------------
+Data: 22/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:39 | Janta:20 | Lanche:1
+-----------------------------------------------------------------
+Data: 23/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:32 | Janta:20 | Lanche:2
+-----------------------------------------------------------------
+Data: 24/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:36 | Janta:24 | Lanche:2
+-----------------------------------------------------------------
+Data: 25/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:1 | Buffet:0 | Marmita:27 | Janta:6 | Lanche:1
+-----------------------------------------------------------------
+Data: 26/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:40 | Janta:18 | Lanche:2
+-----------------------------------------------------------------
+Data: 27/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:30 | Janta:15 | Lanche:2
+-----------------------------------------------------------------
+Data: 28/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:34 | Janta:18 | Lanche:2
+-----------------------------------------------------------------
+Data: 29/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:2 | Marmita:42 | Janta:19 | Lanche:2
+-----------------------------------------------------------------
+Data: 30/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:34 | Janta:23 | Lanche:2
+-----------------------------------------------------------------
+Data: 31/01/2026 | Cantina do Secador | Setor: Terceirizado Algodoeira
+  -> Café:0 | Buffet:1 | Marmita:34 | Janta:17 | Lanche:4
+-----------------------------------------------------------------
