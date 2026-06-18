@@ -1,5 +1,6 @@
 import io
 import json
+import os
 from datetime import date
 from collections import defaultdict
 import pandas as pd
@@ -9,6 +10,8 @@ from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, Q, F
 from django.core.paginator import Paginator
+from django.template.context_processors import request
+from dotenv import load_dotenv
 
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
@@ -19,6 +22,13 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from .models import RegistroRefeicao, TabelaPreco
 from .forms import RegistroRefeicaoForm, TabelaPrecoForm
 
+import google.generativeai as genai
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+load_dotenv()
+
+genai.configure(api_key=(os.getenv('GEMINI_API_KEY')))
 
 def painel_refeicoes(request):
     formato_clicado = request.GET.get('formato', 'filtrar')
@@ -47,7 +57,6 @@ def painel_refeicoes(request):
         if data_fim:
             registros = registros.filter(data_consumo__lte=data_fim)
 
-    # VOLTOU AO NORMAL (Sem o __nome)
     if local_busca:
         registros = registros.filter(local=local_busca)
     if setor_busca:
@@ -70,7 +79,6 @@ def painel_refeicoes(request):
         v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
     )
 
-    # Usando o cálculo dinâmico da função F() para garantir o valor mesmo nos importados
     total_gasto = (
             (detalhes['v_cafe'] or 0) + (detalhes['v_buffet'] or 0) +
             (detalhes['v_marmita'] or 0) + (detalhes['v_janta'] or 0) + (detalhes['v_lanche'] or 0)
@@ -108,7 +116,6 @@ def painel_refeicoes(request):
         'filtros': request.GET
     }
     return render(request, 'refeicoes/painel.html', contexto)
-
 
 def dashboard_refeicoes(request):
     registros = RegistroRefeicao.objects.all()
@@ -161,10 +168,8 @@ def dashboard_refeicoes(request):
         )
         return (agg['vc'] or 0) + (agg['vb'] or 0) + (agg['vm'] or 0) + (agg['vj'] or 0) + (agg['vl'] or 0)
 
-    # 1. CRIAMOS A REGRA DO QUE É TERCEIRO
     filtro_terceiros = Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
 
-    # 2. COLABORADOR PASSA A SER TUDO QUE "NÃO É TERCEIRO" (Usando o .exclude)
     total_colab_periodo = calc_financeiro(registros.exclude(filtro_terceiros))
     total_terc_periodo = calc_financeiro(registros.filter(filtro_terceiros))
 
@@ -183,7 +188,6 @@ def dashboard_refeicoes(request):
             data_consumo__year=mes_alvo.year
         )
 
-        # APLICAMOS A MESMA LÓGICA MÊS A MÊS
         total_colab = calc_financeiro(refeicoes_mes.exclude(filtro_terceiros))
         total_terc = calc_financeiro(refeicoes_mes.filter(filtro_terceiros))
 
@@ -237,7 +241,6 @@ def dashboard_refeicoes(request):
     return render(request, 'refeicoes/dashboard.html', contexto)
 
 
-
 def novo_registro(request):
     if request.method == "POST":
         form = RegistroRefeicaoForm(request.POST)
@@ -247,7 +250,6 @@ def novo_registro(request):
     else:
         form = RegistroRefeicaoForm()
     return render(request, 'refeicoes/novo_registro.html', {'form': form})
-
 
 def editar_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
@@ -260,12 +262,10 @@ def editar_registro(request, id):
         form = RegistroRefeicaoForm(instance=registro)
     return render(request, 'refeicoes/novo_registro.html', {'form': form, 'registro': registro})
 
-
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
     registro.delete()
     return redirect('painel')
-
 
 def exportar_pdf(request):
     registros = RegistroRefeicao.objects.all().order_by('setor', '-data_consumo')
@@ -288,7 +288,6 @@ def exportar_pdf(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
-    # VOLTOU AO NORMAL
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
@@ -296,7 +295,6 @@ def exportar_pdf(request):
     total_geral = 0
 
     for r in registros:
-        # VOLTOU AO NORMAL (Lendo como display para evitar erro no ReportLab)
         dados_por_setor[r.get_setor_display() if hasattr(r, 'get_setor_display') else r.setor].append(r)
 
         # O PDF recalcula somando linha a linha, então podemos usar a mesma lógica
@@ -381,7 +379,6 @@ def exportar_pdf(request):
         ]
         dados_tabela.append(linha_total)
 
-        # Removemos o ('NOSPLIT', (0, 0), (-1, -1)) daqui de dentro
         estilo_tabela_minimalista = TableStyle([
             ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
@@ -442,11 +439,9 @@ def exportar_refeicoes_excel(request):
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
 
-    # VOLTOU AO NORMAL
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
-    # VOLTOU AO NORMAL
     queryset = registros.values(
         'data_consumo', 'local', 'setor', 'qtd_cafe',
         'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche', 'valor_total'
@@ -471,6 +466,85 @@ def exportar_refeicoes_excel(request):
 
     return response
 
+@csrf_exempt
+def chat_assistente(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            pergunta = data.get('pergunta', '')
+            limpar_memoria = data.get('limpar', False)
+
+            # Se o usuário clicar no botão de limpar chat, nós apagamos a sessão
+            if limpar_memoria:
+                request.session['historico_ia'] = []
+                return JsonResponse({'status': 'memoria_apagada'})
+
+            # Puxa a memória da conversa atual (ou cria uma vazia se for a primeira vez)
+            historico_sessao = request.session.get('historico_ia', [])
+
+            registros = RegistroRefeicao.objects.values(
+                'data_consumo', 'local', 'setor',
+                'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita',
+                'qtd_janta', 'qtd_lanche', 'valor_total'
+            )
+            df = pd.DataFrame(list(registros))
+
+            csv_dados = ""
+            if not df.empty:
+                df['data_consumo'] = pd.to_datetime(df['data_consumo']).dt.strftime('%d/%m/%Y')
+                df.rename(columns={
+                    'data_consumo': 'Data', 'local': 'Cantina', 'setor': 'Setor',
+                    'qtd_cafe': 'Café', 'qtd_almoco_buffet': 'Buffet',
+                    'qtd_almoco_marmita': 'Marmita', 'qtd_janta': 'Janta',
+                    'qtd_lanche': 'Lanche', 'valor_total': 'Valor Total'
+                }, inplace=True)
+                csv_dados = df.to_csv(index=False)
+
+            # 1. VELOCIDADE: Instrução de Sistema
+            # Colocar o CSV aqui acelera o processamento porque o modelo processa esse bloco de forma separada
+            instrucoes = f"""
+            Você é um Cientista de Dados do sistema de Controle de Refeições.
+            A coluna 'Data' contém as datas no formato DD/MM/YYYY.
+
+            DADOS DO BANCO:
+            {csv_dados}
+
+            REGRAS ESTRITAS DE RESPOSTA:
+            - Retorne APENAS um objeto JSON válido, sem markdown ou textos fora do JSON.
+            - Gráfico: {{"tipo": "grafico", "texto": "...", "tipo_grafico": "bar", "labels": ["..."], "datasets": [{{"label": "...", "data": [...], "backgroundColor": "#a855f7"}}]}}
+            - Texto: {{"tipo": "texto", "texto": "..."}}
+            """
+
+            model = genai.GenerativeModel(
+                model_name='gemini-2.5-flash',
+                system_instruction=instrucoes,  # Injeta os dados na camada rápida
+                generation_config=genai.GenerationConfig(response_mime_type="application/json")
+            )
+
+            # 2. MEMÓRIA: Prepara o histórico no formato que o Gemini exige
+            historico_formatado = []
+            for msg in historico_sessao:
+                historico_formatado.append({"role": msg["role"], "parts": [msg["parts"]]})
+
+            # Inicia o chat já com as lembranças do passado
+            chat = model.start_chat(history=historico_formatado)
+
+            # Envia apenas a pergunta nova (muito mais rápido do que enviar tudo de novo)
+            resposta_ia = chat.send_message(pergunta)
+
+            # Atualiza a memória com a pergunta de agora e a resposta da IA
+            historico_sessao.append({"role": "user", "parts": pergunta})
+            historico_sessao.append({"role": "model", "parts": resposta_ia.text})
+
+            # Guarda apenas as últimas 8 interações (4 perguntas e 4 respostas) para o chat não ficar gigante e lento
+            request.session['historico_ia'] = historico_sessao[-8:]
+
+            return JsonResponse(json.loads(resposta_ia.text))
+
+        except Exception as e:
+            return JsonResponse({'tipo': 'texto', 'texto': f'Erro ao processar: {str(e)}'})
+
+    return render(request, 'refeicoes/chat.html')
 
 def configurar_precos(request):
     tabela = TabelaPreco.objects.first()

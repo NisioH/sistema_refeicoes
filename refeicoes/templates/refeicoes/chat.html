@@ -1,0 +1,64 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+    <h2>🤖 Assistente de Dados (IA)</h2>
+    <p>Faça qualquer pergunta sobre os consumos, gastos ou peça para comparar meses em gráficos!</p>
+
+    <div id="area-resposta" class="card p-4 mb-4" style="min-height: 200px; background: #f8f9fc;">
+        <p class="text-muted text-center" id="msg-espera">A IA está aguardando sua pergunta...</p>
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="text" id="input-pergunta" class="form-control form-control-lg" placeholder="Ex: Compare o gasto de buffet de Jan/2026 com o mês passado em um gráfico...">
+        <button class="btn btn-primary" id="btn-enviar" onclick="perguntarIA()">Perguntar à IA</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    async function perguntarIA() {
+        const input = document.getElementById('input-pergunta');
+        const areaResposta = document.getElementById('area-resposta');
+        const botao = document.getElementById('btn-enviar');
+
+        if (!input.value) return;
+
+        // Animação de carregamento
+        areaResposta.innerHTML = '<p class="text-center text-primary">🧠 A IA está analisando o banco de dados. Aguarde...</p>';
+        botao.disabled = true;
+
+        // Envia a pergunta para o Python
+        const resposta = await fetch("{% url 'chat_assistente' %}", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({pergunta: input.value})
+        });
+
+        const dados = await resposta.json();
+        botao.disabled = false;
+        areaResposta.innerHTML = ''; // Limpa a área
+
+        // 1. Escreve a explicação da IA
+        const textoIA = document.createElement('p');
+        textoIA.innerHTML = `<strong>IA:</strong> ${dados.texto}`;
+        areaResposta.appendChild(textoIA);
+
+        // 2. Se a IA decidiu que precisa de um gráfico, nós desenhamos!
+        if (dados.tipo === 'grafico') {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'graficoIA';
+            areaResposta.appendChild(canvas);
+
+            new Chart(canvas, {
+                type: dados.tipo_grafico,
+                data: {
+                    labels: dados.labels,
+                    datasets: dados.datasets
+                }
+            });
+        }
+        
+        input.value = ''; // Limpa o input
+    }
+</script>
+{% endblock %}

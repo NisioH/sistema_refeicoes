@@ -10,4 +10,5 @@ urlpatterns = [
     path('exportar-pdf/', views.exportar_pdf, name='exportar_pdf'),
     path('precos/', views.configurar_precos, name='configurar_precos'),
     path('exportar-excel/', views.exportar_refeicoes_excel, name='exportar_excel'),
+    path('api/assistente/', views.chat_assistente, name='chat_assistente'),
 ]

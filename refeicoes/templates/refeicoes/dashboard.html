@@ -22,6 +22,23 @@
 
     <div class="dashboard-container">
 
+        <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border-color); border-left: 4px solid #a855f7;">
+            <h3 style="color: #a855f7; font-size: 15px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.5px;">
+                <i class="fa-solid fa-robot" style="margin-right: 6px;"></i> Inteligência Artificial
+            </h3>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%;">
+                <input type="text" id="input-pergunta" class="input-dark" style="flex: 1; min-width: 250px; height: 42px; font-size: 14px;" placeholder="Pergunte sobre os consumos ou peça um gráfico comparativo...">
+
+                <button class="btn-novo" id="btn-enviar" onclick="perguntarIA()" style="height: 42px; background-color: #a855f7; border: none; padding: 0 20px; font-size: 14px;">
+                    <i class="fas fa-paper-plane" style="margin-right: 5px;"></i> Perguntar
+                </button>
+            </div>
+
+            <div id="area-resposta" style="display: none; margin-top: 15px; padding: 20px; background: rgba(0, 0, 0, 0.15); border-radius: 8px; border: 1px dashed var(--border-color); color: var(--text-color); font-size: 15px; line-height: 1.6;">
+                <p class="text-center" style="color: var(--text-muted); margin: 0;" id="msg-espera">A IA está pensando...</p>
+            </div>
+        </div>
         <div class="dashboard-header">
             <h1><i class="fa-solid fa-chart-line" style="color: #a855f7;"></i> Relatório Geral de Indicadores</h1>
             <div style="display: flex; gap: 10px;">
@@ -52,7 +69,6 @@
             </form>
         </div>
 
-        <!-- BANNER VERDE NOVO: CUSTO TOTAL ACUMULADO -->
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%;">
             <div>
                 <h3 style="color: #10b981; margin: 0; font-size: 15px; font-weight: 600; text-transform: uppercase;">
@@ -65,30 +81,8 @@
             </div>
         </div>
 
-{#        <!-- Bloco de Resumos Principais (4 Cards) -->#}
-{#        <div style="display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; width: 100%;">#}
-{#            <div style="flex: 1; min-width: 200px; background: var(--panel-bg); border-left: 5px solid #f97316; border-radius: 12px; padding: 20px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">#}
-{#                <h4 style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600;">Refeições do Período</h4>#}
-{#                <h2 style="font-size: 32px; font-weight: bold; color: #f97316; margin-top: 5px;">{{ total_refeicoes }}</h2>#}
-{#            </div>#}
-{#            <div style="flex: 1; min-width: 200px; background: var(--panel-bg); border-left: 5px solid #06b6d4; border-radius: 12px; padding: 20px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">#}
-{#                <h4 style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600;">Almoços Buffet</h4>#}
-{#                <h2 style="font-size: 32px; font-weight: bold; color: #06b6d4; margin-top: 5px;">{{ total_buffet }}</h2>#}
-{#            </div>#}
-{#            <div style="flex: 1; min-width: 200px; background: var(--panel-bg); border-left: 5px solid #a855f7; border-radius: 12px; padding: 20px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">#}
-{#                <h4 style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600;">Jantas Consumidas</h4>#}
-{#                <h2 style="font-size: 32px; font-weight: bold; color: #a855f7; margin-top: 5px;">{{ total_janta }}</h2>#}
-{#            </div>#}
-{#            <div style="flex: 1; min-width: 200px; background: var(--panel-bg); border-left: 5px solid #10b981; border-radius: 12px; padding: 20px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">#}
-{#                <h4 style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600;">Investimento Total</h4>#}
-{#                <h2 style="font-size: 32px; font-weight: bold; color: #10b981; margin-top: 5px;">R$ {{ total_gasto|floatformat:"2g" }}</h2>#}
-{#            </div>#}
-{#        </div>#}
-
-        <!-- Faixa de Detalhes Dinâmicos (Separados em Cards Menores) -->
         <div style="display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; width: 100%;">
 
-            <!-- Café -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #a855f7; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(168, 85, 247, 0.1); color: #a855f7; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-mug-hot"></i>
@@ -99,7 +93,6 @@
                 </div>
             </div>
 
-            <!-- Buffet -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #06b6d4; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(6, 182, 212, 0.1); color: #06b6d4; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-utensils"></i>
@@ -110,7 +103,6 @@
                 </div>
             </div>
 
-            <!-- Marmita -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #3b82f6; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-box-open"></i>
@@ -121,7 +113,6 @@
                 </div>
             </div>
 
-            <!-- Janta -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #f97316; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(249, 115, 22, 0.1); color: #f97316; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-moon"></i>
@@ -132,7 +123,6 @@
                 </div>
             </div>
 
-            <!-- Lanche -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #10b981; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-burger"></i>
@@ -145,10 +135,8 @@
 
         </div>
 
-        <!-- Seção dos Gráficos de Barra -->
         <div style="display: flex; gap: 20px; flex-wrap: wrap; width: 100%;">
 
-            <!-- Gráfico 1: Custo Acumulado do Período -->
             <div style="flex: 1; min-width: 350px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
                 <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase; margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
                     <i class="fa-solid fa-chart-column" style="color: #3b82f6; margin-right: 6px;"></i> Custo Acumulado do Período
@@ -158,7 +146,6 @@
                 </div>
             </div>
 
-            <!-- Gráfico 2: Evolução de 3 Meses Fixos -->
             <div style="flex: 1; min-width: 350px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
                 <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase; margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
                     <i class="fa-solid fa-bar-chart" style="color: #10b981; margin-right: 6px;"></i> Evolução: Colab. x Terc. (3 Meses)
@@ -172,10 +159,77 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
+        // ==========================================
+        // 2. LÓGICA DA IA (Fora do DOMContentLoaded)
+        // ==========================================
+        async function perguntarIA() {
+            const input = document.getElementById('input-pergunta');
+            const areaResposta = document.getElementById('area-resposta');
+            const botao = document.getElementById('btn-enviar');
+
+            if (!input.value) return;
+
+            // Mostra a área de resposta e desativa o botão
+            areaResposta.style.display = 'block';
+            areaResposta.innerHTML = '<p class="text-center" style="color: #a855f7; margin: 0;"><strong><i class="fa-solid fa-spinner fa-spin"></i> A IA está analisando os dados... Aguarde!</strong></p>';
+            botao.disabled = true;
+
+            try {
+                // Chama a URL da sua view do Gemini
+                const resposta = await fetch("{% url 'chat_assistente' %}", {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({pergunta: input.value})
+                });
+
+                const dados = await resposta.json();
+                areaResposta.innerHTML = ''; // Limpa o "aguarde"
+
+                // Escreve o texto que a IA mandou
+                const textoIA = document.createElement('p');
+                textoIA.innerHTML = `<strong>Resposta:</strong> ${dados.texto}`;
+                areaResposta.appendChild(textoIA);
+
+                // Desenha o gráfico se a IA pediu!
+                if (dados.tipo === 'grafico') {
+                    const canvas = document.createElement('canvas');
+                    canvas.id = 'graficoIA';
+                    canvas.style.maxHeight = '300px';
+                    areaResposta.appendChild(canvas);
+
+                    new Chart(canvas, {
+                        type: dados.tipo_grafico,
+                        data: {
+                            labels: dados.labels,
+                            datasets: dados.datasets
+                        }
+                    });
+                }
+            } catch (error) {
+                areaResposta.innerHTML = '<p class="text-danger" style="margin:0;">❌ Ocorreu um erro ao consultar a IA. Verifique se o servidor está rodando e a chave configurada.</p>';
+            }
+
+            botao.disabled = false;
+            input.value = ''; // Limpa a barra
+        }
+
+        // ==========================================
+        // 3. EVENTOS QUE PRECISAM ESPERAR O HTML
+        // ==========================================
         document.addEventListener('DOMContentLoaded', function() {
 
-            // --- 1. CONFIGURAÇÃO GRÁFICO BARRA (ACUMULADO DO PERÍODO) ---
+            // Evento para enviar a pergunta ao apertar ENTER
+            document.getElementById("input-pergunta").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.getElementById("btn-enviar").click();
+                }
+            });
+
+            // --- CONFIGURAÇÃO GRÁFICO BARRA (ACUMULADO DO PERÍODO) ---
             const totalColabPeriodo = {{ total_colab_periodo|default:"0"|safe }};
             const totalTercPeriodo = {{ total_terc_periodo|default:"0"|safe }};
 
@@ -237,16 +291,13 @@
                 }
             });
 
-            // --- 2. CONFIGURAÇÃO GRÁFICO BARRA (COMPARATIVO 3 MESES) ---
+            // --- CONFIGURAÇÃO GRÁFICO BARRA (COMPARATIVO 3 MESES) ---
             const labelsMeses = {{ meses_labels|default:"[]"|safe }};
             const dadosColaborador = {{ dados_colaboradores|default:"[]"|safe }};
             const dadosTerceirizado = {{ dados_terceirizados|default:"[]"|safe }};
-
-            // Recebendo as quantidades calculadas
             const qtdsColab = {{ qtds_colaboradores|default:"[]"|safe }};
             const qtdsTerc = {{ qtds_terceirizados|default:"[]"|safe }};
 
-            // Plugin nativo customizado: Desenha a quantidade sobre as barras
             const pluginTextoNasBarras = {
                 id: 'pluginTextoNasBarras',
                 afterDatasetsDraw(chart, args, pluginOptions) {
@@ -261,8 +312,8 @@
                         meta.data.forEach((bar, index) => {
                             const qtd = i === 0 ? qtdsColab[index] : qtdsTerc[index];
                             if (qtd > 0) {
-                                ctx.fillStyle = '#e2e8f0'; // Cor clara que contrasta com o fundo escuro
-                                ctx.fillText(qtd + ' un', bar.x, bar.y - 5); // 5 pixels acima da barra
+                                ctx.fillStyle = '#e2e8f0';
+                                ctx.fillText(qtd + ' un', bar.x, bar.y - 5);
                             }
                         });
                     });
@@ -292,14 +343,12 @@
                         }
                     ]
                 },
-                plugins: [pluginTextoNasBarras], // Ativando nosso plugin
+                plugins: [pluginTextoNasBarras],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     layout: {
-                        padding: {
-                            top: 10 // Espaço fino no topo do canvas
-                        }
+                        padding: { top: 10 }
                     },
                     plugins: {
                         legend: {
@@ -307,7 +356,7 @@
                             labels: {
                                 color: '#94a3b8',
                                 font: { weight: '600' },
-                                padding: 25 // <-- EMPURRA O GRÁFICO PARA BAIXO DA LEGENDA
+                                padding: 25
                             }
                         },
                         tooltip: {
@@ -326,7 +375,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grace: '20%', // <-- FAZ O TETO SER SEMPRE 20% MAIOR QUE A BARRA MAIS ALTA
+                            grace: '20%',
                             ticks: {
                                 color: '#94a3b8',
                                 callback: function(value) {
@@ -342,7 +391,6 @@
                     }
                 }
             });
-
         });
     </script>
 </body>

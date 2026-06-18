@@ -7,7 +7,6 @@ class RegistroRefeicaoForm(forms.ModelForm):
         model = RegistroRefeicao
         fields = ['data_consumo', 'local', 'setor', 'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta',
                   'qtd_lanche']
-
         widgets = {
             'data_consumo': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'input-dark'}),
             'local': forms.Select(attrs={'class': 'input-dark', 'id': 'dropLocal'}),
@@ -21,15 +20,12 @@ class RegistroRefeicaoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RegistroRefeicaoForm, self).__init__(*args, **kwargs)
-        # Filtra as escolhas do campo 'setor' para excluir o CORPORATIVO_SEDE
-        # O Django mantém os dados antigos no banco, mas remove a opção da lista de seleção (dropdown)
         self.fields['setor'].choices = [
             choice for choice in SetorColaborador.choices
             if choice[0] != SetorColaborador.CORPORATIVO_SEDE
         ]
 
     def clean(self):
-        """ Validação para impedir Terceirizado Sede no Secador """
         cleaned_data = super().clean()
         local = cleaned_data.get('local')
         setor = cleaned_data.get('setor')
