@@ -12,6 +12,7 @@ venv/
 env/
 .venv/
 .venv_estavel/
+*.xlsx
 # =========================
 # Arquivos compilados do Python
 # =========================
