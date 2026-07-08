@@ -216,7 +216,6 @@ def dashboard_refeicoes(request):
         'total_buffet': total_buffet,
         'total_janta': total_janta,
 
-        # ---> AGORA AS VARIÁVEIS ESTÃO INDO PARA O DASHBOARD <---
         'det_q_cafe': soma_total['cafe'] or 0,
         'det_v_cafe': float(detalhes['v_cafe'] or 0),
         'det_q_buffet': soma_total['buffet'] or 0,
@@ -227,7 +226,6 @@ def dashboard_refeicoes(request):
         'det_v_janta': float(detalhes['v_janta'] or 0),
         'det_q_lanche': soma_total['lanche'] or 0,
         'det_v_lanche': float(detalhes['v_lanche'] or 0),
-        # --------------------------------------------------------
 
         'total_colab_periodo': float(total_colab_periodo),
         'total_terc_periodo': float(total_terc_periodo),
@@ -297,7 +295,6 @@ def exportar_pdf(request):
     for r in registros:
         dados_por_setor[r.get_setor_display() if hasattr(r, 'get_setor_display') else r.setor].append(r)
 
-        # O PDF recalcula somando linha a linha, então podemos usar a mesma lógica
         valor_da_linha = (
                 (float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0) +
                 (float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0) +
@@ -354,7 +351,6 @@ def exportar_pdf(request):
             valor_linha = c_v + b_v + m_v + j_v + l_v
             total_deste_setor += valor_linha
 
-            # VOLTOU AO NORMAL (Lendo local_display)
             linha = [
                 r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
                 r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
@@ -394,11 +390,9 @@ def exportar_pdf(request):
             ('FONTSIZE', (2, -1), (-2, -1), 9),
         ])
 
-        # Adicionamos o repeatRows=1 para repetir o cabeçalho se a tabela quebrar de página
         tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90], repeatRows=1)
         tabela.setStyle(estilo_tabela_minimalista)
 
-        # Removemos o KeepTogether e adicionamos os itens diretamente aos elementos do PDF
         elementos.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
         elementos.append(tabela)
         elementos.append(Spacer(1, 20))
@@ -474,12 +468,10 @@ def chat_assistente(request):
             pergunta = data.get('pergunta', '')
             limpar_memoria = data.get('limpar', False)
 
-            # Se o usuário clicar no botão de limpar chat, nós apagamos a sessão
             if limpar_memoria:
                 request.session['historico_ia'] = []
                 return JsonResponse({'status': 'memoria_apagada'})
 
-            # Puxa a memória da conversa atual (ou cria uma vazia se for a primeira vez)
             historico_sessao = request.session.get('historico_ia', [])
 
             registros = RegistroRefeicao.objects.values(
@@ -500,8 +492,6 @@ def chat_assistente(request):
                 }, inplace=True)
                 csv_dados = df.to_csv(index=False)
 
-            # 1. VELOCIDADE: Instrução de Sistema
-            # Colocar o CSV aqui acelera o processamento porque o modelo processa esse bloco de forma separada
             instrucoes = f"""
             Você é um Cientista de Dados do sistema de Controle de Refeições.
             A coluna 'Data' contém as datas no formato DD/MM/YYYY.
@@ -521,22 +511,17 @@ def chat_assistente(request):
                 generation_config=genai.GenerationConfig(response_mime_type="application/json")
             )
 
-            # 2. MEMÓRIA: Prepara o histórico no formato que o Gemini exige
             historico_formatado = []
             for msg in historico_sessao:
                 historico_formatado.append({"role": msg["role"], "parts": [msg["parts"]]})
 
-            # Inicia o chat já com as lembranças do passado
             chat = model.start_chat(history=historico_formatado)
 
-            # Envia apenas a pergunta nova (muito mais rápido do que enviar tudo de novo)
             resposta_ia = chat.send_message(pergunta)
 
-            # Atualiza a memória com a pergunta de agora e a resposta da IA
             historico_sessao.append({"role": "user", "parts": pergunta})
             historico_sessao.append({"role": "model", "parts": resposta_ia.text})
 
-            # Guarda apenas as últimas 8 interações (4 perguntas e 4 respostas) para o chat não ficar gigante e lento
             request.session['historico_ia'] = historico_sessao[-8:]
 
             return JsonResponse(json.loads(resposta_ia.text))

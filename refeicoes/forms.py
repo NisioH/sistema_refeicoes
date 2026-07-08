@@ -30,7 +30,6 @@ class RegistroRefeicaoForm(forms.ModelForm):
         local = cleaned_data.get('local')
         setor = cleaned_data.get('setor')
 
-        # Regra: Se local for SECADOR, não pode ser TERCEIROS_FAZENDA (que agora aparece como Terceirizado Sede)
         if local == LocalRefeicao.SECADOR and setor == SetorColaborador.TERCEIROS_FAZENDA:
             self.add_error('setor', "A opção 'Terceirizado Sede' não é permitida para a Cantina do Secador.")
 
