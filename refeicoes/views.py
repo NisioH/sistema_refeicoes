@@ -460,76 +460,76 @@ def exportar_refeicoes_excel(request):
 
     return response
 
-@csrf_exempt
-def chat_assistente(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            pergunta = data.get('pergunta', '')
-            limpar_memoria = data.get('limpar', False)
-
-            if limpar_memoria:
-                request.session['historico_ia'] = []
-                return JsonResponse({'status': 'memoria_apagada'})
-
-            historico_sessao = request.session.get('historico_ia', [])
-
-            registros = RegistroRefeicao.objects.values(
-                'data_consumo', 'local', 'setor',
-                'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita',
-                'qtd_janta', 'qtd_lanche', 'valor_total'
-            )
-            df = pd.DataFrame(list(registros))
-
-            csv_dados = ""
-            if not df.empty:
-                df['data_consumo'] = pd.to_datetime(df['data_consumo']).dt.strftime('%d/%m/%Y')
-                df.rename(columns={
-                    'data_consumo': 'Data', 'local': 'Cantina', 'setor': 'Setor',
-                    'qtd_cafe': 'Café', 'qtd_almoco_buffet': 'Buffet',
-                    'qtd_almoco_marmita': 'Marmita', 'qtd_janta': 'Janta',
-                    'qtd_lanche': 'Lanche', 'valor_total': 'Valor Total'
-                }, inplace=True)
-                csv_dados = df.to_csv(index=False)
-
-            instrucoes = f"""
-            Você é um Cientista de Dados do sistema de Controle de Refeições.
-            A coluna 'Data' contém as datas no formato DD/MM/YYYY.
-
-            DADOS DO BANCO:
-            {csv_dados}
-
-            REGRAS ESTRITAS DE RESPOSTA:
-            - Retorne APENAS um objeto JSON válido, sem markdown ou textos fora do JSON.
-            - Gráfico: {{"tipo": "grafico", "texto": "...", "tipo_grafico": "bar", "labels": ["..."], "datasets": [{{"label": "...", "data": [...], "backgroundColor": "#a855f7"}}]}}
-            - Texto: {{"tipo": "texto", "texto": "..."}}
-            """
-
-            model = genai.GenerativeModel(
-                model_name='gemini-2.5-flash',
-                system_instruction=instrucoes,  # Injeta os dados na camada rápida
-                generation_config=genai.GenerationConfig(response_mime_type="application/json")
-            )
-
-            historico_formatado = []
-            for msg in historico_sessao:
-                historico_formatado.append({"role": msg["role"], "parts": [msg["parts"]]})
-
-            chat = model.start_chat(history=historico_formatado)
-
-            resposta_ia = chat.send_message(pergunta)
-
-            historico_sessao.append({"role": "user", "parts": pergunta})
-            historico_sessao.append({"role": "model", "parts": resposta_ia.text})
-
-            request.session['historico_ia'] = historico_sessao[-8:]
-
-            return JsonResponse(json.loads(resposta_ia.text))
-
-        except Exception as e:
-            return JsonResponse({'tipo': 'texto', 'texto': f'Erro ao processar: {str(e)}'})
-
-    return render(request, 'refeicoes/chat.html')
+# @csrf_exempt
+# def chat_assistente(request):
+#     if request.method == 'POST':
+#         try:
+#             data = json.loads(request.body)
+#             pergunta = data.get('pergunta', '')
+#             limpar_memoria = data.get('limpar', False)
+#
+#             if limpar_memoria:
+#                 request.session['historico_ia'] = []
+#                 return JsonResponse({'status': 'memoria_apagada'})
+#
+#             historico_sessao = request.session.get('historico_ia', [])
+#
+#             registros = RegistroRefeicao.objects.values(
+#                 'data_consumo', 'local', 'setor',
+#                 'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita',
+#                 'qtd_janta', 'qtd_lanche', 'valor_total'
+#             )
+#             df = pd.DataFrame(list(registros))
+#
+#             csv_dados = ""
+#             if not df.empty:
+#                 df['data_consumo'] = pd.to_datetime(df['data_consumo']).dt.strftime('%d/%m/%Y')
+#                 df.rename(columns={
+#                     'data_consumo': 'Data', 'local': 'Cantina', 'setor': 'Setor',
+#                     'qtd_cafe': 'Café', 'qtd_almoco_buffet': 'Buffet',
+#                     'qtd_almoco_marmita': 'Marmita', 'qtd_janta': 'Janta',
+#                     'qtd_lanche': 'Lanche', 'valor_total': 'Valor Total'
+#                 }, inplace=True)
+#                 csv_dados = df.to_csv(index=False)
+#
+#             instrucoes = f"""
+#             Você é um Cientista de Dados do sistema de Controle de Refeições.
+#             A coluna 'Data' contém as datas no formato DD/MM/YYYY.
+#
+#             DADOS DO BANCO:
+#             {csv_dados}
+#
+#             REGRAS ESTRITAS DE RESPOSTA:
+#             - Retorne APENAS um objeto JSON válido, sem markdown ou textos fora do JSON.
+#             - Gráfico: {{"tipo": "grafico", "texto": "...", "tipo_grafico": "bar", "labels": ["..."], "datasets": [{{"label": "...", "data": [...], "backgroundColor": "#a855f7"}}]}}
+#             - Texto: {{"tipo": "texto", "texto": "..."}}
+#             """
+#
+#             model = genai.GenerativeModel(
+#                 model_name='gemini-2.5-flash',
+#                 system_instruction=instrucoes,  # Injeta os dados na camada rápida
+#                 generation_config=genai.GenerationConfig(response_mime_type="application/json")
+#             )
+#
+#             historico_formatado = []
+#             for msg in historico_sessao:
+#                 historico_formatado.append({"role": msg["role"], "parts": [msg["parts"]]})
+#
+#             chat = model.start_chat(history=historico_formatado)
+#
+#             resposta_ia = chat.send_message(pergunta)
+#
+#             historico_sessao.append({"role": "user", "parts": pergunta})
+#             historico_sessao.append({"role": "model", "parts": resposta_ia.text})
+#
+#             request.session['historico_ia'] = historico_sessao[-8:]
+#
+#             return JsonResponse(json.loads(resposta_ia.text))
+#
+#         except Exception as e:
+#             return JsonResponse({'tipo': 'texto', 'texto': f'Erro ao processar: {str(e)}'})
+#
+#     return render(request, 'refeicoes/chat.html')
 
 def configurar_precos(request):
     tabela = TabelaPreco.objects.first()

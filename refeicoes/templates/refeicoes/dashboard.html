@@ -21,7 +21,7 @@
 <body>
 
     <div class="dashboard-container">
-
+<!--
         <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border-color); border-left: 4px solid #a855f7;">
             <h3 style="color: #a855f7; font-size: 15px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.5px;">
                 <i class="fa-solid fa-robot" style="margin-right: 6px;"></i> Inteligência Artificial
@@ -39,6 +39,8 @@
                 <p class="text-center" style="color: var(--text-muted); margin: 0;" id="msg-espera">A IA está pensando...</p>
             </div>
         </div>
+        -->
+
         <div class="dashboard-header">
             <h1><i class="fa-solid fa-chart-line" style="color: #a855f7;"></i> Relatório Geral de Indicadores</h1>
             <div style="display: flex; gap: 10px;">
@@ -165,6 +167,7 @@
         // ==========================================
         // 2. LÓGICA DA IA (Fora do DOMContentLoaded)
         // ==========================================
+        /*
         async function perguntarIA() {
             const input = document.getElementById('input-pergunta');
             const areaResposta = document.getElementById('area-resposta');
@@ -179,7 +182,7 @@
 
             try {
                 // Chama a URL da sua view do Gemini
-                const resposta = await fetch("{% url 'chat_assistente' %}", {
+                const resposta = await fetch("{#% url 'chat_assistente' %#}", {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({pergunta: input.value})
@@ -215,12 +218,13 @@
             botao.disabled = false;
             input.value = ''; // Limpa a barra
         }
-
+    */
         // ==========================================
         // 3. EVENTOS QUE PRECISAM ESPERAR O HTML
         // ==========================================
         document.addEventListener('DOMContentLoaded', function() {
 
+            /*
             // Evento para enviar a pergunta ao apertar ENTER
             document.getElementById("input-pergunta").addEventListener("keypress", function(event) {
                 if (event.key === "Enter") {
@@ -228,6 +232,7 @@
                     document.getElementById("btn-enviar").click();
                 }
             });
+            */
 
             // --- CONFIGURAÇÃO GRÁFICO BARRA (ACUMULADO DO PERÍODO) ---
             const totalColabPeriodo = {{ total_colab_periodo|default:"0"|safe }};
