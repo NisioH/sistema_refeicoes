@@ -19,17 +19,17 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 
-from .models import RegistroRefeicao, TabelaPreco
-from .forms import RegistroRefeicaoForm, TabelaPrecoForm
-
-import google.generativeai as genai
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, Fazenda
+from .forms import RegistroRefeicaoForm, TabelaPrecoForm
+
 load_dotenv()
 
-genai.configure(api_key=(os.getenv('GEMINI_API_KEY')))
 
+@login_required
 def painel_refeicoes(request):
     formato_clicado = request.GET.get('formato', 'filtrar')
 
@@ -40,10 +40,46 @@ def painel_refeicoes(request):
 
     registros = RegistroRefeicao.objects.all().order_by('-data_consumo', '-id')
 
+    is_dono = True
+    fazenda_usuario = None
+    if hasattr(request.user, 'perfil'):
+        is_dono = request.user.perfil.is_dono
+        if request.user.perfil.fazenda_lotacao:
+            fazenda_usuario = request.user.perfil.fazenda_lotacao
+
+    if not is_dono and fazenda_usuario:
+        registros = registros.filter(fazenda=fazenda_usuario)
+
+    nome_fazenda_atual = fazenda_usuario.nome if fazenda_usuario else "Todas as Fazendas"
+
+    # Define dinamicamente as cantinas e se exibe a opção "Todas"
+    if is_dono:
+        cantinas_disponiveis = list(LocalRefeicao.choices)
+        fazendas_disponiveis = Fazenda.objects.all() if 'Fazenda' in globals() else []
+    else:
+        nome_f = fazenda_usuario.nome if fazenda_usuario else ""
+        if nome_f == 'Fazenda BC':
+            # Apenas 1 opção, sem a opção "Todas"
+            cantinas_disponiveis = [(LocalRefeicao.CANTINA_BC, 'Cantina BC')]
+        elif nome_f == 'Fazenda Matão':
+            cantinas_disponiveis = [(LocalRefeicao.CANTINA_MATAO, 'Cantina Matão')]
+        elif nome_f == 'Fazenda Lagoa':
+            cantinas_disponiveis = [(LocalRefeicao.CANTINA_LAGOA, 'Cantina Lagoa')]
+        else:  # Fazenda Independência (tem duas, então adicionamos a opção vazia "Todas")
+            cantinas_disponiveis = [
+                ('', 'Todas'),
+                (LocalRefeicao.SEDE, 'Cantina Sede'),
+                (LocalRefeicao.SECADOR, 'Cantina Secador')
+            ]
+
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
+    fazenda_busca = request.GET.get('fazenda')
+
+    if is_dono and fazenda_busca:
+        registros = registros.filter(fazenda_id=fazenda_busca)
 
     if not data_inicio and not data_fim:
         hoje = date.today()
@@ -56,6 +92,15 @@ def painel_refeicoes(request):
             registros = registros.filter(data_consumo__gte=data_inicio)
         if data_fim:
             registros = registros.filter(data_consumo__lte=data_fim)
+
+    # Se a fazenda tem apenas uma cantina, forçamos o filtro a buscar por ela automaticamente
+    if not is_dono and nome_f in ['Fazenda BC', 'Fazenda Matão', 'Fazenda Lagoa']:
+        if nome_f == 'Fazenda BC':
+            local_busca = LocalRefeicao.CANTINA_BC
+        elif nome_f == 'Fazenda Matão':
+            local_busca = LocalRefeicao.CANTINA_MATAO
+        elif nome_f == 'Fazenda Lagoa':
+            local_busca = LocalRefeicao.CANTINA_LAGOA
 
     if local_busca:
         registros = registros.filter(local=local_busca)
@@ -113,13 +158,26 @@ def painel_refeicoes(request):
         'det_q_lanche': soma_total['lanche'] or 0,
         'det_v_lanche': float(detalhes['v_lanche'] or 0),
 
+        'nome_fazenda_atual': nome_fazenda_atual,
+        'cantinas_disponiveis': cantinas_disponiveis,
+        'fazendas_disponiveis': Fazenda.objects.all() if is_dono else [],
+
         'filtros': request.GET
     }
     return render(request, 'refeicoes/painel.html', contexto)
 
+
+@login_required
 def dashboard_refeicoes(request):
+    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+        return redirect('painel')
+
     registros = RegistroRefeicao.objects.all()
     hoje = date.today()
+
+    fazenda_id = request.GET.get('fazenda')
+    if fazenda_id:
+        registros = registros.filter(fazenda_id=fazenda_id)
 
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
@@ -168,7 +226,7 @@ def dashboard_refeicoes(request):
         )
         return (agg['vc'] or 0) + (agg['vb'] or 0) + (agg['vm'] or 0) + (agg['vj'] or 0) + (agg['vl'] or 0)
 
-    filtro_terceiros = Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda')
+    filtro_terceiros = Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda') | Q(setor='Terceiros')
 
     total_colab_periodo = calc_financeiro(registros.exclude(filtro_terceiros))
     total_terc_periodo = calc_financeiro(registros.filter(filtro_terceiros))
@@ -183,7 +241,7 @@ def dashboard_refeicoes(request):
         mes_alvo = hoje - relativedelta(months=i)
         meses_labels.append(mes_alvo.strftime('%m/%Y'))
 
-        refeicoes_mes = RegistroRefeicao.objects.filter(
+        refeicoes_mes = registros.filter(
             data_consumo__month=mes_alvo.month,
             data_consumo__year=mes_alvo.year
         )
@@ -196,14 +254,14 @@ def dashboard_refeicoes(request):
             l=Sum('qtd_lanche')
         )
         q_colab = (agg_colab['c'] or 0) + (agg_colab['b'] or 0) + (agg_colab['m'] or 0) + (agg_colab['j'] or 0) + (
-                    agg_colab['l'] or 0)
+                agg_colab['l'] or 0)
 
         agg_terc = refeicoes_mes.filter(filtro_terceiros).aggregate(
             c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
             l=Sum('qtd_lanche')
         )
         q_terc = (agg_terc['c'] or 0) + (agg_terc['b'] or 0) + (agg_terc['m'] or 0) + (agg_terc['j'] or 0) + (
-                    agg_terc['l'] or 0)
+                agg_terc['l'] or 0)
 
         dados_colaboradores.append(float(total_colab))
         dados_terceirizados.append(float(total_terc))
@@ -239,34 +297,61 @@ def dashboard_refeicoes(request):
     return render(request, 'refeicoes/dashboard.html', contexto)
 
 
+@login_required
 def novo_registro(request):
     if request.method == "POST":
-        form = RegistroRefeicaoForm(request.POST)
+        form = RegistroRefeicaoForm(request.POST, usuario=request.user)
         if form.is_valid():
-            form.save()
+            registro = form.save(commit=False)
+
+            if hasattr(request.user, 'perfil') and request.user.perfil.fazenda_lotacao:
+                if not request.user.perfil.is_dono:
+                    registro.fazenda = request.user.perfil.fazenda_lotacao
+
+            registro.save()
             return redirect('painel')
     else:
-        form = RegistroRefeicaoForm()
+        form = RegistroRefeicaoForm(usuario=request.user)
     return render(request, 'refeicoes/novo_registro.html', {'form': form})
 
+
+@login_required
 def editar_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
+
+    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+        if registro.fazenda != request.user.perfil.fazenda_lotacao:
+            return redirect('painel')
+
     if request.method == 'POST':
-        form = RegistroRefeicaoForm(request.POST, instance=registro)
+        form = RegistroRefeicaoForm(request.POST, instance=registro, usuario=request.user)
         if form.is_valid():
             form.save()
             return redirect('painel')
     else:
-        form = RegistroRefeicaoForm(instance=registro)
+        form = RegistroRefeicaoForm(instance=registro, usuario=request.user)
     return render(request, 'refeicoes/novo_registro.html', {'form': form, 'registro': registro})
 
+
+@login_required
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
+
+    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+        if registro.fazenda != request.user.perfil.fazenda_lotacao:
+            return redirect('painel')
+
     registro.delete()
     return redirect('painel')
 
+
+@login_required
 def exportar_pdf(request):
     registros = RegistroRefeicao.objects.all().order_by('setor', '-data_consumo')
+
+    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+        if request.user.perfil.fazenda_lotacao:
+            registros = registros.filter(fazenda=request.user.perfil.fazenda_lotacao)
 
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
@@ -412,8 +497,13 @@ def exportar_pdf(request):
     return FileResponse(buffer, as_attachment=True, filename=nome_arquivo)
 
 
+@login_required
 def exportar_refeicoes_excel(request):
     registros = RegistroRefeicao.objects.all()
+
+    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+        if request.user.perfil.fazenda_lotacao:
+            registros = registros.filter(fazenda=request.user.perfil.fazenda_lotacao)
 
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
@@ -458,83 +548,24 @@ def exportar_refeicoes_excel(request):
     with pd.ExcelWriter(response, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name='Lançamentos')
 
+    response['Content-Disposition'] = 'attachment; filename=Relatorio_Refeicoes.xlsx'
     return response
 
-# @csrf_exempt
-# def chat_assistente(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             pergunta = data.get('pergunta', '')
-#             limpar_memoria = data.get('limpar', False)
-#
-#             if limpar_memoria:
-#                 request.session['historico_ia'] = []
-#                 return JsonResponse({'status': 'memoria_apagada'})
-#
-#             historico_sessao = request.session.get('historico_ia', [])
-#
-#             registros = RegistroRefeicao.objects.values(
-#                 'data_consumo', 'local', 'setor',
-#                 'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita',
-#                 'qtd_janta', 'qtd_lanche', 'valor_total'
-#             )
-#             df = pd.DataFrame(list(registros))
-#
-#             csv_dados = ""
-#             if not df.empty:
-#                 df['data_consumo'] = pd.to_datetime(df['data_consumo']).dt.strftime('%d/%m/%Y')
-#                 df.rename(columns={
-#                     'data_consumo': 'Data', 'local': 'Cantina', 'setor': 'Setor',
-#                     'qtd_cafe': 'Café', 'qtd_almoco_buffet': 'Buffet',
-#                     'qtd_almoco_marmita': 'Marmita', 'qtd_janta': 'Janta',
-#                     'qtd_lanche': 'Lanche', 'valor_total': 'Valor Total'
-#                 }, inplace=True)
-#                 csv_dados = df.to_csv(index=False)
-#
-#             instrucoes = f"""
-#             Você é um Cientista de Dados do sistema de Controle de Refeições.
-#             A coluna 'Data' contém as datas no formato DD/MM/YYYY.
-#
-#             DADOS DO BANCO:
-#             {csv_dados}
-#
-#             REGRAS ESTRITAS DE RESPOSTA:
-#             - Retorne APENAS um objeto JSON válido, sem markdown ou textos fora do JSON.
-#             - Gráfico: {{"tipo": "grafico", "texto": "...", "tipo_grafico": "bar", "labels": ["..."], "datasets": [{{"label": "...", "data": [...], "backgroundColor": "#a855f7"}}]}}
-#             - Texto: {{"tipo": "texto", "texto": "..."}}
-#             """
-#
-#             model = genai.GenerativeModel(
-#                 model_name='gemini-2.5-flash',
-#                 system_instruction=instrucoes,  # Injeta os dados na camada rápida
-#                 generation_config=genai.GenerationConfig(response_mime_type="application/json")
-#             )
-#
-#             historico_formatado = []
-#             for msg in historico_sessao:
-#                 historico_formatado.append({"role": msg["role"], "parts": [msg["parts"]]})
-#
-#             chat = model.start_chat(history=historico_formatado)
-#
-#             resposta_ia = chat.send_message(pergunta)
-#
-#             historico_sessao.append({"role": "user", "parts": pergunta})
-#             historico_sessao.append({"role": "model", "parts": resposta_ia.text})
-#
-#             request.session['historico_ia'] = historico_sessao[-8:]
-#
-#             return JsonResponse(json.loads(resposta_ia.text))
-#
-#         except Exception as e:
-#             return JsonResponse({'tipo': 'texto', 'texto': f'Erro ao processar: {str(e)}'})
-#
-#     return render(request, 'refeicoes/chat.html')
 
+@login_required
 def configurar_precos(request):
-    tabela = TabelaPreco.objects.first()
-    if not tabela:
-        tabela = TabelaPreco.objects.create()
+    fazenda_usuario = None
+    if hasattr(request.user, 'perfil') and request.user.perfil.fazenda_lotacao:
+        fazenda_usuario = request.user.perfil.fazenda_lotacao
+
+    if fazenda_usuario:
+        tabela = TabelaPreco.objects.filter(fazenda=fazenda_usuario).first()
+        if not tabela:
+            tabela = TabelaPreco.objects.create(fazenda=fazenda_usuario)
+    else:
+        tabela = TabelaPreco.objects.filter(fazenda__isnull=True).first()
+        if not tabela:
+            tabela = TabelaPreco.objects.create()
 
     if request.method == 'POST':
         form = TabelaPrecoForm(request.POST, instance=tabela)
@@ -544,4 +575,9 @@ def configurar_precos(request):
     else:
         form = TabelaPrecoForm(instance=tabela)
 
-    return render(request, 'refeicoes/configurar_precos.html', {'form': form, 'tabela': tabela})
+    contexto = {
+        'form': form,
+        'tabela': tabela,
+        'nome_fazenda': fazenda_usuario.nome if fazenda_usuario else "Matriz (Padrão)"
+    }
+    return render(request, 'refeicoes/configurar_precos.html', contexto)

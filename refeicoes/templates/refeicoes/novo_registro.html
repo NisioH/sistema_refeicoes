@@ -20,8 +20,8 @@
 
 <body>
 
-        <div class="form-container">
-                <div class="header" style="text-align: center;">
+    <div class="form-container">
+        <div class="header" style="text-align: center;">
             {% if registro %}
                 <h2><i class="fa-solid fa-pen"></i> Editar Lançamento</h2>
                 <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Alterando registro do dia {{ registro.data_formatada }}</p>
@@ -33,7 +33,7 @@
 
         <form method="POST">
             {% csrf_token %}
-            
+
             <div class="form-group">
                 <label>Data do Consumo (Competência)</label>
                 {{ form.data_consumo }}
@@ -62,7 +62,7 @@
                     {{ form.qtd_almoco_buffet }}
                 </div>
                 <div class="form-group">
-                    <label>🍱 Almoço Marmita</label>
+                    <label>🍱 Marmita</label>
                     {{ form.qtd_almoco_marmita }}
                 </div>
                 <div class="form-group">
@@ -79,7 +79,7 @@
                 <a href="{% url 'painel' %}" class="btn-voltar">
                     <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
                 </a>
-                
+
                 <button type="submit" class="btn-salvar">
                     <i class="fa-solid fa-check"></i> {% if registro %}Atualizar Registro{% else %}Salvar Lançamento{% endif %}
                 </button>
@@ -108,14 +108,30 @@ document.addEventListener("DOMContentLoaded", function() {
         // Limpa o select completamente
         campoSetor.innerHTML = "";
 
-        // Regras (Chaves em minúsculo para evitar erro de digitação)
-        const setoresSede = ['colaborador sede', 'corporativo sede', 'terceiros fazenda'];
+
+        if (cantinaEscolhida !== 'SEDE' && cantinaEscolhida !== 'SECADOR') {
+            backupDados.forEach(dado => {
+                campoSetor.add(new Option(dado.text, dado.value));
+            });
+            campoSetor.value = valorSetorAnterior;
+            return;
+        }
+
+        // Regras ATUALIZADAS (Chaves em minúsculo para evitar erro de digitação)
+        const setoresSede = [
+            'colaborador sede',
+            'terceiros fazenda',
+
+        ];
+
         const setoresSecador = [
             'colaborador secador',
+            'safrista secador',
             'colaborador algodoeira',
             'terceirizado algodoeira',
             'safrista algodoeira',
-            'corporativo'
+            'corporativo',
+            'colaborador escritorio'
         ];
 
         // Reconstruímos as opções do zero usando os dados salvos
@@ -124,8 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Sempre mantém o "---------" (opção vazia)
             if (!dado.value) {
-                const novaOpcao = new Option(dado.text, dado.value);
-                campoSetor.add(novaOpcao);
+                campoSetor.add(new Option(dado.text, dado.value));
                 return;
             }
 

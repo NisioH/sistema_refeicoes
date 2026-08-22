@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Refeições</title>
+    <title>Painel de Refeições - {{ nome_fazenda_atual }}</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=6">
 
     <script>
         if (localStorage.getItem('tema-refeicoes') === 'claro') {
@@ -22,16 +22,20 @@
     <div class="dashboard-container">
 
         <div class="dashboard-header">
-            <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições</h1>
+            <!-- TÍTULO DINÂMICO COM O NOME DA FAZENDA -->
+            <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições - {{ nome_fazenda_atual }}</h1>
             <div style="display: flex; gap: 10px;">
 
                 <button id="btn-tema" class="btn-novo" style="background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--border-color); flex: 0 0 45px; height: 45px; padding: 0; display: flex; justify-content: center; align-items: center;" title="Mudar Tema">
                     <i id="icone-tema" class="fa-solid fa-sun"></i>
                 </button>
 
+                <!-- BOTÃO DE RESUMO GERAL APARECE APENAS PARA O ADMIN -->
+                {% if request.user.perfil.is_dono %}
                 <a href="{% url 'dashboard_refeicoes' %}" class="btn-novo" style="background-color: #a855f7;">
                     <i class="fa-solid fa-chart-pie"></i> Resumo Geral
                 </a>
+                {% endif %}
 
                 <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-tags"></i> Preços
@@ -114,7 +118,7 @@
         </div>
 
         <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color); overflow: hidden;">
-            <form method="GET" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: end; width: 100%;">
+            <form method="GET" style="display: flex; opacity: 0.85; flex-wrap: wrap; gap: 15px; align-items: end; width: 100%;">
 
                 <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA INÍCIO</label>
@@ -126,13 +130,38 @@
                     <input type="date" name="data_fim" value="{{ filtros.data_fim }}" class="input-dark">
                 </div>
 
+                <!-- FILTRO DE FAZENDA EXCLUSIVO PARA O ADMIN -->
+                {% if request.user.perfil.is_dono %}
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">FAZENDA</label>
+                    <select name="fazenda" class="input-dark">
+                        <option value="">Todas as Fazendas</option>
+                        {% for f in fazendas_disponiveis %}
+                            <option value="{{ f.id }}" {% if filtros.fazenda == f.id|stringformat:"s" %}selected{% endif %}>{{ f.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <!-- FILTRO DE CANTINA DINÂMICO -->
                 <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">CANTINA</label>
-                    <select name="local" class="input-dark">
-                        <option value="">Todas</option>
-                        <option value="SEDE" {% if filtros.local == 'SEDE' %}selected{% endif %}>Sede</option>
-                        <option value="SECADOR" {% if filtros.local == 'SECADOR' %}selected{% endif %}>Secador</option>
-                    </select>
+
+                    {% if cantinas_disponiveis|length > 1 or request.user.perfil.is_dono %}
+                        <!-- Se tem mais de uma cantina (Independência ou Admin), exibe o select normal -->
+                        <select name="local" class="input-dark">
+                            <option value="">Todas</option>
+                            {% for sigla, nome in cantinas_disponiveis %}
+                                <option value="{{ sigla }}" {% if filtros.local == sigla %}selected{% endif %}>{{ nome }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <!-- Se só tem 1 cantina, exibe exatamente igual ao input de texto comum, sem alteração de opacidade -->
+                        {% for sigla, nome in cantinas_disponiveis %}
+                            <input type="text" value="{{ nome }}" class="input-dark" readonly style="cursor: default;">
+                            <input type="hidden" name="local" value="{{ sigla }}">
+                        {% endfor %}
+                    {% endif %}
                 </div>
 
                 <div style="flex: 1; min-width: 130px;">
@@ -162,6 +191,9 @@
                 <thead>
                     <tr>
                         <th>Data</th>
+                        {% if request.user.perfil.is_dono %}
+                        <th>Fazenda</th>
+                        {% endif %}
                         <th>Cantina</th>
                         <th>Setor</th>
                         <th class="text-center">Café</th>
@@ -177,6 +209,9 @@
                     {% for reg in page_obj %}
                     <tr>
                         <td style="font-weight: 600;">{{ reg.data_formatada }}</td>
+                        {% if request.user.perfil.is_dono %}
+                        <td><span style="color: var(--primary-color); font-weight: 600;">{{ reg.fazenda.nome }}</span></td>
+                        {% endif %}
                         <td>{{ reg.get_local_display }}</td>
                         <td><span class="badge-setor">{{ reg.get_setor_display }}</span></td>
                         <td class="text-center">{{ reg.qtd_cafe }}</td>
@@ -194,7 +229,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
+                        <td colspan="{% if request.user.perfil.is_dono %}11{% else %}10{% endif %}" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

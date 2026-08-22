@@ -7,65 +7,103 @@
     <title>Configurar Preços</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=5">
 
     <script>
         if (localStorage.getItem('tema-refeicoes') === 'claro') {
             document.documentElement.classList.add('theme-light');
         }
     </script>
+    <style>
+        /* Estilo para embutir o R$ colado no input */
+        .input-money-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-money-wrapper .prefixo-rs {
+            position: absolute;
+            left: 15px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        /* Empurra o texto do input para a direita para não ficar em cima do R$ */
+        .input-money-wrapper input {
+            padding-left: 45px !important;
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="form-container">
-        <div class="form-header">
-            <h2><i class="fa-solid fa-tags"></i> Tabela de Preços</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">
+        <div class="form-header" style="margin-bottom: 30px;">
+            <h2><i class="fa-solid fa-tags"></i> Tabela de Preços - {{ nome_fazenda }}</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">
                 Atualizado pela última vez em: {{ tabela.data_atualizacao|date:"d/m/Y H:i" }}
             </p>
         </div>
 
         <form method="POST">
             {% csrf_token %}
-            
-            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary-color); padding: 15px; border-radius: 8px; margin-bottom: 25px;">
-                <p style="color: #93c5fd; font-size: 13px;">
+
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary-color); padding: 20px; border-radius: 8px; margin-bottom: 35px;">
+                <p style="color: #93c5fd; font-size: 14px; margin: 0; line-height: 1.5;">
                     <i class="fa-solid fa-circle-info"></i> <strong>Aviso:</strong> Alterar estes valores não afetará o custo total das refeições que já foram lançadas no passado.
                 </p>
             </div>
 
-            <div class="input-group">
-                <label>Café da Manhã (R$)</label>
-                {{ form.cafe }}
-            </div>
-            
-            <div style="display: flex; gap: 15px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Almoço Buffet (R$)</label>
-                    {{ form.buffet }}
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Almoço Marmita (R$)</label>
-                    {{ form.marmita }}
+            <!-- Café da Manhã -->
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Café da Manhã</label>
+                <div class="input-money-wrapper">
+                    <span class="prefixo-rs">R$</span>
+                    {{ form.cafe }}
                 </div>
             </div>
 
-            <div style="display: flex; gap: 15px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Janta (R$)</label>
-                    {{ form.janta }}
+            <!-- Almoço Buffet e Marmita -->
+            <div style="display: flex; gap: 24px; margin-bottom: 25px;">
+                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Almoço Buffet</label>
+                    <div class="input-money-wrapper">
+                        <span class="prefixo-rs">R$</span>
+                        {{ form.buffet }}
+                    </div>
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Lanche (R$)</label>
-                    {{ form.lanche }}
+                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Almoço Marmita</label>
+                    <div class="input-money-wrapper">
+                        <span class="prefixo-rs">R$</span>
+                        {{ form.marmita }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Janta e Lanche -->
+            <div style="display: flex; gap: 24px; margin-bottom: 35px;">
+                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Janta</label>
+                    <div class="input-money-wrapper">
+                        <span class="prefixo-rs">R$</span>
+                        {{ form.janta }}
+                    </div>
+                </div>
+                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Lanche</label>
+                    <div class="input-money-wrapper">
+                        <span class="prefixo-rs">R$</span>
+                        {{ form.lanche }}
+                    </div>
                 </div>
             </div>
 
             <div class="botoes-form">
                 <a href="{% url 'painel' %}" class="btn-voltar">
-    <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
-</a>
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+                </a>
                 <button type="submit" class="btn-salvar">
                     <i class="fa-solid fa-check"></i> Atualizar Preços
                 </button>
