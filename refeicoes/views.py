@@ -162,7 +162,11 @@ def painel_refeicoes(request):
         'cantinas_disponiveis': cantinas_disponiveis,
         'fazendas_disponiveis': Fazenda.objects.all() if is_dono else [],
 
+        'is_dono': is_dono,
+
         'filtros': request.GET
+
+
     }
     return render(request, 'refeicoes/painel.html', contexto)
 
@@ -347,14 +351,29 @@ def excluir_registro(request, id):
 
 @login_required
 def exportar_pdf(request):
-    registros = RegistroRefeicao.objects.all().order_by('setor', '-data_consumo')
+    from reportlab.platypus import PageBreak  # <--- Importação da quebra de página adicionada aqui
 
-    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+    registros = RegistroRefeicao.objects.all()
+
+    # Identifica o perfil do usuário
+    is_dono = True
+    fazenda_usuario = None
+    if hasattr(request.user, 'perfil'):
+        is_dono = request.user.perfil.is_dono
         if request.user.perfil.fazenda_lotacao:
-            registros = registros.filter(fazenda=request.user.perfil.fazenda_lotacao)
+            fazenda_usuario = request.user.perfil.fazenda_lotacao
 
+    # Se não for dono, restringe rigidamente à fazenda de lotação
+    if not is_dono and fazenda_usuario:
+        registros = registros.filter(fazenda=fazenda_usuario)
+
+    # Filtros recebidos da URL (iguais aos do painel)
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
+    fazenda_busca = request.GET.get('fazenda')
+
+    if is_dono and fazenda_busca:
+        registros = registros.filter(fazenda_id=fazenda_busca)
 
     if not data_inicio and not data_fim:
         hoje = date.today()
@@ -374,11 +393,22 @@ def exportar_pdf(request):
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
-    dados_por_setor = defaultdict(list)
+    # Ordenação importante para o agrupamento do PDF funcionar bem
+    registros = registros.order_by('fazenda__nome', 'setor', 'data_consumo')
+
+    # Dicionário aninhado para agrupar Fazenda -> Setor
+    dados_agrupados = defaultdict(lambda: defaultdict(list))
     total_geral = 0
 
     for r in registros:
-        dados_por_setor[r.get_setor_display() if hasattr(r, 'get_setor_display') else r.setor].append(r)
+        nome_setor = r.get_setor_display() if hasattr(r, 'get_setor_display') else r.setor
+
+        if is_dono:
+            nome_fazenda = r.fazenda.nome if r.fazenda else "Sem Fazenda"
+            dados_agrupados[nome_fazenda][nome_setor].append(r)
+        else:
+            # Para o RH, não precisamos do título da fazenda, agrupamos direto no setor
+            dados_agrupados[""][nome_setor].append(r)
 
         valor_da_linha = (
                 (float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0) +
@@ -399,8 +429,14 @@ def exportar_pdf(request):
                                    textColor=colors.black, spaceAfter=5, fontName='Helvetica-Bold')
     estilo_subtitulo = ParagraphStyle('Subtitulo', parent=estilos['Normal'], alignment=TA_CENTER, fontSize=11,
                                       textColor=colors.black, spaceAfter=25)
+
+    # Novo estilo para o nome da Fazenda
+    estilo_nome_fazenda = ParagraphStyle('NomeFazenda', parent=estilos['Heading1'], fontSize=16,
+                                         textColor=colors.HexColor('#1f2937'), spaceBefore=25, spaceAfter=10,
+                                         fontName='Helvetica-Bold', alignment=TA_CENTER)
+
     estilo_nome_setor = ParagraphStyle('NomeSetor', parent=estilos['Heading2'], fontSize=14, textColor=colors.black,
-                                       spaceBefore=10, spaceAfter=10, fontName='Helvetica-Bold')
+                                       spaceBefore=15, spaceAfter=10, fontName='Helvetica-Bold')
 
     elementos.append(Paragraph("Relatório de Refeições", estilo_titulo))
     elementos.append(Paragraph("Extrato analítico gerado pelo sistema.", estilo_subtitulo))
@@ -410,77 +446,96 @@ def exportar_pdf(request):
             return f"R$ {float(valor):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
         return '-'
 
-    for setor_nome, lista_refeicoes in dados_por_setor.items():
-        bloco_setor = []
-        bloco_setor.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
+    # Variável para controlar a quebra de página
+    is_primeira_fazenda = True
 
-        cabecalho = ['Data', 'Cantina', 'Café', 'Buffet', 'Marm.', 'Janta', 'Lanche', 'Valor Total']
-        dados_tabela = [cabecalho]
+    # Percorre o dicionário agrupado para desenhar o PDF
+    for fazenda_nome, setores in dados_agrupados.items():
 
-        total_deste_setor = 0
-        v_cafe = v_buffet = v_marmita = v_janta = v_lanche = 0
+        # Se não for a primeira fazenda do laço, insere uma quebra de página
+        if not is_primeira_fazenda:
+            elementos.append(PageBreak())
 
-        for r in lista_refeicoes:
-            c_v = float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
-            b_v = float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
-            m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
-            j_v = float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
-            l_v = float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
+        # Só exibe o título grandão da fazenda se for o Admin
+        if fazenda_nome != "":
+            # Caso tenha rolado uma quebra de página, podemos tirar o spaceBefore para o título não ficar muito baixo na folha nova
+            estilo_usado = estilo_nome_fazenda if is_primeira_fazenda else ParagraphStyle('NomeFazendaNova',
+                                                                                          parent=estilo_nome_fazenda,
+                                                                                          spaceBefore=0)
+            elementos.append(Paragraph(f"FAZENDA: {fazenda_nome.upper()}", estilo_usado))
 
-            v_cafe += c_v
-            v_buffet += b_v
-            v_marmita += m_v
-            v_janta += j_v
-            v_lanche += l_v
+        # A partir daqui, já passamos pela primeira fazenda
+        is_primeira_fazenda = False
 
-            valor_linha = c_v + b_v + m_v + j_v + l_v
-            total_deste_setor += valor_linha
+        for setor_nome, lista_refeicoes in setores.items():
+            elementos.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
 
-            linha = [
-                r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
-                r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
-                r.qtd_cafe or '-',
-                r.qtd_almoco_buffet or '-',
-                r.qtd_almoco_marmita or '-',
-                r.qtd_janta or '-',
-                r.qtd_lanche or '-',
-                formata_rs(valor_linha)
+            cabecalho = ['Data', 'Cantina', 'Café', 'Buffet', 'Marm.', 'Janta', 'Lanche', 'Valor Total']
+            dados_tabela = [cabecalho]
+
+            total_deste_setor = 0
+            v_cafe = v_buffet = v_marmita = v_janta = v_lanche = 0
+
+            for r in lista_refeicoes:
+                c_v = float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
+                b_v = float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
+                m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
+                j_v = float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
+                l_v = float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
+
+                v_cafe += c_v
+                v_buffet += b_v
+                v_marmita += m_v
+                v_janta += j_v
+                v_lanche += l_v
+
+                valor_linha = c_v + b_v + m_v + j_v + l_v
+                total_deste_setor += valor_linha
+
+                linha = [
+                    r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
+                    r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
+                    r.qtd_cafe or '-',
+                    r.qtd_almoco_buffet or '-',
+                    r.qtd_almoco_marmita or '-',
+                    r.qtd_janta or '-',
+                    r.qtd_lanche or '-',
+                    formata_rs(valor_linha)
+                ]
+                dados_tabela.append(linha)
+
+            linha_total = [
+                '',
+                'SUBTOTAL DO SETOR:',
+                formata_rs(v_cafe),
+                formata_rs(v_buffet),
+                formata_rs(v_marmita),
+                formata_rs(v_janta),
+                formata_rs(v_lanche),
+                formata_rs(total_deste_setor)
             ]
-            dados_tabela.append(linha)
+            dados_tabela.append(linha_total)
 
-        linha_total = [
-            '',
-            'SUBTOTAL DO SETOR:',
-            formata_rs(v_cafe),
-            formata_rs(v_buffet),
-            formata_rs(v_marmita),
-            formata_rs(v_janta),
-            formata_rs(v_lanche),
-            formata_rs(total_deste_setor)
-        ]
-        dados_tabela.append(linha_total)
+            estilo_tabela_minimalista = TableStyle([
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('ALIGN', (0, 0), (1, -1), 'LEFT'),
+                ('ALIGN', (2, 0), (-2, -1), 'CENTER'),
+                ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
+                ('LINEBELOW', (0, 0), (-1, 0), 1.2, colors.black),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('TOPPADDING', (0, 0), (-1, -1), 5),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+                ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
+                ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+                ('FONTSIZE', (2, -1), (-2, -1), 9),
+            ])
 
-        estilo_tabela_minimalista = TableStyle([
-            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('ALIGN', (0, 0), (1, -1), 'LEFT'),
-            ('ALIGN', (2, 0), (-2, -1), 'CENTER'),
-            ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
-            ('LINEBELOW', (0, 0), (-1, 0), 1.2, colors.black),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('TOPPADDING', (0, 0), (-1, -1), 5),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
-            ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
-            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (2, -1), (-2, -1), 9),
-        ])
+            tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90], repeatRows=1)
+            tabela.setStyle(estilo_tabela_minimalista)
 
-        tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90], repeatRows=1)
-        tabela.setStyle(estilo_tabela_minimalista)
-
-        elementos.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
-        elementos.append(tabela)
-        elementos.append(Spacer(1, 20))
+            elementos.append(tabela)
+            elementos.append(Spacer(1, 20))
 
     elementos.append(Spacer(1, 10))
     estilo_total_geral = ParagraphStyle('TotalGeral', parent=estilos['Heading2'], alignment=TA_RIGHT,
@@ -499,14 +554,32 @@ def exportar_pdf(request):
 
 @login_required
 def exportar_refeicoes_excel(request):
+    import openpyxl
+    from openpyxl.styles import Font
+    from django.http import HttpResponse
+    from collections import defaultdict
+    from datetime import date
+
     registros = RegistroRefeicao.objects.all()
 
-    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
+    # Identifica o perfil do usuário
+    is_dono = True
+    fazenda_usuario = None
+    if hasattr(request.user, 'perfil'):
+        is_dono = request.user.perfil.is_dono
         if request.user.perfil.fazenda_lotacao:
-            registros = registros.filter(fazenda=request.user.perfil.fazenda_lotacao)
+            fazenda_usuario = request.user.perfil.fazenda_lotacao
 
+    if not is_dono and fazenda_usuario:
+        registros = registros.filter(fazenda=fazenda_usuario)
+
+    # Aplica os Filtros
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
+    fazenda_busca = request.GET.get('fazenda')
+
+    if is_dono and fazenda_busca:
+        registros = registros.filter(fazenda_id=fazenda_busca)
 
     if not data_inicio and not data_fim:
         hoje = date.today()
@@ -526,29 +599,78 @@ def exportar_refeicoes_excel(request):
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
-    queryset = registros.values(
-        'data_consumo', 'local', 'setor', 'qtd_cafe',
-        'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche', 'valor_total'
-    )
+    registros = registros.order_by('fazenda__nome', 'data_consumo', 'setor')
 
-    df = pd.DataFrame(list(queryset))
+    # Dicionário para agrupar os registros por Fazenda
+    dados_agrupados = defaultdict(list)
+    for r in registros:
+        if is_dono:
+            nome_fazenda = r.fazenda.nome if r.fazenda else "Sem Fazenda"
+        else:
+            nome_fazenda = fazenda_usuario.nome if fazenda_usuario else "Lançamentos"
 
-    if not df.empty:
-        df.columns = ['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet', 'Almoço Marmita', 'Janta', 'Lanche',
-                      'Valor Total']
-        df['Data'] = pd.to_datetime(df['Data']).dt.date
-    else:
-        df = pd.DataFrame(
-            columns=['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet', 'Almoço Marmita', 'Janta', 'Lanche',
-                     'Valor Total'])
+        # O Excel limita o nome das abas a 31 caracteres
+        nome_aba = str(nome_fazenda)[:31]
+        dados_agrupados[nome_aba].append(r)
 
+    # Cria o arquivo Excel
+    wb = openpyxl.Workbook()
+
+    # Remove a aba padrão ("Sheet") que o openpyxl cria automaticamente
+    if 'Sheet' in wb.sheetnames:
+        wb.remove(wb['Sheet'])
+
+    # Prevenção: se a busca não retornar nada, cria uma aba vazia para não dar erro
+    if not dados_agrupados:
+        wb.create_sheet(title="Sem Dados")
+
+    # Percorre cada fazenda e cria sua respectiva aba
+    for nome_aba, lista_refeicoes in dados_agrupados.items():
+        ws = wb.create_sheet(title=nome_aba)
+
+        cabecalho = ['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet', 'Almoço Marmita', 'Janta', 'Lanche',
+                     'Valor Total']
+        ws.append(cabecalho)
+
+        # Coloca o cabeçalho em negrito
+        for col_num in range(1, len(cabecalho) + 1):
+            ws.cell(row=1, column=col_num).font = Font(bold=True)
+
+        for r in lista_refeicoes:
+            c_v = float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
+            b_v = float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
+            m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
+            j_v = float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
+            l_v = float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
+
+            valor_linha = c_v + b_v + m_v + j_v + l_v
+
+            # Diferente do PDF, aqui não formatamos como string (R$), usamos números (0) para o usuário poder usar a fórmula SOMA() no Excel
+            linha = [
+                r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
+                r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
+                r.get_setor_display() if hasattr(r, 'get_setor_display') else r.setor,
+                r.qtd_cafe or 0,
+                r.qtd_almoco_buffet or 0,
+                r.qtd_almoco_marmita or 0,
+                r.qtd_janta or 0,
+                r.qtd_lanche or 0,
+                valor_linha
+            ]
+            ws.append(linha)
+
+        # Alarga um pouco as colunas mais importantes para caber o texto
+        ws.column_dimensions['A'].width = 12
+        ws.column_dimensions['B'].width = 20
+        ws.column_dimensions['C'].width = 20
+        ws.column_dimensions['I'].width = 15
+
+    # Configura a resposta para forçar o download do arquivo .xlsx
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=Relatorio_Refeicoes.xlsx'
+    hoje_str = date.today().strftime('%m_%Y')
+    response['Content-Disposition'] = f'attachment; filename="Relatorio_Refeicoes_{hoje_str}.xlsx"'
 
-    with pd.ExcelWriter(response, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Lançamentos')
-
-    response['Content-Disposition'] = 'attachment; filename=Relatorio_Refeicoes.xlsx'
+    wb.save(response)
     return response
 
 

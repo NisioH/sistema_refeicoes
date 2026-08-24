@@ -8,5 +8,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='refeicoes/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('painel/', include('refeicoes.urls')),
-    path('', RedirectView.as_view(url='painel/', permanent=True)),
+
+    # MUDANÇA AQUI: Agora a raiz joga direto para a rota com nome 'login'
+    path('', RedirectView.as_view(pattern_name='login', permanent=False), name='raiz'),
 ]

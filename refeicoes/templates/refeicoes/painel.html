@@ -22,7 +22,6 @@
     <div class="dashboard-container">
 
         <div class="dashboard-header">
-            <!-- TÍTULO DINÂMICO COM O NOME DA FAZENDA -->
             <h1><i class="fa-solid fa-utensils"></i> Controle de Refeições - {{ nome_fazenda_atual }}</h1>
             <div style="display: flex; gap: 10px;">
 
@@ -30,8 +29,8 @@
                     <i id="icone-tema" class="fa-solid fa-sun"></i>
                 </button>
 
-                <!-- BOTÃO DE RESUMO GERAL APARECE APENAS PARA O ADMIN -->
-                {% if request.user.perfil.is_dono %}
+                <!-- USA AGORA A VARIÁVEL IS_DONO QUE VEM DO PYTHON -->
+                {% if is_dono %}
                 <a href="{% url 'dashboard_refeicoes' %}" class="btn-novo" style="background-color: #a855f7;">
                     <i class="fa-solid fa-chart-pie"></i> Resumo Geral
                 </a>
@@ -57,10 +56,8 @@
             </div>
         </div>
 
-        <!-- Faixa de Detalhes Dinâmicos (Separados em Cards Menores) -->
         <div style="display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; width: 100%;">
 
-            <!-- Café -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #a855f7; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(168, 85, 247, 0.1); color: #a855f7; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-mug-hot"></i>
@@ -71,7 +68,6 @@
                 </div>
             </div>
 
-            <!-- Buffet -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #06b6d4; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(6, 182, 212, 0.1); color: #06b6d4; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-utensils"></i>
@@ -82,7 +78,6 @@
                 </div>
             </div>
 
-            <!-- Marmita -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #3b82f6; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-box-open"></i>
@@ -93,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Janta -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #f97316; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(249, 115, 22, 0.1); color: #f97316; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-moon"></i>
@@ -104,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- Lanche -->
             <div style="flex: 1; min-width: 160px; background: var(--panel-bg); border-left: 5px solid #10b981; border-radius: 12px; padding: 15px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
                 <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-burger"></i>
@@ -118,7 +111,7 @@
         </div>
 
         <div style="background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid var(--border-color); overflow: hidden;">
-            <form method="GET" style="display: flex; opacity: 0.85; flex-wrap: wrap; gap: 15px; align-items: end; width: 100%;">
+            <form method="GET" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: end; width: 100%;">
 
                 <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA INÍCIO</label>
@@ -131,13 +124,13 @@
                 </div>
 
                 <!-- FILTRO DE FAZENDA EXCLUSIVO PARA O ADMIN -->
-                {% if request.user.perfil.is_dono %}
+                {% if is_dono %}
                 <div style="flex: 1; min-width: 140px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">FAZENDA</label>
                     <select name="fazenda" class="input-dark">
                         <option value="">Todas as Fazendas</option>
                         {% for f in fazendas_disponiveis %}
-                            <option value="{{ f.id }}" {% if filtros.fazenda == f.id|stringformat:"s" %}selected{% endif %}>{{ f.name }}</option>
+                            <option value="{{ f.id }}" {% if filtros.fazenda == f.id|stringformat:"s" %}selected{% endif %}>{{ f.nome }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -147,8 +140,8 @@
                 <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">CANTINA</label>
 
-                    {% if cantinas_disponiveis|length > 1 or request.user.perfil.is_dono %}
-                        <!-- Se tem mais de uma cantina (Independência ou Admin), exibe o select normal -->
+                    {% if cantinas_disponiveis|length > 1 or is_dono %}
+                        <!-- Se tem mais de uma cantina ou for Admin, exibe o select normal -->
                         <select name="local" class="input-dark">
                             <option value="">Todas</option>
                             {% for sigla, nome in cantinas_disponiveis %}
@@ -156,7 +149,7 @@
                             {% endfor %}
                         </select>
                     {% else %}
-                        <!-- Se só tem 1 cantina, exibe exatamente igual ao input de texto comum, sem alteração de opacidade -->
+                        <!-- Se só tem 1 cantina, exibe como um input de texto comum travado -->
                         {% for sigla, nome in cantinas_disponiveis %}
                             <input type="text" value="{{ nome }}" class="input-dark" readonly style="cursor: default;">
                             <input type="hidden" name="local" value="{{ sigla }}">
@@ -191,7 +184,7 @@
                 <thead>
                     <tr>
                         <th>Data</th>
-                        {% if request.user.perfil.is_dono %}
+                        {% if is_dono %}
                         <th>Fazenda</th>
                         {% endif %}
                         <th>Cantina</th>
@@ -209,7 +202,7 @@
                     {% for reg in page_obj %}
                     <tr>
                         <td style="font-weight: 600;">{{ reg.data_formatada }}</td>
-                        {% if request.user.perfil.is_dono %}
+                        {% if is_dono %}
                         <td><span style="color: var(--primary-color); font-weight: 600;">{{ reg.fazenda.nome }}</span></td>
                         {% endif %}
                         <td>{{ reg.get_local_display }}</td>
@@ -229,7 +222,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="{% if request.user.perfil.is_dono %}11{% else %}10{% endif %}" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
+                        <td colspan="{% if is_dono %}11{% else %}10{% endif %}" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -282,6 +275,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Lógica de Paginação
             document.querySelectorAll('.page-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -290,6 +284,7 @@
                 });
             });
 
+            // Lógica do Tema Claro/Escuro
             const btnTema = document.getElementById("btn-tema");
             const iconeTema = document.getElementById("icone-tema");
             const htmlTag = document.documentElement;
@@ -298,17 +293,90 @@
                 iconeTema.classList.replace('fa-sun', 'fa-moon');
             }
 
-            btnTema.addEventListener("click", function() {
-                htmlTag.classList.toggle('theme-light');
+            if (btnTema) {
+                btnTema.addEventListener("click", function() {
+                    htmlTag.classList.toggle('theme-light');
+                    if (htmlTag.classList.contains('theme-light')) {
+                        localStorage.setItem('tema-refeicoes', 'claro');
+                        iconeTema.classList.replace('fa-sun', 'fa-moon');
+                    } else {
+                        localStorage.setItem('tema-refeicoes', 'escuro');
+                        iconeTema.classList.replace('fa-moon', 'fa-sun');
+                    }
+                });
+            }
 
-                if (htmlTag.classList.contains('theme-light')) {
-                    localStorage.setItem('tema-refeicoes', 'claro');
-                    iconeTema.classList.replace('fa-sun', 'fa-moon');
-                } else {
-                    localStorage.setItem('tema-refeicoes', 'escuro');
-                    iconeTema.classList.replace('fa-moon', 'fa-sun');
+            // --- LÓGICA INTELIGENTE FAZENDA -> CANTINA (NÍVEL PERFECCIONISTA) ---
+            const selectFazenda = document.querySelector('select[name="fazenda"]');
+            const selectCantina = document.querySelector('select[name="local"]');
+
+            if (selectFazenda && selectCantina) {
+                const todasOpcoesCantina = Array.from(selectCantina.options);
+
+                // O parâmetro 'evento' serve para sabermos se foi um clique do usuário ou só o carregamento da página
+                function atualizarCantinas(evento) {
+                    const fazendaSelecionada = selectFazenda.options[selectFazenda.selectedIndex].text;
+                    const valorAtualCantina = selectCantina.value;
+
+                    selectCantina.innerHTML = '';
+                    const opcoesParaAdicionar = [];
+
+                    todasOpcoesCantina.forEach(opcao => {
+                        const nomeCantina = opcao.text;
+                        const isOpcaoTodas = opcao.value === '';
+
+                        if (fazendaSelecionada === 'Todas as Fazendas') {
+                            opcoesParaAdicionar.push(opcao);
+                        }
+                        else if (fazendaSelecionada.includes('Independ')) {
+                            if (isOpcaoTodas || nomeCantina.includes('Sede') || nomeCantina.includes('Secador')) {
+                                opcoesParaAdicionar.push(opcao);
+                            }
+                        }
+                        else if (fazendaSelecionada.includes('BC')) {
+                            if (!isOpcaoTodas && nomeCantina.includes('BC')) opcoesParaAdicionar.push(opcao);
+                        }
+                        else if (fazendaSelecionada.includes('Matão')) {
+                            if (!isOpcaoTodas && nomeCantina.includes('Matão')) opcoesParaAdicionar.push(opcao);
+                        }
+                        else if (fazendaSelecionada.includes('Lagoa')) {
+                            if (!isOpcaoTodas && nomeCantina.includes('Lagoa')) opcoesParaAdicionar.push(opcao);
+                        }
+                    });
+
+                    opcoesParaAdicionar.forEach(opcao => {
+                        selectCantina.appendChild(opcao.cloneNode(true));
+                    });
+
+                    // 1. Controle visual da "Orelhinha" e bloqueio
+                    if (selectCantina.options.length === 1) {
+                        selectCantina.style.pointerEvents = 'none'; // Trava o clique
+                        selectCantina.style.appearance = 'none';    // Remove a setinha do navegador
+                        selectCantina.style.backgroundImage = 'none'; // Remove se houver setinha no CSS customizado
+                        selectCantina.style.opacity = '0.85';       // Dá cara de campo readonly
+                    } else {
+                        selectCantina.style.pointerEvents = 'auto'; // Libera o clique
+                        selectCantina.style.removeProperty('appearance'); // Volta ao normal
+                        selectCantina.style.removeProperty('background-image');
+                        selectCantina.style.removeProperty('opacity');
+                    }
+
+                    // 2. Lógica de Reset ao escolher "Todas as Fazendas"
+                    if (evento && fazendaSelecionada === 'Todas as Fazendas') {
+                        // Se o usuário trocou na mão para Todas as Fazendas, força voltar para "Todas"
+                        selectCantina.value = '';
+                    } else {
+                        // Caso contrário, tenta manter o que estava selecionado
+                        const opcaoAindaExiste = Array.from(selectCantina.options).some(opt => opt.value === valorAtualCantina);
+                        selectCantina.value = opcaoAindaExiste ? valorAtualCantina : (selectCantina.options.length > 0 ? selectCantina.options[0].value : '');
+                    }
                 }
-            });
+
+                selectFazenda.addEventListener('change', atualizarCantinas);
+
+                // Roda na inicialização passando 'null' para não engatilhar o reset de cara
+                atualizarCantinas(null);
+            }
         });
     </script>
 </body>
