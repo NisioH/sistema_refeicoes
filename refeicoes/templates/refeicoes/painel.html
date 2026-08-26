@@ -43,6 +43,14 @@
                 <a href="{% url 'novo_registro' %}" class="btn-novo">
                     <i class="fa-solid fa-plus"></i> Novo Registro
                 </a>
+
+            <form action="{% url 'logout' %}" method="post" style="margin: 0; display: inline-block;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-novo" style="background-color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sair
+                    </button>
+                </form>
+
             </div>
         </div>
 
