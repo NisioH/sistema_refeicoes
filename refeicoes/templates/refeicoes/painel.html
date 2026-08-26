@@ -29,18 +29,20 @@
                     <i id="icone-tema" class="fa-solid fa-sun"></i>
                 </button>
 
-                <!-- USA AGORA A VARIÁVEL IS_DONO QUE VEM DO PYTHON -->
+                <!-- ÁREA EXCLUSIVA DOS ADMINS / DONOS -->
                 {% if is_dono %}
                 <a href="{% url 'gerenciar_usuarios' %}" class="btn-novo" style="background-color: #f59e0b;">
                     <i class="fa-solid fa-users-gear"></i> Usuários
                 </a>
 
-                <!-- O seu botão de Resumo Geral que já estava aí -->
                 <a href="{% url 'dashboard_refeicoes' %}" class="btn-novo" style="background-color: #a855f7;">
                     <i class="fa-solid fa-chart-pie"></i> Resumo Geral
                 </a>
+                {% endif %}
+                <!-- O ENDIF AGORA ESTÁ AQUI. LIBERANDO OS PRÓXIMOS BOTÕES! -->
 
-                    <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
+                <!-- ÁREA COMUM (RH TAMBÉM VÊ) -->
+                <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-tags"></i> Preços
                 </a>
 
@@ -48,11 +50,7 @@
                     <i class="fa-solid fa-plus"></i> Novo Registro
                 </a>
 
-                {% endif %}
-
-
-
-            <form action="{% url 'logout' %}" method="post" style="margin: 0; display: inline-block;">
+                <form action="{% url 'logout' %}" method="post" style="margin: 0; display: inline-block;">
                     {% csrf_token %}
                     <button type="submit" class="btn-novo" style="background-color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-right-from-bracket"></i> Sair
@@ -138,19 +136,6 @@
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">DATA FIM</label>
                     <input type="date" name="data_fim" value="{{ filtros.data_fim }}" class="input-dark">
                 </div>
-
-                <!-- FILTRO DE FAZENDA EXCLUSIVO PARA O ADMIN -->
-                {% if is_dono %}
-                <div style="flex: 1; min-width: 140px;">
-                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">FAZENDA</label>
-                    <select name="fazenda" class="input-dark">
-                        <option value="">Todas as Fazendas</option>
-                        {% for f in fazendas_disponiveis %}
-                            <option value="{{ f.id }}" {% if filtros.fazenda == f.id|stringformat:"s" %}selected{% endif %}>{{ f.nome }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% endif %}
 
                 <!-- FILTRO DE CANTINA DINÂMICO -->
                 <div style="flex: 1; min-width: 130px;">
