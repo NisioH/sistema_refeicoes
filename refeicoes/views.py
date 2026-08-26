@@ -1,16 +1,13 @@
 import io
 import json
-import os
 from datetime import date
 from collections import defaultdict
-import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, Q, F
 from django.core.paginator import Paginator
-from django.template.context_processors import request
 from dotenv import load_dotenv
 
 from reportlab.lib.pagesizes import A4, landscape
@@ -20,10 +17,11 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
-from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, Fazenda
+
+from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, Fazenda, Perfil
 from .forms import RegistroRefeicaoForm, TabelaPrecoForm
 
 load_dotenv()
@@ -703,3 +701,80 @@ def configurar_precos(request):
         'nome_fazenda': fazenda_usuario.nome if fazenda_usuario else "Matriz (Padrão)"
     }
     return render(request, 'refeicoes/configurar_precos.html', contexto)
+
+
+@login_required
+def gerenciar_usuarios(request):
+    is_dono = request.user.is_superuser or (hasattr(request.user, 'perfil') and request.user.perfil.is_dono)
+
+    if not is_dono:
+        return redirect('painel')
+
+    # Transforma em lista para podermos manipular
+    usuarios = list(User.objects.all().select_related('perfil'))
+
+    # Prepara os dados para cada usuário
+    for u in usuarios:
+        # Carimba quem é você
+        u.is_logged_in_user = (u.id == request.user.id)
+        # Cria uma "flag" temporária para saber se é admin (facilita a ordenação)
+        u.is_admin_flag = u.is_superuser or (hasattr(u, 'perfil') and u.perfil.is_dono)
+
+    # ORDENAÇÃO INTELIGENTE AQUI:
+    # 1. 'not u.is_admin_flag': O Python ordena falsos (0) antes de verdadeiros (1).
+    #    Logo, quem for Admin vai pro topo!
+    # 2. 'u.username.lower()': Em seguida, organiza os nomes em ordem alfabética.
+    usuarios.sort(key=lambda u: (not u.is_admin_flag, u.username.lower()))
+
+    return render(request, 'refeicoes/gerenciar_usuarios.html', {'usuarios': usuarios, 'is_dono': True})
+@login_required
+def criar_usuario(request):
+    is_dono = request.user.is_superuser or (hasattr(request.user, 'perfil') and request.user.perfil.is_dono)
+
+    if not is_dono:
+        return redirect('painel')
+
+    fazendas = Fazenda.objects.all()
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        fazenda_id = request.POST.get('fazenda')
+        nivel_acesso = request.POST.get('nivel_acesso')  # NOVO: Captura a escolha do Admin
+
+        if User.objects.filter(username=username).exists():
+            return render(request, 'refeicoes/criar_usuario.html', {
+                'fazendas': fazendas,
+                'erro': 'Este nome de usuário já está em uso. Escolha outro.',
+                'is_dono': True
+            })
+
+        # Cria o usuário
+        novo_user = User.objects.create_user(username=username, password=password)
+
+        # Define a fazenda apenas se foi selecionada alguma
+        fazenda = get_object_or_404(Fazenda, id=fazenda_id) if fazenda_id else None
+
+        # Grava o perfil com o nível de acesso escolhido
+        perfil, created = Perfil.objects.get_or_create(user=novo_user)
+        perfil.fazenda_lotacao = fazenda
+        perfil.is_dono = (nivel_acesso == 'admin')  # Se escolheu admin, fica True. Se não, False.
+        perfil.save()
+
+        return redirect('gerenciar_usuarios')
+
+    return render(request, 'refeicoes/criar_usuario.html', {'fazendas': fazendas, 'is_dono': True})
+
+@login_required
+def excluir_usuario(request, user_id):
+    is_dono = request.user.is_superuser or (hasattr(request.user, 'perfil') and request.user.perfil.is_dono)
+
+    if not is_dono:
+        return redirect('painel')
+
+    usuario = get_object_or_404(User, id=user_id)
+
+    if usuario.id != request.user.id:
+        usuario.delete()
+
+    return redirect('gerenciar_usuarios')

@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Usuário</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}">
+    <script>if (localStorage.getItem('tema-refeicoes') === 'claro') document.documentElement.classList.add('theme-light');</script>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header" style="margin-bottom: 30px;">
+            <h2><i class="fa-solid fa-user-plus"></i> Cadastrar Usuário RH</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">
+                Crie um acesso para o lançamento de refeições.
+            </p>
+        </div>
+
+        {% if erro %}
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
+            <i class="fa-solid fa-triangle-exclamation"></i> {{ erro }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Nome de Usuário (Login)</label>
+                <input type="text" name="username" class="input-dark" required placeholder="Ex: rh_matal">
+            </div>
+
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Senha de Acesso</label>
+                <input type="password" name="password" class="input-dark" required placeholder="Digite a senha">
+            </div>
+
+            <!-- NOVO CAMPO: Nível de Acesso -->
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Nível de Acesso</label>
+                <select name="nivel_acesso" class="input-dark" required>
+                    <option value="comum">Usuário Comum (Apenas RH da Fazenda)</option>
+                    <option value="admin">Administrador (Acesso Total ao Sistema)</option>
+                </select>
+            </div>
+
+            <!-- Ajustado para não ser obrigatório (útil para Admins Gerais) -->
+            <div class="input-group" style="margin-bottom: 35px;">
+                <label>Fazenda de Lotação</label>
+                <select name="fazenda" class="input-dark">
+                    <option value="">Nenhuma / Sem Fazenda Fixa</option>
+                    {% for f in fazendas %}
+                        <option value="{{ f.id }}">{{ f.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="botoes-form">
+                <a href="{% url 'gerenciar_usuarios' %}" class="btn-voltar">
+                    <i class="fa-solid fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn-salvar">
+                    <i class="fa-solid fa-check"></i> Salvar Usuário
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

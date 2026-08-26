@@ -31,18 +31,26 @@
 
                 <!-- USA AGORA A VARIÁVEL IS_DONO QUE VEM DO PYTHON -->
                 {% if is_dono %}
+                <a href="{% url 'gerenciar_usuarios' %}" class="btn-novo" style="background-color: #f59e0b;">
+                    <i class="fa-solid fa-users-gear"></i> Usuários
+                </a>
+
+                <!-- O seu botão de Resumo Geral que já estava aí -->
                 <a href="{% url 'dashboard_refeicoes' %}" class="btn-novo" style="background-color: #a855f7;">
                     <i class="fa-solid fa-chart-pie"></i> Resumo Geral
                 </a>
-                {% endif %}
 
-                <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
+                    <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-tags"></i> Preços
                 </a>
 
                 <a href="{% url 'novo_registro' %}" class="btn-novo">
                     <i class="fa-solid fa-plus"></i> Novo Registro
                 </a>
+
+                {% endif %}
+
+
 
             <form action="{% url 'logout' %}" method="post" style="margin: 0; display: inline-block;">
                     {% csrf_token %}

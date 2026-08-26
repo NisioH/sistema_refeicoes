@@ -11,4 +11,7 @@ urlpatterns = [
     path('precos/', views.configurar_precos, name='configurar_precos'),
     path('exportar-excel/', views.exportar_refeicoes_excel, name='exportar_excel'),
    # path('api/assistente/', views.chat_assistente, name='chat_assistente'),
+    path('usuarios/', views.gerenciar_usuarios, name='gerenciar_usuarios'),
+    path('usuarios/novo/', views.criar_usuario, name='criar_usuario'),
+    path('usuarios/excluir/<int:user_id>/', views.excluir_usuario, name='excluir_usuario')
 ]

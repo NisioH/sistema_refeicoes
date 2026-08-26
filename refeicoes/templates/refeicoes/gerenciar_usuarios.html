@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Usuários</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}">
+    <script>if (localStorage.getItem('tema-refeicoes') === 'claro') document.documentElement.classList.add('theme-light');</script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header" style="margin-bottom: 30px;">
+            <h2><i class="fa-solid fa-users"></i> Gestão de Contas </h2>
+            <div style="display: flex; gap: 10px;">
+                <a href="{% url 'painel' %}" class="btn-novo" style="background-color: var(--border-color);">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+                </a>
+                <a href="{% url 'criar_usuario' %}" class="btn-novo" style="background-color: #3b82f6;">
+                    <i class="fa-solid fa-user-plus"></i> Novo Usuário
+                </a>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuário (Login)</th>
+                        <th>Fazenda (Lotação)</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ u.username }}</td>
+                        <td>
+                            {% if u.perfil.fazenda_lotacao %}
+                                <span class="badge-setor">{{ u.perfil.fazenda_lotacao.nome }}</span>
+                            {% else %}
+                                <span style="color: var(--text-muted);">Sem Fazenda</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acoes-container" style="justify-content: center; align-items: center; display: flex; gap: 10px;">
+
+                                <!-- AQUI ESTÁ A MÁGICA: Lendo o carimbo que o Python colocou -->
+                                {% if u.is_logged_in_user %}
+
+                                    <!-- Se for o próprio usuário logado -->
+                                    <span style="color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px;">Admin</span>
+
+                                {% else %}
+
+                                    <!-- Etiqueta visual para destacar se for outro Admin -->
+                                    {% if u.is_superuser or u.perfil.is_dono %}
+                                        <span style="color: #a855f7; background: rgba(168, 85, 247, 0.1); padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px;" title="Este usuário é um Administrador">Admin</span>
+                                    {% endif %}
+
+                                    <!-- Se for OUTRO usuário (Admin ou RH), exibe a lixeira -->
+                                    <a href="{% url 'excluir_usuario' u.id %}" class="btn-acao delete" onclick="return confirm('ATENÇÃO: Deseja realmente excluir o acesso de {{ u.username }}?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum usuário cadastrado ainda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
