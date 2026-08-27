@@ -29,7 +29,6 @@
                     <i id="icone-tema" class="fa-solid fa-sun"></i>
                 </button>
 
-                <!-- ÁREA EXCLUSIVA DOS ADMINS / DONOS -->
                 {% if is_dono %}
                 <a href="{% url 'gerenciar_usuarios' %}" class="btn-novo" style="background-color: #f59e0b;">
                     <i class="fa-solid fa-users-gear"></i> Usuários
@@ -39,9 +38,7 @@
                     <i class="fa-solid fa-chart-pie"></i> Resumo Geral
                 </a>
                 {% endif %}
-                <!-- O ENDIF AGORA ESTÁ AQUI. LIBERANDO OS PRÓXIMOS BOTÕES! -->
 
-                <!-- ÁREA COMUM (RH TAMBÉM VÊ) -->
                 <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-tags"></i> Preços
                 </a>
@@ -137,12 +134,22 @@
                     <input type="date" name="data_fim" value="{{ filtros.data_fim }}" class="input-dark">
                 </div>
 
-                <!-- FILTRO DE CANTINA DINÂMICO -->
+                {% if is_dono %}
+                <div style="flex: 1; min-width: 130px;">
+                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">FAZENDA</label>
+                    <select name="fazenda" class="input-dark">
+                        <option value="">Todas as Fazendas</option>
+                        {% for f in fazendas %}
+                            <option value="{{ f.id }}" {% if request.GET.fazenda == f.id|stringformat:"s" %}selected{% endif %}>{{ f.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
                 <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">CANTINA</label>
 
                     {% if cantinas_disponiveis|length > 1 or is_dono %}
-                        <!-- Se tem mais de uma cantina ou for Admin, exibe o select normal -->
                         <select name="local" class="input-dark">
                             <option value="">Todas</option>
                             {% for sigla, nome in cantinas_disponiveis %}
@@ -150,7 +157,6 @@
                             {% endfor %}
                         </select>
                     {% else %}
-                        <!-- Se só tem 1 cantina, exibe como um input de texto comum travado -->
                         {% for sigla, nome in cantinas_disponiveis %}
                             <input type="text" value="{{ nome }}" class="input-dark" readonly style="cursor: default;">
                             <input type="hidden" name="local" value="{{ sigla }}">
@@ -254,131 +260,6 @@
 
     </div>
 
-    <script>
-        function mudarPagina(numeroDaPagina) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', numeroDaPagina);
-            window.location.href = url.toString();
-        }
-
-        function irParaPaginaDigitada() {
-            const input = document.getElementById('input-pagina');
-            let num = parseInt(input.value);
-            const max = parseInt(input.max);
-            const min = parseInt(input.min);
-
-            if (num >= min && num <= max) {
-                mudarPagina(num);
-            } else {
-                alert('Página inválida. Digite um número entre ' + min + ' e ' + max);
-                input.value = "{{ page_obj.number }}";
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Lógica de Paginação
-            document.querySelectorAll('.page-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = this.getAttribute('data-page');
-                    mudarPagina(page);
-                });
-            });
-
-            // Lógica do Tema Claro/Escuro
-            const btnTema = document.getElementById("btn-tema");
-            const iconeTema = document.getElementById("icone-tema");
-            const htmlTag = document.documentElement;
-
-            if (localStorage.getItem('tema-refeicoes') === 'claro') {
-                iconeTema.classList.replace('fa-sun', 'fa-moon');
-            }
-
-            if (btnTema) {
-                btnTema.addEventListener("click", function() {
-                    htmlTag.classList.toggle('theme-light');
-                    if (htmlTag.classList.contains('theme-light')) {
-                        localStorage.setItem('tema-refeicoes', 'claro');
-                        iconeTema.classList.replace('fa-sun', 'fa-moon');
-                    } else {
-                        localStorage.setItem('tema-refeicoes', 'escuro');
-                        iconeTema.classList.replace('fa-moon', 'fa-sun');
-                    }
-                });
-            }
-
-            // --- LÓGICA INTELIGENTE FAZENDA -> CANTINA (NÍVEL PERFECCIONISTA) ---
-            const selectFazenda = document.querySelector('select[name="fazenda"]');
-            const selectCantina = document.querySelector('select[name="local"]');
-
-            if (selectFazenda && selectCantina) {
-                const todasOpcoesCantina = Array.from(selectCantina.options);
-
-                // O parâmetro 'evento' serve para sabermos se foi um clique do usuário ou só o carregamento da página
-                function atualizarCantinas(evento) {
-                    const fazendaSelecionada = selectFazenda.options[selectFazenda.selectedIndex].text;
-                    const valorAtualCantina = selectCantina.value;
-
-                    selectCantina.innerHTML = '';
-                    const opcoesParaAdicionar = [];
-
-                    todasOpcoesCantina.forEach(opcao => {
-                        const nomeCantina = opcao.text;
-                        const isOpcaoTodas = opcao.value === '';
-
-                        if (fazendaSelecionada === 'Todas as Fazendas') {
-                            opcoesParaAdicionar.push(opcao);
-                        }
-                        else if (fazendaSelecionada.includes('Independ')) {
-                            if (isOpcaoTodas || nomeCantina.includes('Sede') || nomeCantina.includes('Secador')) {
-                                opcoesParaAdicionar.push(opcao);
-                            }
-                        }
-                        else if (fazendaSelecionada.includes('BC')) {
-                            if (!isOpcaoTodas && nomeCantina.includes('BC')) opcoesParaAdicionar.push(opcao);
-                        }
-                        else if (fazendaSelecionada.includes('Matão')) {
-                            if (!isOpcaoTodas && nomeCantina.includes('Matão')) opcoesParaAdicionar.push(opcao);
-                        }
-                        else if (fazendaSelecionada.includes('Lagoa')) {
-                            if (!isOpcaoTodas && nomeCantina.includes('Lagoa')) opcoesParaAdicionar.push(opcao);
-                        }
-                    });
-
-                    opcoesParaAdicionar.forEach(opcao => {
-                        selectCantina.appendChild(opcao.cloneNode(true));
-                    });
-
-                    // 1. Controle visual da "Orelhinha" e bloqueio
-                    if (selectCantina.options.length === 1) {
-                        selectCantina.style.pointerEvents = 'none'; // Trava o clique
-                        selectCantina.style.appearance = 'none';    // Remove a setinha do navegador
-                        selectCantina.style.backgroundImage = 'none'; // Remove se houver setinha no CSS customizado
-                        selectCantina.style.opacity = '0.85';       // Dá cara de campo readonly
-                    } else {
-                        selectCantina.style.pointerEvents = 'auto'; // Libera o clique
-                        selectCantina.style.removeProperty('appearance'); // Volta ao normal
-                        selectCantina.style.removeProperty('background-image');
-                        selectCantina.style.removeProperty('opacity');
-                    }
-
-                    // 2. Lógica de Reset ao escolher "Todas as Fazendas"
-                    if (evento && fazendaSelecionada === 'Todas as Fazendas') {
-                        // Se o usuário trocou na mão para Todas as Fazendas, força voltar para "Todas"
-                        selectCantina.value = '';
-                    } else {
-                        // Caso contrário, tenta manter o que estava selecionado
-                        const opcaoAindaExiste = Array.from(selectCantina.options).some(opt => opt.value === valorAtualCantina);
-                        selectCantina.value = opcaoAindaExiste ? valorAtualCantina : (selectCantina.options.length > 0 ? selectCantina.options[0].value : '');
-                    }
-                }
-
-                selectFazenda.addEventListener('change', atualizarCantinas);
-
-                // Roda na inicialização passando 'null' para não engatilhar o reset de cara
-                atualizarCantinas(null);
-            }
-        });
-    </script>
+    <script src="{% static 'refeicoes/js/scripts.js' %}"></script>
 </body>
 </html>

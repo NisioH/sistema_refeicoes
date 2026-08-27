@@ -158,7 +158,7 @@ def painel_refeicoes(request):
 
         'nome_fazenda_atual': nome_fazenda_atual,
         'cantinas_disponiveis': cantinas_disponiveis,
-        'fazendas_disponiveis': Fazenda.objects.all() if is_dono else [],
+        'fazendas': Fazenda.objects.all() if is_dono else [],
 
         'is_dono': is_dono,
 
@@ -710,20 +710,13 @@ def gerenciar_usuarios(request):
     if not is_dono:
         return redirect('painel')
 
-    # Transforma em lista para podermos manipular
     usuarios = list(User.objects.all().select_related('perfil'))
 
-    # Prepara os dados para cada usuário
     for u in usuarios:
-        # Carimba quem é você
         u.is_logged_in_user = (u.id == request.user.id)
-        # Cria uma "flag" temporária para saber se é admin (facilita a ordenação)
         u.is_admin_flag = u.is_superuser or (hasattr(u, 'perfil') and u.perfil.is_dono)
 
-    # ORDENAÇÃO INTELIGENTE AQUI:
-    # 1. 'not u.is_admin_flag': O Python ordena falsos (0) antes de verdadeiros (1).
-    #    Logo, quem for Admin vai pro topo!
-    # 2. 'u.username.lower()': Em seguida, organiza os nomes em ordem alfabética.
+
     usuarios.sort(key=lambda u: (not u.is_admin_flag, u.username.lower()))
 
     return render(request, 'refeicoes/gerenciar_usuarios.html', {'usuarios': usuarios, 'is_dono': True})
@@ -756,7 +749,7 @@ def criar_usuario(request):
         fazenda = get_object_or_404(Fazenda, id=fazenda_id) if fazenda_id else None
 
         # Grava o perfil com o nível de acesso escolhido
-        perfil, created = Perfil.objects.get_or_create(user=novo_user)
+        perfil, created = Perfil.objects.get_or_create(usuario=novo_user)
         perfil.fazenda_lotacao = fazenda
         perfil.is_dono = (nivel_acesso == 'admin')  # Se escolheu admin, fica True. Se não, False.
         perfil.save()

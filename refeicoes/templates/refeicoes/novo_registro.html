@@ -8,7 +8,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=4">
 
     <script>
@@ -87,86 +86,6 @@
         </form>
     </div>
 
-   <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const campoCantina = document.getElementById("dropLocal");
-    const campoSetor = document.getElementById("dropSetor");
-
-    if (!campoCantina || !campoSetor) return;
-
-    // --- BACKUP DE DADOS REAL ---
-    // Guardamos apenas os textos e valores, sem depender dos elementos do HTML
-    const backupDados = Array.from(campoSetor.options).map(opt => ({
-        value: opt.value,
-        text: opt.text
-    }));
-
-    function filtrarSetores() {
-        const cantinaEscolhida = campoCantina.value;
-        const valorSetorAnterior = campoSetor.value;
-
-        // Limpa o select completamente
-        campoSetor.innerHTML = "";
-
-
-        if (cantinaEscolhida !== 'SEDE' && cantinaEscolhida !== 'SECADOR') {
-            backupDados.forEach(dado => {
-                campoSetor.add(new Option(dado.text, dado.value));
-            });
-            campoSetor.value = valorSetorAnterior;
-            return;
-        }
-
-        // Regras ATUALIZADAS (Chaves em minúsculo para evitar erro de digitação)
-        const setoresSede = [
-            'colaborador sede',
-            'terceiros fazenda',
-
-        ];
-
-        const setoresSecador = [
-            'colaborador secador',
-            'safrista secador',
-            'colaborador algodoeira',
-            'terceirizado algodoeira',
-            'safrista algodoeira',
-            'corporativo',
-            'colaborador escritorio'
-        ];
-
-        // Reconstruímos as opções do zero usando os dados salvos
-        backupDados.forEach(dado => {
-            const valorMinusculo = dado.value.toLowerCase();
-
-            // Sempre mantém o "---------" (opção vazia)
-            if (!dado.value) {
-                campoSetor.add(new Option(dado.text, dado.value));
-                return;
-            }
-
-            let mostrar = false;
-            if (cantinaEscolhida === 'SEDE' && setoresSede.includes(valorMinusculo)) {
-                mostrar = true;
-            } else if (cantinaEscolhida === 'SECADOR' && setoresSecador.includes(valorMinusculo)) {
-                mostrar = true;
-            }
-
-            if (mostrar) {
-                // Cria um novo elemento <option> do zero
-                const novaOpcao = new Option(dado.text, dado.value);
-                campoSetor.add(novaOpcao);
-            }
-        });
-
-        // Tenta restaurar o valor que estava antes
-        campoSetor.value = valorSetorAnterior;
-    }
-
-    campoCantina.addEventListener("change", filtrarSetores);
-
-    // Roda ao carregar a página
-    filtrarSetores();
-});
-</script>
+    <script src="{% static 'refeicoes/js/scripts.js' %}"></script>
 </body>
 </html>

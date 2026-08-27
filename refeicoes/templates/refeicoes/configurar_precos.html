@@ -14,8 +14,8 @@
             document.documentElement.classList.add('theme-light');
         }
     </script>
+
     <style>
-        /* Estilo para embutir o R$ colado no input */
         .input-money-wrapper {
             position: relative;
             display: flex;
@@ -29,7 +29,6 @@
             font-size: 14px;
             pointer-events: none;
         }
-        /* Empurra o texto do input para a direita para não ficar em cima do R$ */
         .input-money-wrapper input {
             padding-left: 45px !important;
         }
@@ -55,7 +54,6 @@
                 </p>
             </div>
 
-            <!-- Café da Manhã -->
             <div class="input-group" style="margin-bottom: 25px;">
                 <label>Café da Manhã</label>
                 <div class="input-money-wrapper">
@@ -64,7 +62,6 @@
                 </div>
             </div>
 
-            <!-- Almoço Buffet e Marmita -->
             <div style="display: flex; gap: 24px; margin-bottom: 25px;">
                 <div class="input-group" style="flex: 1; margin-bottom: 0;">
                     <label>Almoço Buffet</label>
@@ -82,7 +79,6 @@
                 </div>
             </div>
 
-            <!-- Janta e Lanche -->
             <div style="display: flex; gap: 24px; margin-bottom: 35px;">
                 <div class="input-group" style="flex: 1; margin-bottom: 0;">
                     <label>Janta</label>
@@ -111,5 +107,6 @@
         </form>
     </div>
 
+    <script src="{% static 'refeicoes/js/scripts.js' %}"></script>
 </body>
 </html>
