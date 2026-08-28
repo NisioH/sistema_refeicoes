@@ -313,30 +313,36 @@ def dashboard_refeicoes(request):
     }
     return render(request, 'refeicoes/dashboard.html', contexto)
 
+
 @login_required
 def novo_registro(request):
+    if hasattr(request.user, 'perfil') and request.user.perfil.is_dono:
+        return redirect('painel')
+
     if request.method == "POST":
         form = RegistroRefeicaoForm(request.POST, usuario=request.user)
         if form.is_valid():
             registro = form.save(commit=False)
 
             if hasattr(request.user, 'perfil') and request.user.perfil.fazenda_lotacao:
-                if not request.user.perfil.is_dono:
-                    registro.fazenda = request.user.perfil.fazenda_lotacao
+                registro.fazenda = request.user.perfil.fazenda_lotacao
 
             registro.save()
             return redirect('painel')
     else:
         form = RegistroRefeicaoForm(usuario=request.user)
-    return render(request, 'refeicoes/novo_registro.html', {'form': form})
 
+    return render(request, 'refeicoes/novo_registro.html', {'form': form})
 
 @login_required
 def editar_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
 
-    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
-        if registro.fazenda != request.user.perfil.fazenda_lotacao:
+    if hasattr(request.user, 'perfil'):
+        if request.user.perfil.is_dono:
+            return redirect('painel')
+
+        if not request.user.perfil.is_dono and registro.fazenda != request.user.perfil.fazenda_lotacao:
             return redirect('painel')
 
     if request.method == 'POST':
@@ -348,12 +354,16 @@ def editar_registro(request, id):
         form = RegistroRefeicaoForm(instance=registro, usuario=request.user)
     return render(request, 'refeicoes/novo_registro.html', {'form': form, 'registro': registro})
 
+
 @login_required
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
 
-    if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
-        if registro.fazenda != request.user.perfil.fazenda_lotacao:
+    if hasattr(request.user, 'perfil'):
+        if request.user.perfil.is_dono:
+            return redirect('painel')
+
+        if not request.user.perfil.is_dono and registro.fazenda != request.user.perfil.fazenda_lotacao:
             return redirect('painel')
 
     registro.delete()

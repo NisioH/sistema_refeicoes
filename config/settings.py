@@ -15,7 +15,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -72,16 +72,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True
-    )
-}
+if DATABASE_URL:
+    # Configuração de Produção (Render / Nuvem)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True
+        )
+    }
+else:
+    # Configuração de Desenvolvimento (Local)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -128,3 +137,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Configuração para o WhiteNoise entregar os arquivos de forma eficiente
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# BLINDAGEM DE PRODUÇÃO (Só ativa quando DEBUG for False)
+if not DEBUG:
+    # Garante que os cookies de login e formulários só transitem via HTTPS
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+
+    # Impede que o navegador "adivinhe" tipos de arquivos, evitando injeções
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    # Ativa o filtro XSS nativo dos navegadores modernos
+    SECURE_BROWSER_XSS_FILTER = True

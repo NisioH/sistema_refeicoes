@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from decimal import Decimal
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 
 class Fazenda(models.Model):
@@ -24,11 +25,11 @@ class Perfil(models.Model):
 class TabelaPreco(models.Model):
     fazenda = models.OneToOneField(Fazenda, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Fazenda")
 
-    cafe = models.DecimalField("Café da Manhã", max_digits=5, decimal_places=2, default=9.00)
-    buffet = models.DecimalField("Almoço Buffet", max_digits=5, decimal_places=2, default=24.00)
-    marmita = models.DecimalField("Almoço Marmita", max_digits=5, decimal_places=2, default=21.50)
-    janta = models.DecimalField("Janta", max_digits=5, decimal_places=2, default=21.50)
-    lanche = models.DecimalField("Lanche", max_digits=5, decimal_places=2, default=9.00)
+    cafe = models.DecimalField("Café da Manhã", max_digits=5, decimal_places=2, default=9.00, validators=[MinValueValidator(Decimal('0.00'))])
+    buffet = models.DecimalField("Almoço Buffet", max_digits=5, decimal_places=2, default=24.00, validators=[MinValueValidator(Decimal('0.00'))])
+    marmita = models.DecimalField("Almoço Marmita", max_digits=5, decimal_places=2, default=21.50, validators=[MinValueValidator(Decimal('0.00'))])
+    janta = models.DecimalField("Janta", max_digits=5, decimal_places=2, default=21.50, validators=[MinValueValidator(Decimal('0.00'))])
+    lanche = models.DecimalField("Lanche", max_digits=5, decimal_places=2, default=9.00, validators=[MinValueValidator(Decimal('0.00'))])
     data_atualizacao = models.DateTimeField(auto_now=True)
 
     class Meta:

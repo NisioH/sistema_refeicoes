@@ -90,6 +90,13 @@ class RegistroRefeicaoForm(forms.ModelForm):
         if local == LocalRefeicao.SECADOR and setor == SetorColaborador.TERCEIROS_FAZENDA:
             self.add_error('setor', "A opção 'Terceirizado Sede' não é permitida para a Cantina do Secador.")
 
+        # Trava de Segurança: Bloqueio de quantidades negativas
+        campos_quantidade = ['qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche']
+        for campo in campos_quantidade:
+            valor = cleaned_data.get(campo)
+            if valor is not None and valor < 0:
+                self.add_error(campo, "A quantidade não pode ser um número negativo.")
+
         return cleaned_data
 
 
@@ -104,3 +111,14 @@ class TabelaPrecoForm(forms.ModelForm):
             'janta': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
             'lanche': forms.NumberInput(attrs={'class': 'input-dark', 'step': '0.01'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        campos_preco = ['cafe', 'buffet', 'marmita', 'janta', 'lanche']
+
+        for campo in campos_preco:
+            valor = cleaned_data.get(campo)
+            if valor is not None and valor < 0:
+                self.add_error(campo, "O preço não pode ser um valor negativo.")
+
+        return cleaned_data
