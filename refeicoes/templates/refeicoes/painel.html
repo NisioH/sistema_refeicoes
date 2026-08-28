@@ -210,7 +210,9 @@
                         <th class="text-center">Janta</th>
                         <th class="text-center">Lanche</th>
                         <th class="text-right">Total</th>
+                        {% if not is_dono %}
                         <th class="text-center">Ações</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -228,6 +230,7 @@
                         <td class="text-center">{{ reg.qtd_janta }}</td>
                         <td class="text-center">{{ reg.qtd_lanche }}</td>
                         <td class="valor-total text-right">R$ {{ reg.valor_total|floatformat:"2g" }}</td>
+                        {% if not is_dono %}
                         <td>
                             <div class="acoes-container" style="justify-content: center;">
                                 <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit"><i
@@ -237,6 +240,7 @@
                                         class="fa-solid fa-trash"></i></a>
                             </div>
                         </td>
+                        {% endif %}
                     </tr>
                     {% empty %}
                     <tr>
