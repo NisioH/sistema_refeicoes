@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Refeições - {{ nome_fazenda_atual }}</title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22
+    viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}?v=6">
 
@@ -39,6 +40,8 @@
                 </a>
                 {% endif %}
 
+                {% if not is_dono %}
+
                 <a href="{% url 'configurar_precos' %}" class="btn-novo" style="background-color: var(--border-color);">
                     <i class="fa-solid fa-tags"></i> Preços
                 </a>
@@ -47,6 +50,7 @@
                     <i class="fa-solid fa-plus"></i> Novo Registro
                 </a>
 
+                {% endif %}
                 <form action="{% url 'logout' %}" method="post" style="margin: 0; display: inline-block;">
                     {% csrf_token %}
                     <button type="submit" class="btn-novo" style="background-color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
@@ -140,7 +144,8 @@
                     <select name="fazenda" class="input-dark">
                         <option value="">Todas as Fazendas</option>
                         {% for f in fazendas %}
-                            <option value="{{ f.id }}" {% if request.GET.fazenda == f.id|stringformat:"s" %}selected{% endif %}>{{ f.nome }}</option>
+                            <option value="{{ f.id }}" {% if request.GET.fazenda == f.id|stringformat:"s" %}
+                                    selected{% endif %}>{{ f.nome }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -153,7 +158,8 @@
                         <select name="local" class="input-dark">
                             <option value="">Todas</option>
                             {% for sigla, nome in cantinas_disponiveis %}
-                                <option value="{{ sigla }}" {% if filtros.local == sigla %}selected{% endif %}>{{ nome }}</option>
+                                <option value="{{ sigla }}" {% if filtros.local == sigla %}
+                                        selected{% endif %}>{{ nome }}</option>
                             {% endfor %}
                         </select>
                     {% else %}
@@ -166,7 +172,8 @@
 
                 <div style="flex: 1; min-width: 130px;">
                     <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">SETOR</label>
-                    <input type="text" name="setor" value="{{ filtros.setor }}" placeholder="Buscar..." class="input-dark">
+                    <input type="text" name="setor" value="{{ filtros.setor }}"
+                           placeholder="Buscar..." class="input-dark">
                 </div>
 
                 <div class="filter-actions" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; white-space: nowrap !important; flex: 0 0 auto;">
@@ -179,7 +186,8 @@
                     <button type="submit" name="formato" value="excel" class="btn-excel">
                         <i class="fas fa-file-excel"></i> Excel
                     </button>
-                    <button type="button" onclick="window.location.href=window.location.pathname;" class="btn-clear" style="background-color: #334155 !important; color: white !important; border: none !important; border-radius: 6px !important; height: 42px !important; width: 42px !important; min-width: 42px !important; padding: 0 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+                    <button type="button" onclick="window.location.href=window.location.pathname;"
+                            class="btn-clear" style="background-color: #334155 !important; color: white !important; border: none !important; border-radius: 6px !important; height: 42px !important; width: 42px !important; min-width: 42px !important; padding: 0 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;">
                         <i class="fas fa-eraser"></i>
                     </button>
                 </div>
@@ -222,14 +230,18 @@
                         <td class="valor-total text-right">R$ {{ reg.valor_total|floatformat:"2g" }}</td>
                         <td>
                             <div class="acoes-container" style="justify-content: center;">
-                                <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit"><i class="fa-solid fa-pen"></i></a>
-                                <a href="{% url 'excluir_registro' reg.id %}" class="btn-acao delete" onclick="return confirm('Excluir este registro?');"><i class="fa-solid fa-trash"></i></a>
+                                <a href="{% url 'editar_registro' reg.id %}" class="btn-acao edit"><i
+                                        class="fa-solid fa-pen"></i></a>
+                                <a href="{% url 'excluir_registro' reg.id %}" class="btn-acao delete"
+                                   onclick="return confirm('Excluir este registro?');"><i
+                                        class="fa-solid fa-trash"></i></a>
                             </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="{% if is_dono %}11{% else %}10{% endif %}" class="text-center" style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
+                        <td colspan="{% if is_dono %}11{% else %}10{% endif %}" class="text-center"
+                            style="padding: 40px; color: var(--text-muted);">Nenhum dado encontrado com os filtros atuais.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -252,7 +264,8 @@
 
             <div class="paginacao-ir-para">
                 <span>Ir para:</span>
-                <input type="number" id="input-pagina" min="1" max="{{ page_obj.paginator.num_pages }}" class="input-dark input-page" value="{{ page_obj.number }}">
+                <input type="number" id="input-pagina" min="1" max="{{ page_obj.paginator.num_pages }}"
+                       class="input-dark input-page" value="{{ page_obj.number }}">
                 <button onclick="irParaPaginaDigitada()" class="btn-ir">Ir</button>
             </div>
         </div>

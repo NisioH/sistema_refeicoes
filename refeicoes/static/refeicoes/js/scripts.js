@@ -27,171 +27,135 @@ function irParaPaginaDigitada() {
 
 function inicializarGraficosDashboard(dados) {
     const canvasAcumulado = document.getElementById('chartAcumuladoPeriodo');
-    const canvasComparativo = document.getElementById('graficoComparativoBarras');
+    const canvas3Meses = document.getElementById('chart3Meses');
+    const canvasCompleto = document.getElementById('graficoComparativoBarras');
 
-    if (!canvasAcumulado || !canvasComparativo) return;
+    if (!canvasAcumulado || !canvasCompleto) return;
 
-    // --- GRÁFICO 1: ACUMULADO ---
-    const ctxAcumulado = canvasAcumulado.getContext('2d');
-    new Chart(ctxAcumulado, {
+    // --- 1. GRÁFICO ACUMULADO ---
+    new Chart(canvasAcumulado.getContext('2d'), {
         type: 'bar',
         data: {
             labels: ['Total Acumulado Histórico'],
             datasets: [
-                {
-                    label: 'Colaboradores',
-                    data: [dados.totalColabPeriodo],
-                    backgroundColor: '#10b981',
-                    borderRadius: 5,
-                    borderWidth: 0
-                },
-                {
-                    label: 'Terceirizados',
-                    data: [dados.totalTercPeriodo],
-                    backgroundColor: '#a855f7',
-                    borderRadius: 5,
-                    borderWidth: 0
-                }
+                { label: 'Colaboradores', data: [dados.totalColabPeriodo], backgroundColor: '#10b981',
+                    borderRadius: 5, borderWidth: 0 },
+                { label: 'Terceirizados', data: [dados.totalTercPeriodo], backgroundColor: '#a855f7',
+                    borderRadius: 5, borderWidth: 0 }
             ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { color: '#94a3b8', font: { weight: '600' } }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let val = context.raw || 0;
-                            return context.dataset.label + ': R$ ' + val.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                        }
-                    }
-                }
+                legend: { position: 'top', labels: { color: '#94a3b8', font: { weight: '600' } } },
+                tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': R$ ' +
+                            (c.raw || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2}); } } }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        color: '#94a3b8',
-                        callback: function(value) {
-                            return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 0});
-                        }
-                    },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                x: {
-                    ticks: { color: '#94a3b8' },
-                    grid: { display: false }
-                }
+                y: { ticks: { color: '#94a3b8', callback: function(v) { return 'R$ ' +
+                            v.toLocaleString('pt-BR', {minimumFractionDigits: 0}); } },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
             }
-        } // <--- AQUI ESTAVA FALTANDO ESSA CHAVE
+        }
     });
 
-    // --- GRÁFICO 2: COMPARATIVO 3 MESES ---
-    const pluginTextoNasBarras = {
-        id: 'pluginTextoNasBarras',
-        afterDatasetsDraw(chart, args, pluginOptions) {
-            const { ctx } = chart;
-            ctx.save();
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-
-            chart.data.datasets.forEach((dataset, i) => {
-                const meta = chart.getDatasetMeta(i);
-                meta.data.forEach((bar, index) => {
-                    const qtd = i === 0 ? dados.qtdsColab[index] : dados.qtdsTerc[index];
-                    if (qtd > 0) {
-                        ctx.fillStyle = '#e2e8f0';
-                        ctx.fillText(qtd + ' un', bar.x, bar.y - 5);
-                    }
+    // --- FÁBRICA DE PLUGIN DE TEXTO NAS BARRAS ---
+    function criarPluginTexto(qtdsColabArray, qtdsTercArray, idPlugin) {
+        return {
+            id: idPlugin,
+            afterDatasetsDraw(chart) {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                chart.data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        const qtd = i === 0 ? qtdsColabArray[index] : qtdsTercArray[index];
+                        if (qtd > 0) {
+                            ctx.fillStyle = '#e2e8f0';
+                            ctx.fillText(qtd + ' un', bar.x, bar.y - 5);
+                        }
+                    });
                 });
-            });
-            ctx.restore();
-        }
+                ctx.restore();
+            }
+        };
+    }
+
+    function gerarOpcoesBase() {
+        return {
+            responsive: true, maintainAspectRatio: false, layout: { padding: { top: 15 } },
+            plugins: {
+                legend: { position: 'top', labels: { color: '#94a3b8', font: { weight: '600' }, padding: 15 } },
+                tooltip: { callbacks: {} } // Caixinha pré-criada para evitar erros no JavaScript
+            },
+            scales: {
+                y: { grace: '20%', ticks: { color: '#94a3b8', callback: function(v)
+                        { return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits: 0}); } },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+            }
+        };
+    }
+
+    if (canvas3Meses) {
+        const labels3M = dados.mesesLabels.slice(-3);
+        const dColab3M = dados.dadosColaborador.slice(-3);
+        const dTerc3M = dados.dadosTerceirizado.slice(-3);
+        const qColab3M = dados.qtdsColab.slice(-3);
+        const qTerc3M = dados.qtdsTerc.slice(-3);
+
+        const config3M = gerarOpcoesBase();
+        config3M.plugins.tooltip.callbacks.label = function(c) {
+            let q = c.datasetIndex === 0 ? qColab3M[c.dataIndex] : qTerc3M[c.dataIndex];
+            return `${c.dataset.label}: R$ ${(c.raw || 0).toLocaleString('pt-BR', 
+                {minimumFractionDigits: 2})} (${q} un)`;
+        };
+
+        new Chart(canvas3Meses.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: labels3M,
+                datasets: [
+                    { label: 'Colaboradores', data: dColab3M, backgroundColor: '#10b981',
+                        borderRadius: 4, borderWidth: 0 },
+                    { label: 'Terceirizados', data: dTerc3M, backgroundColor: '#a855f7',
+                        borderRadius: 4, borderWidth: 0 }
+                ]
+            },
+            plugins: [criarPluginTexto(qColab3M, qTerc3M, 'pluginTexto3M')],
+            options: config3M
+        });
+    }
+
+    const configCompleto = gerarOpcoesBase();
+    configCompleto.plugins.tooltip.callbacks.label = function(c) {
+        let q = c.datasetIndex === 0 ? dados.qtdsColab[c.dataIndex] : dados.qtdsTerc[c.dataIndex];
+        return `${c.dataset.label}: R$ ${(c.raw || 0).toLocaleString('pt-BR', 
+            {minimumFractionDigits: 2})} (${q} un)`;
     };
 
-    const ctxComparativo = canvasComparativo.getContext('2d');
-    new Chart(ctxComparativo, {
+    new Chart(canvasCompleto.getContext('2d'), {
         type: 'bar',
         data: {
             labels: dados.mesesLabels,
             datasets: [
-                {
-                    label: 'Colaboradores (Sede + Secador)',
-                    data: dados.dadosColaborador,
-                    backgroundColor: '#10b981',
-                    borderRadius: 5,
-                    borderWidth: 0
-                },
-                {
-                    label: 'Terceirizados (Sede + Secador)',
-                    data: dados.dadosTerceirizado,
-                    backgroundColor: '#a855f7',
-                    borderRadius: 5,
-                    borderWidth: 0
-                }
+                { label: 'Colaboradores', data: dados.dadosColaborador,
+                    backgroundColor: '#10b981', borderRadius: 4, borderWidth: 0 },
+                { label: 'Terceirizados', data: dados.dadosTerceirizado,
+                    backgroundColor: '#a855f7', borderRadius: 4, borderWidth: 0 }
             ]
         },
-        plugins: [pluginTextoNasBarras],
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: { top: 10 }
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        color: '#94a3b8',
-                        font: { weight: '600' },
-                        padding: 25
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let val = context.raw || 0;
-                            let datasetIndex = context.datasetIndex;
-                            let itemIndex = context.dataIndex;
-                            let qtd = datasetIndex === 0 ? dados.qtdsColab[itemIndex] : dados.qtdsTerc[itemIndex];
-
-                            return `${context.dataset.label}: R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${qtd} refeições)`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grace: '20%',
-                    ticks: {
-                        color: '#94a3b8',
-                        callback: function(value) {
-                            return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 0});
-                        }
-                    },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                x: {
-                    ticks: { color: '#94a3b8' },
-                    grid: { display: false }
-                }
-            }
-        } // <--- E AQUI ESTAVA FALTANDO A OUTRA!
+        plugins: [criarPluginTexto(dados.qtdsColab, dados.qtdsTerc, 'pluginTextoCompleto')],
+        options: configCompleto
     });
 }
 
-// ==========================================
-// INICIALIZAÇÃO AO CARREGAR A PÁGINA
-// ==========================================
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. Lógica de Paginação
     document.querySelectorAll('.page-link').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -200,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. Lógica do Tema Claro/Escuro
     const btnTema = document.getElementById("btn-tema");
     const iconeTema = document.getElementById("icone-tema");
     const htmlTag = document.documentElement;
@@ -222,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 3. Filtro de Fazenda -> Cantina (Painel)
     const selectFazenda = document.querySelector('select[name="fazenda"]');
     const selectCantina = document.querySelector('select[name="local"]');
 
@@ -278,8 +240,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (evento && fazendaSelecionada === 'Todas as Fazendas') {
                 selectCantina.value = '';
             } else {
-                const opcaoAindaExiste = Array.from(selectCantina.options).some(opt => opt.value === valorAtualCantina);
-                selectCantina.value = opcaoAindaExiste ? valorAtualCantina : (selectCantina.options.length > 0 ? selectCantina.options[0].value : '');
+                const opcaoAindaExiste = Array.from(selectCantina.
+                    options).some(opt => opt.value === valorAtualCantina);
+                selectCantina.value = opcaoAindaExiste ? valorAtualCantina :
+                    (selectCantina.options.length > 0 ? selectCantina.options[0].value : '');
             }
         }
 

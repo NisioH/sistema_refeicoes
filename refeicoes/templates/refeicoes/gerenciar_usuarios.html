@@ -6,7 +6,8 @@
     <title>Gerenciar Usuários</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'refeicoes/css/style.css' %}">
-    <script>if (localStorage.getItem('tema-refeicoes') === 'claro') document.documentElement.classList.add('theme-light');</script>
+    <script>if (localStorage.getItem('tema-refeicoes') === 'claro')
+        document.documentElement.classList.add('theme-light');</script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -55,7 +56,9 @@
                                         <span style="color: #a855f7; background: rgba(168, 85, 247, 0.1); padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px;" title="Este usuário é um Administrador">Admin</span>
                                     {% endif %}
 
-                                    <a href="{% url 'excluir_usuario' u.id %}" class="btn-acao delete" onclick="return confirm('ATENÇÃO: Deseja realmente excluir o acesso de {{ u.username }}?');">
+                                    <a href="{% url 'excluir_usuario' u.id %}" class="btn-acao delete"
+                                       onclick="return confirm('ATENÇÃO: Deseja realmente ' +
+                                               'excluir o acesso de {{ u.username }}?');">
                                         <i class="fa-solid fa-trash"></i>
                                     </a>
 

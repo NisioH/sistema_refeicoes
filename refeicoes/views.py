@@ -26,7 +26,6 @@ from .forms import RegistroRefeicaoForm, TabelaPrecoForm
 
 load_dotenv()
 
-
 @login_required
 def painel_refeicoes(request):
     formato_clicado = request.GET.get('formato', 'filtrar')
@@ -36,7 +35,7 @@ def painel_refeicoes(request):
     elif formato_clicado == 'excel':
         return exportar_refeicoes_excel(request)
 
-    registros = RegistroRefeicao.objects.all().order_by('-data_consumo', '-id')
+    registros = RegistroRefeicao.objects.select_related('fazenda').all().order_by('-data_consumo', '-id')
 
     is_dono = True
     fazenda_usuario = None
@@ -50,20 +49,18 @@ def painel_refeicoes(request):
 
     nome_fazenda_atual = fazenda_usuario.nome if fazenda_usuario else "Todas as Fazendas"
 
-    # Define dinamicamente as cantinas e se exibe a opção "Todas"
+    # Define dinamicamente as cantinas
+    nome_f = fazenda_usuario.nome if fazenda_usuario else ""
     if is_dono:
         cantinas_disponiveis = list(LocalRefeicao.choices)
-        fazendas_disponiveis = Fazenda.objects.all() if 'Fazenda' in globals() else []
     else:
-        nome_f = fazenda_usuario.nome if fazenda_usuario else ""
         if nome_f == 'Fazenda BC':
-            # Apenas 1 opção, sem a opção "Todas"
             cantinas_disponiveis = [(LocalRefeicao.CANTINA_BC, 'Cantina BC')]
         elif nome_f == 'Fazenda Matão':
             cantinas_disponiveis = [(LocalRefeicao.CANTINA_MATAO, 'Cantina Matão')]
         elif nome_f == 'Fazenda Lagoa':
             cantinas_disponiveis = [(LocalRefeicao.CANTINA_LAGOA, 'Cantina Lagoa')]
-        else:  # Fazenda Independência (tem duas, então adicionamos a opção vazia "Todas")
+        else:
             cantinas_disponiveis = [
                 ('', 'Todas'),
                 (LocalRefeicao.SEDE, 'Cantina Sede'),
@@ -91,7 +88,6 @@ def painel_refeicoes(request):
         if data_fim:
             registros = registros.filter(data_consumo__lte=data_fim)
 
-    # Se a fazenda tem apenas uma cantina, forçamos o filtro a buscar por ela automaticamente
     if not is_dono and nome_f in ['Fazenda BC', 'Fazenda Matão', 'Fazenda Lagoa']:
         if nome_f == 'Fazenda BC':
             local_busca = LocalRefeicao.CANTINA_BC
@@ -105,16 +101,13 @@ def painel_refeicoes(request):
     if setor_busca:
         registros = registros.filter(setor__icontains=setor_busca)
 
-    soma_total = registros.aggregate(
-        total=Sum('valor_total'),
-        cafe=Sum('qtd_cafe'),
-        buffet=Sum('qtd_almoco_buffet'),
-        marmita=Sum('qtd_almoco_marmita'),
-        janta=Sum('qtd_janta'),
-        lanche=Sum('qtd_lanche')
-    )
+    agregados = registros.aggregate(
+        q_cafe=Sum('qtd_cafe'),
+        q_buffet=Sum('qtd_almoco_buffet'),
+        q_marmita=Sum('qtd_almoco_marmita'),
+        q_janta=Sum('qtd_janta'),
+        q_lanche=Sum('qtd_lanche'),
 
-    detalhes = registros.aggregate(
         v_cafe=Sum(F('qtd_cafe') * F('valor_cafe')),
         v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
         v_marmita=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
@@ -123,16 +116,14 @@ def painel_refeicoes(request):
     )
 
     total_gasto = (
-            (detalhes['v_cafe'] or 0) + (detalhes['v_buffet'] or 0) +
-            (detalhes['v_marmita'] or 0) + (detalhes['v_janta'] or 0) + (detalhes['v_lanche'] or 0)
+            (agregados['v_cafe'] or 0) + (agregados['v_buffet'] or 0) +
+            (agregados['v_marmita'] or 0) + (agregados['v_janta'] or 0) + (agregados['v_lanche'] or 0)
     )
 
     total_refeicoes = (
-            (soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) +
-            (soma_total['marmita'] or 0) + (soma_total['janta'] or 0) + (soma_total['lanche'] or 0)
+            (agregados['q_cafe'] or 0) + (agregados['q_buffet'] or 0) +
+            (agregados['q_marmita'] or 0) + (agregados['q_janta'] or 0) + (agregados['q_lanche'] or 0)
     )
-    total_buffet = soma_total['buffet'] or 0
-    total_janta = soma_total['janta'] or 0
 
     paginator = Paginator(registros, 7)
     numero_pagina = request.GET.get('page')
@@ -142,40 +133,44 @@ def painel_refeicoes(request):
         'page_obj': page_obj,
         'total_gasto': float(total_gasto),
         'total_refeicoes': total_refeicoes,
-        'total_buffet': total_buffet,
-        'total_janta': total_janta,
+        'total_buffet': agregados['q_buffet'] or 0,
+        'total_janta': agregados['q_janta'] or 0,
 
-        'det_q_cafe': soma_total['cafe'] or 0,
-        'det_v_cafe': float(detalhes['v_cafe'] or 0),
-        'det_q_buffet': soma_total['buffet'] or 0,
-        'det_v_buffet': float(detalhes['v_buffet'] or 0),
-        'det_q_marmita': soma_total['marmita'] or 0,
-        'det_v_marmita': float(detalhes['v_marmita'] or 0),
-        'det_q_janta': soma_total['janta'] or 0,
-        'det_v_janta': float(detalhes['v_janta'] or 0),
-        'det_q_lanche': soma_total['lanche'] or 0,
-        'det_v_lanche': float(detalhes['v_lanche'] or 0),
+        'det_q_cafe': agregados['q_cafe'] or 0,
+        'det_v_cafe': float(agregados['v_cafe'] or 0),
+        'det_q_buffet': agregados['q_buffet'] or 0,
+        'det_v_buffet': float(agregados['v_buffet'] or 0),
+        'det_q_marmita': agregados['q_marmita'] or 0,
+        'det_v_marmita': float(agregados['v_marmita'] or 0),
+        'det_q_janta': agregados['q_janta'] or 0,
+        'det_v_janta': float(agregados['v_janta'] or 0),
+        'det_q_lanche': agregados['q_lanche'] or 0,
+        'det_v_lanche': float(agregados['v_lanche'] or 0),
 
         'nome_fazenda_atual': nome_fazenda_atual,
         'cantinas_disponiveis': cantinas_disponiveis,
         'fazendas': Fazenda.objects.all() if is_dono else [],
-
         'is_dono': is_dono,
-
         'filtros': request.GET
-
-
     }
-    return render(request, 'refeicoes/painel.html', contexto)
 
+    return render(request, 'refeicoes/painel.html', contexto)
 
 @login_required
 def dashboard_refeicoes(request):
     if hasattr(request.user, 'perfil') and not request.user.perfil.is_dono:
         return redirect('painel')
 
-    registros = RegistroRefeicao.objects.all()
     hoje = date.today()
+    if hoje.month >= 9:
+        ano_inicio_safra = hoje.year
+    else:
+        ano_inicio_safra = hoje.year - 1
+
+    ano_fim_safra = ano_inicio_safra + 1
+    nome_safra = f"Safra {str(ano_inicio_safra)[2:]}/{str(ano_fim_safra)[2:]}"
+
+    registros = RegistroRefeicao.objects.all()
 
     fazenda_id = request.GET.get('fazenda')
     if fazenda_id:
@@ -184,18 +179,27 @@ def dashboard_refeicoes(request):
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
 
-    if data_inicio:
-        registros = registros.filter(data_consumo__gte=data_inicio)
-    if data_fim:
-        registros = registros.filter(data_consumo__lte=data_fim)
+    if not data_inicio and not data_fim:
+        data_inicio_obj = date(ano_inicio_safra, 9, 1)
+        data_fim_obj = date(ano_fim_safra, 8, 31)
+        registros = registros.filter(data_consumo__gte=data_inicio_obj, data_consumo__lte=data_fim_obj)
+    else:
+        if data_inicio:
+            from datetime import datetime
+            data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            registros = registros.filter(data_consumo__gte=data_inicio_obj)
+        else:
+            data_inicio_obj = date(ano_inicio_safra, 9, 1)
+
+        if data_fim:
+            data_fim_obj = datetime.strptime(data_fim, '%Y-%m-%d').date()
+            registros = registros.filter(data_consumo__lte=data_fim_obj)
+        else:
+            data_fim_obj = date(ano_fim_safra, 8, 31)
 
     soma_total = registros.aggregate(
-        total=Sum('valor_total'),
-        cafe=Sum('qtd_cafe'),
-        buffet=Sum('qtd_almoco_buffet'),
-        marmita=Sum('qtd_almoco_marmita'),
-        janta=Sum('qtd_janta'),
-        lanche=Sum('qtd_lanche')
+        total=Sum('valor_total'), cafe=Sum('qtd_cafe'), buffet=Sum('qtd_almoco_buffet'),
+        marmita=Sum('qtd_almoco_marmita'), janta=Sum('qtd_janta'), lanche=Sum('qtd_lanche')
     )
 
     detalhes = registros.aggregate(
@@ -206,86 +210,88 @@ def dashboard_refeicoes(request):
         v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
     )
 
-    total_gasto = (
-            (detalhes['v_cafe'] or 0) + (detalhes['v_buffet'] or 0) +
-            (detalhes['v_marmita'] or 0) + (detalhes['v_janta'] or 0) + (detalhes['v_lanche'] or 0)
+    total_gasto = ((detalhes['v_cafe'] or 0) + (detalhes['v_buffet'] or 0) + (detalhes['v_marmita'] or 0) + (
+                detalhes['v_janta'] or 0) + (detalhes['v_lanche'] or 0))
+    total_refeicoes = ((soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) + (soma_total['marmita'] or 0) + (
+                soma_total['janta'] or 0) + (soma_total['lanche'] or 0))
+
+    dados_brutos = registros.values(
+        'data_consumo', 'setor', 'qtd_cafe', 'valor_cafe', 'qtd_almoco_buffet', 'valor_almoco',
+        'qtd_almoco_marmita', 'valor_almoco_marmita', 'qtd_janta', 'valor_janta', 'qtd_lanche', 'valor_lanche'
     )
 
-    total_refeicoes = (
-            (soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) +
-            (soma_total['marmita'] or 0) + (soma_total['janta'] or 0) + (soma_total['lanche'] or 0)
-    )
-    total_buffet = soma_total['buffet'] or 0
-    total_janta = soma_total['janta'] or 0
+    mapa_meses = {}
+    for linha in dados_brutos:
+        ano = linha['data_consumo'].year
+        mes = linha['data_consumo'].month
+        chave = (ano, mes)
 
-    def calc_financeiro(queryset):
-        agg = queryset.aggregate(
-            vc=Sum(F('qtd_cafe') * F('valor_cafe')),
-            vb=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
-            vm=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
-            vj=Sum(F('qtd_janta') * F('valor_janta')),
-            vl=Sum(F('qtd_lanche') * F('valor_lanche'))
-        )
-        return (agg['vc'] or 0) + (agg['vb'] or 0) + (agg['vm'] or 0) + (agg['vj'] or 0) + (agg['vl'] or 0)
+        if chave not in mapa_meses:
+            mapa_meses[chave] = {'colab_v': 0, 'colab_q': 0, 'terc_v': 0, 'terc_q': 0}
 
-    filtro_terceiros = Q(setor__icontains='Terceirizado') | Q(setor='Terceiros Fazenda') | Q(setor='Terceiros')
+        # Valores
+        v_c = (linha['qtd_cafe'] or 0) * (linha['valor_cafe'] or 0)
+        v_b = (linha['qtd_almoco_buffet'] or 0) * (linha['valor_almoco'] or 0)
+        v_m = (linha['qtd_almoco_marmita'] or 0) * (linha['valor_almoco_marmita'] or 0)
+        v_j = (linha['qtd_janta'] or 0) * (linha['valor_janta'] or 0)
+        v_l = (linha['qtd_lanche'] or 0) * (linha['valor_lanche'] or 0)
+        total_v = v_c + v_b + v_m + v_j + v_l
 
-    total_colab_periodo = calc_financeiro(registros.exclude(filtro_terceiros))
-    total_terc_periodo = calc_financeiro(registros.filter(filtro_terceiros))
+        # Quantidades
+        total_q = ((linha['qtd_cafe'] or 0) + (linha['qtd_almoco_buffet'] or 0) + (linha['qtd_almoco_marmita'] or 0) +
+                   (linha['qtd_janta'] or 0) + (linha['qtd_lanche'] or 0))
 
+        # Regra do Terceirizado
+        setor = (linha['setor'] or '').lower()
+        is_terceiro = 'terceirizado' in setor or 'terceiros' in setor
+
+        if is_terceiro:
+            mapa_meses[chave]['terc_v'] += total_v
+            mapa_meses[chave]['terc_q'] += total_q
+        else:
+            mapa_meses[chave]['colab_v'] += total_v
+            mapa_meses[chave]['colab_q'] += total_q
+
+    total_colab_periodo = sum(mes['colab_v'] for mes in mapa_meses.values())
+    total_terc_periodo = sum(mes['terc_v'] for mes in mapa_meses.values())
+
+    # 6. Preparar Listas para o Gráfico (Instantâneo)
     meses_labels = []
     dados_colaboradores = []
     dados_terceirizados = []
     qtds_colaboradores = []
     qtds_terceirizados = []
 
-    for i in range(2, -1, -1):
-        mes_alvo = hoje - relativedelta(months=i)
-        meses_labels.append(mes_alvo.strftime('%m/%Y'))
+    nomes_meses = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
-        refeicoes_mes = registros.filter(
-            data_consumo__month=mes_alvo.month,
-            data_consumo__year=mes_alvo.year
-        )
+    data_atual_iter = data_inicio_obj.replace(day=1)
+    data_limite_iter = data_fim_obj.replace(day=1)
 
-        total_colab = calc_financeiro(refeicoes_mes.exclude(filtro_terceiros))
-        total_terc = calc_financeiro(refeicoes_mes.filter(filtro_terceiros))
+    while data_atual_iter <= data_limite_iter:
+        ano_alvo = data_atual_iter.year
+        mes_alvo = data_atual_iter.month
 
-        agg_colab = refeicoes_mes.exclude(filtro_terceiros).aggregate(
-            c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
-            l=Sum('qtd_lanche')
-        )
-        q_colab = (agg_colab['c'] or 0) + (agg_colab['b'] or 0) + (agg_colab['m'] or 0) + (agg_colab['j'] or 0) + (
-                agg_colab['l'] or 0)
+        label = f"{nomes_meses[mes_alvo]}/{str(ano_alvo)[2:]}"
+        meses_labels.append(label)
 
-        agg_terc = refeicoes_mes.filter(filtro_terceiros).aggregate(
-            c=Sum('qtd_cafe'), b=Sum('qtd_almoco_buffet'), m=Sum('qtd_almoco_marmita'), j=Sum('qtd_janta'),
-            l=Sum('qtd_lanche')
-        )
-        q_terc = (agg_terc['c'] or 0) + (agg_terc['b'] or 0) + (agg_terc['m'] or 0) + (agg_terc['j'] or 0) + (
-                agg_terc['l'] or 0)
+        dados_do_mes = mapa_meses.get((ano_alvo, mes_alvo), {'colab_v': 0, 'colab_q': 0, 'terc_v': 0, 'terc_q': 0})
 
-        dados_colaboradores.append(float(total_colab))
-        dados_terceirizados.append(float(total_terc))
-        qtds_colaboradores.append(q_colab)
-        qtds_terceirizados.append(q_terc)
+        dados_colaboradores.append(float(dados_do_mes['colab_v']))
+        dados_terceirizados.append(float(dados_do_mes['terc_v']))
+        qtds_colaboradores.append(dados_do_mes['colab_q'])
+        qtds_terceirizados.append(dados_do_mes['terc_q'])
+
+        data_atual_iter += relativedelta(months=1)
+        if len(meses_labels) >= 24: break
 
     contexto = {
-        'total_gasto': float(total_gasto),
-        'total_refeicoes': total_refeicoes,
-        'total_buffet': total_buffet,
-        'total_janta': total_janta,
-
-        'det_q_cafe': soma_total['cafe'] or 0,
-        'det_v_cafe': float(detalhes['v_cafe'] or 0),
-        'det_q_buffet': soma_total['buffet'] or 0,
-        'det_v_buffet': float(detalhes['v_buffet'] or 0),
-        'det_q_marmita': soma_total['marmita'] or 0,
-        'det_v_marmita': float(detalhes['v_marmita'] or 0),
-        'det_q_janta': soma_total['janta'] or 0,
-        'det_v_janta': float(detalhes['v_janta'] or 0),
-        'det_q_lanche': soma_total['lanche'] or 0,
-        'det_v_lanche': float(detalhes['v_lanche'] or 0),
+        'total_gasto': float(total_gasto), 'total_refeicoes': total_refeicoes,
+        'total_buffet': soma_total['buffet'] or 0, 'total_janta': soma_total['janta'] or 0,
+        'det_q_cafe': soma_total['cafe'] or 0, 'det_v_cafe': float(detalhes['v_cafe'] or 0),
+        'det_q_buffet': soma_total['buffet'] or 0, 'det_v_buffet': float(detalhes['v_buffet'] or 0),
+        'det_q_marmita': soma_total['marmita'] or 0, 'det_v_marmita': float(detalhes['v_marmita'] or 0),
+        'det_q_janta': soma_total['janta'] or 0, 'det_v_janta': float(detalhes['v_janta'] or 0),
+        'det_q_lanche': soma_total['lanche'] or 0, 'det_v_lanche': float(detalhes['v_lanche'] or 0),
 
         'total_colab_periodo': float(total_colab_periodo),
         'total_terc_periodo': float(total_terc_periodo),
@@ -294,10 +300,12 @@ def dashboard_refeicoes(request):
         'dados_terceirizados': json.dumps(dados_terceirizados),
         'qtds_colaboradores': json.dumps(qtds_colaboradores),
         'qtds_terceirizados': json.dumps(qtds_terceirizados),
+
+        'nome_safra': nome_safra,
+        'fazendas_disponiveis': Fazenda.objects.all(),
         'filtros': request.GET
     }
     return render(request, 'refeicoes/dashboard.html', contexto)
-
 
 @login_required
 def novo_registro(request):
@@ -334,7 +342,6 @@ def editar_registro(request, id):
         form = RegistroRefeicaoForm(instance=registro, usuario=request.user)
     return render(request, 'refeicoes/novo_registro.html', {'form': form, 'registro': registro})
 
-
 @login_required
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
@@ -345,7 +352,6 @@ def excluir_registro(request, id):
 
     registro.delete()
     return redirect('painel')
-
 
 @login_required
 def exportar_pdf(request):
@@ -433,8 +439,8 @@ def exportar_pdf(request):
                                          textColor=colors.HexColor('#1f2937'), spaceBefore=25, spaceAfter=10,
                                          fontName='Helvetica-Bold', alignment=TA_CENTER)
 
-    estilo_nome_setor = ParagraphStyle('NomeSetor', parent=estilos['Heading2'], fontSize=14, textColor=colors.black,
-                                       spaceBefore=15, spaceAfter=10, fontName='Helvetica-Bold')
+    estilo_nome_setor = ParagraphStyle('NomeSetor', parent=estilos['Heading2'], fontSize=14,
+                                       textColor=colors.black,spaceBefore=15, spaceAfter=10, fontName='Helvetica-Bold')
 
     elementos.append(Paragraph("Relatório de Refeições", estilo_titulo))
     elementos.append(Paragraph("Extrato analítico gerado pelo sistema.", estilo_subtitulo))
@@ -456,7 +462,6 @@ def exportar_pdf(request):
 
         # Só exibe o título grandão da fazenda se for o Admin
         if fazenda_nome != "":
-            # Caso tenha rolado uma quebra de página, podemos tirar o spaceBefore para o título não ficar muito baixo na folha nova
             estilo_usado = estilo_nome_fazenda if is_primeira_fazenda else ParagraphStyle('NomeFazendaNova',
                                                                                           parent=estilo_nome_fazenda,
                                                                                           spaceBefore=0)
@@ -599,7 +604,6 @@ def exportar_refeicoes_excel(request):
 
     registros = registros.order_by('fazenda__nome', 'data_consumo', 'setor')
 
-    # Dicionário para agrupar os registros por Fazenda
     dados_agrupados = defaultdict(list)
     for r in registros:
         if is_dono:
@@ -643,7 +647,6 @@ def exportar_refeicoes_excel(request):
 
             valor_linha = c_v + b_v + m_v + j_v + l_v
 
-            # Diferente do PDF, aqui não formatamos como string (R$), usamos números (0) para o usuário poder usar a fórmula SOMA() no Excel
             linha = [
                 r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
                 r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
@@ -719,7 +722,9 @@ def gerenciar_usuarios(request):
 
     usuarios.sort(key=lambda u: (not u.is_admin_flag, u.username.lower()))
 
-    return render(request, 'refeicoes/gerenciar_usuarios.html', {'usuarios': usuarios, 'is_dono': True})
+    return render(request, 'refeicoes/gerenciar_usuarios.html',
+                  {'usuarios': usuarios, 'is_dono': True})
+
 @login_required
 def criar_usuario(request):
     is_dono = request.user.is_superuser or (hasattr(request.user, 'perfil') and request.user.perfil.is_dono)
