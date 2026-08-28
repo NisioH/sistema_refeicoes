@@ -173,8 +173,13 @@ def dashboard_refeicoes(request):
     registros = RegistroRefeicao.objects.all()
 
     fazenda_id = request.GET.get('fazenda')
+    nome_fazenda_atual = "Todas as Fazendas"
+
     if fazenda_id:
         registros = registros.filter(fazenda_id=fazenda_id)
+        fazenda_selecionada = Fazenda.objects.filter(id=fazenda_id).first()
+        if fazenda_selecionada:
+            nome_fazenda_atual = fazenda_selecionada.nome
 
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
@@ -302,6 +307,7 @@ def dashboard_refeicoes(request):
         'qtds_terceirizados': json.dumps(qtds_terceirizados),
 
         'nome_safra': nome_safra,
+        'nome_fazenda_atual': nome_fazenda_atual,
         'fazendas_disponiveis': Fazenda.objects.all(),
         'filtros': request.GET
     }

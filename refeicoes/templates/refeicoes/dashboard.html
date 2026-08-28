@@ -178,7 +178,8 @@
             border-radius: 12px; padding: 20px;">
                 <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase;
                 margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
-                    <i class="fa-solid fa-chart-column" style="color: #3b82f6; margin-right: 6px;"></i> Custo Acumulado
+                    <i class="fa-solid fa-chart-column" style="color: #3b82f6;
+                    margin-right: 6px;"></i> Custo Acumulado - {{ nome_fazenda_atual }}
                 </h3>
                 <div style="position: relative; height: 320px; width: 100%;">
                     <canvas id="chartAcumuladoPeriodo"></canvas>
@@ -189,8 +190,8 @@
             border-radius: 12px; padding: 20px;">
                 <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase;
                 margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
-                    <i class="fa-solid fa-chart-line" style="color: #f97316; margin-right:
-                    6px;"></i> Evolução (Últimos 3 Meses)
+                    <i class="fa-solid fa-chart-line" style="color: #f97316;
+                    margin-right: 6px;"></i> Evolução (Últimos 3 Meses) - {{ nome_fazenda_atual }}
                 </h3>
                 <div style="position: relative; height: 320px; width: 100%;">
                     <canvas id="chart3Meses"></canvas>
@@ -203,7 +204,7 @@
             <h3 style="color: var(--text-color); font-size: 13px; text-transform: uppercase;
             margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;">
                 <i class="fa-solid fa-bar-chart" style="color: #10b981;
-                margin-right: 6px;"></i> Evolução Completa - {{ nome_safra }}
+                margin-right: 6px;"></i> Evolução Completa - {{ nome_safra }} - {{ nome_fazenda_atual }}
             </h3>
             <div style="position: relative; height: 350px; width: 100%;">
                 <canvas id="graficoComparativoBarras"></canvas>
