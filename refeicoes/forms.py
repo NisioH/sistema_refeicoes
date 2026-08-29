@@ -5,8 +5,8 @@ from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, SetorColaborad
 class RegistroRefeicaoForm(forms.ModelForm):
     class Meta:
         model = RegistroRefeicao
-        fields = ['data_consumo', 'local', 'setor', 'qtd_cafe', 'qtd_almoco_buffet', 'qtd_almoco_marmita', 'qtd_janta',
-                  'qtd_lanche']
+        fields = ['data_consumo', 'local', 'setor', 'qtd_cafe', 'qtd_almoco_buffet',
+                  'qtd_almoco_marmita', 'qtd_janta', 'qtd_lanche']
         widgets = {
             'data_consumo': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'input-dark'}),
             'local': forms.Select(attrs={'class': 'input-dark', 'id': 'dropLocal'}),
@@ -29,12 +29,6 @@ class RegistroRefeicaoForm(forms.ModelForm):
             is_dono = self.usuario.perfil.is_dono
             if self.usuario.perfil.fazenda_lotacao:
                 fazenda_nome = self.usuario.perfil.fazenda_lotacao.nome
-
-        # =========================================================
-        # SOLUÇÃO DEFINITIVA (FORÇA BRUTA)
-        # Se só tem 1 opção, já carrega direto sem o "Selecione..."
-        # Injetamos os valores exatos para o Django não se perder.
-        # =========================================================
 
         if fazenda_nome == 'Fazenda Matão' and not is_dono:
             self.fields['local'].choices = [(LocalRefeicao.CANTINA_MATAO, 'Cantina Matão')]
@@ -75,12 +69,14 @@ class RegistroRefeicaoForm(forms.ModelForm):
                 (SetorColaborador.TERCEIROS_FAZENDA, 'Terceirizado Sede'),
                 (SetorColaborador.COLAB_ESCRITORIO, 'Colaborador Escritório')
             ]
+
         else:
-            # Para o Administrador (Você), mostra tudo, com "Selecione..." para evitar lançamento acidental
-            self.fields['local'].choices = [('', '--- Selecione a Cantina ---')] + list(LocalRefeicao.choices)
-            self.fields['setor'].choices = [('', '--- Selecione o Setor ---')] + [c for c in SetorColaborador.choices if
-                                                                                  c[
-                                                                                      0] != SetorColaborador.CORPORATIVO_SEDE]
+
+            self.fields['local'].choices = ([('', '--- Selecione a Cantina ---')] +
+                                            list(LocalRefeicao.choices))
+            self.fields['setor'].choices = ([('', '--- Selecione o Setor ---')] +
+                                            [c for c in SetorColaborador.choices if
+                                            c[0] != SetorColaborador.CORPORATIVO_SEDE])
 
     def clean(self):
         cleaned_data = super().clean()
@@ -98,7 +94,6 @@ class RegistroRefeicaoForm(forms.ModelForm):
                 self.add_error(campo, "A quantidade não pode ser um número negativo.")
 
         return cleaned_data
-
 
 class TabelaPrecoForm(forms.ModelForm):
     class Meta:

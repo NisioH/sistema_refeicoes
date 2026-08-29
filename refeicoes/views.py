@@ -24,7 +24,11 @@ from django.shortcuts import get_object_or_404
 from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, Fazenda, Perfil
 from .forms import RegistroRefeicaoForm, TabelaPrecoForm
 
+from django.db.models.functions import TruncMonth
+from django.db.models import Sum, Q, F, Case, When, DecimalField, IntegerField
+
 load_dotenv()
+
 
 @login_required
 def painel_refeicoes(request):
@@ -101,6 +105,7 @@ def painel_refeicoes(request):
     if setor_busca:
         registros = registros.filter(setor__icontains=setor_busca)
 
+
     agregados = registros.aggregate(
         q_cafe=Sum('qtd_cafe'),
         q_buffet=Sum('qtd_almoco_buffet'),
@@ -112,13 +117,13 @@ def painel_refeicoes(request):
         v_buffet=Sum(F('qtd_almoco_buffet') * F('valor_almoco')),
         v_marmita=Sum(F('qtd_almoco_marmita') * F('valor_almoco_marmita')),
         v_janta=Sum(F('qtd_janta') * F('valor_janta')),
-        v_lanche=Sum(F('qtd_lanche') * F('valor_lanche'))
+        v_lanche=Sum(F('qtd_lanche') * F('valor_lanche')),
+
+        # Puxamos a coluna que o banco já calculou
+        soma_geral=Sum('valor_total')
     )
 
-    total_gasto = (
-            (agregados['v_cafe'] or 0) + (agregados['v_buffet'] or 0) +
-            (agregados['v_marmita'] or 0) + (agregados['v_janta'] or 0) + (agregados['v_lanche'] or 0)
-    )
+    total_gasto = agregados['soma_geral'] or 0
 
     total_refeicoes = (
             (agregados['q_cafe'] or 0) + (agregados['q_buffet'] or 0) +
@@ -220,42 +225,31 @@ def dashboard_refeicoes(request):
     total_refeicoes = ((soma_total['cafe'] or 0) + (soma_total['buffet'] or 0) + (soma_total['marmita'] or 0) + (
                 soma_total['janta'] or 0) + (soma_total['lanche'] or 0))
 
-    dados_brutos = registros.values(
-        'data_consumo', 'setor', 'qtd_cafe', 'valor_cafe', 'qtd_almoco_buffet', 'valor_almoco',
-        'qtd_almoco_marmita', 'valor_almoco_marmita', 'qtd_janta', 'valor_janta', 'qtd_lanche', 'valor_lanche'
-    )
 
+    expressao_qtd = F('qtd_cafe') + F('qtd_almoco_buffet') + F('qtd_almoco_marmita') + F('qtd_janta') + F('qtd_lanche')
+    filtro_terceiros = Q(setor__icontains='terceirizado') | Q(setor__icontains='terceiros')
+
+    dados_agrupados_sql = registros.annotate(
+        mes_exato=TruncMonth('data_consumo')
+    ).values('mes_exato').annotate(
+        terc_v=Sum(Case(When(filtro_terceiros, then=F('valor_total')), default=0, output_field=DecimalField())),
+        colab_v=Sum(Case(When(~filtro_terceiros, then=F('valor_total')), default=0, output_field=DecimalField())),
+        terc_q=Sum(Case(When(filtro_terceiros, then=expressao_qtd), default=0, output_field=IntegerField())),
+        colab_q=Sum(Case(When(~filtro_terceiros, then=expressao_qtd), default=0, output_field=IntegerField()))
+    ).order_by('mes_exato')
+
+    # Povoa o mapa para o gráfico ler
     mapa_meses = {}
-    for linha in dados_brutos:
-        ano = linha['data_consumo'].year
-        mes = linha['data_consumo'].month
-        chave = (ano, mes)
-
-        if chave not in mapa_meses:
-            mapa_meses[chave] = {'colab_v': 0, 'colab_q': 0, 'terc_v': 0, 'terc_q': 0}
-
-        # Valores
-        v_c = (linha['qtd_cafe'] or 0) * (linha['valor_cafe'] or 0)
-        v_b = (linha['qtd_almoco_buffet'] or 0) * (linha['valor_almoco'] or 0)
-        v_m = (linha['qtd_almoco_marmita'] or 0) * (linha['valor_almoco_marmita'] or 0)
-        v_j = (linha['qtd_janta'] or 0) * (linha['valor_janta'] or 0)
-        v_l = (linha['qtd_lanche'] or 0) * (linha['valor_lanche'] or 0)
-        total_v = v_c + v_b + v_m + v_j + v_l
-
-        # Quantidades
-        total_q = ((linha['qtd_cafe'] or 0) + (linha['qtd_almoco_buffet'] or 0) + (linha['qtd_almoco_marmita'] or 0) +
-                   (linha['qtd_janta'] or 0) + (linha['qtd_lanche'] or 0))
-
-        # Regra do Terceirizado
-        setor = (linha['setor'] or '').lower()
-        is_terceiro = 'terceirizado' in setor or 'terceiros' in setor
-
-        if is_terceiro:
-            mapa_meses[chave]['terc_v'] += total_v
-            mapa_meses[chave]['terc_q'] += total_q
-        else:
-            mapa_meses[chave]['colab_v'] += total_v
-            mapa_meses[chave]['colab_q'] += total_q
+    for linha in dados_agrupados_sql:
+        if linha['mes_exato']:
+            ano = linha['mes_exato'].year
+            mes = linha['mes_exato'].month
+            mapa_meses[(ano, mes)] = {
+                'colab_v': float(linha['colab_v'] or 0),
+                'colab_q': linha['colab_q'] or 0,
+                'terc_v': float(linha['terc_v'] or 0),
+                'terc_q': linha['terc_q'] or 0
+            }
 
     total_colab_periodo = sum(mes['colab_v'] for mes in mapa_meses.values())
     total_terc_periodo = sum(mes['terc_v'] for mes in mapa_meses.values())
@@ -313,7 +307,6 @@ def dashboard_refeicoes(request):
     }
     return render(request, 'refeicoes/dashboard.html', contexto)
 
-
 @login_required
 def novo_registro(request):
     if hasattr(request.user, 'perfil') and request.user.perfil.is_dono:
@@ -354,7 +347,6 @@ def editar_registro(request, id):
         form = RegistroRefeicaoForm(instance=registro, usuario=request.user)
     return render(request, 'refeicoes/novo_registro.html', {'form': form, 'registro': registro})
 
-
 @login_required
 def excluir_registro(request, id):
     registro = get_object_or_404(RegistroRefeicao, id=id)
@@ -371,11 +363,10 @@ def excluir_registro(request, id):
 
 @login_required
 def exportar_pdf(request):
-    from reportlab.platypus import PageBreak  # <--- Importação da quebra de página adicionada aqui
+    from reportlab.platypus import PageBreak
 
     registros = RegistroRefeicao.objects.all()
 
-    # Identifica o perfil do usuário
     is_dono = True
     fazenda_usuario = None
     if hasattr(request.user, 'perfil'):
@@ -383,11 +374,9 @@ def exportar_pdf(request):
         if request.user.perfil.fazenda_lotacao:
             fazenda_usuario = request.user.perfil.fazenda_lotacao
 
-    # Se não for dono, restringe rigidamente à fazenda de lotação
     if not is_dono and fazenda_usuario:
         registros = registros.filter(fazenda=fazenda_usuario)
 
-    # Filtros recebidos da URL (iguais aos do painel)
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
     fazenda_busca = request.GET.get('fazenda')
@@ -397,15 +386,10 @@ def exportar_pdf(request):
 
     if not data_inicio and not data_fim:
         hoje = date.today()
-        registros = registros.filter(
-            data_consumo__year=hoje.year,
-            data_consumo__month=hoje.month
-        )
+        registros = registros.filter(data_consumo__year=hoje.year, data_consumo__month=hoje.month)
     else:
-        if data_inicio:
-            registros = registros.filter(data_consumo__gte=data_inicio)
-        if data_fim:
-            registros = registros.filter(data_consumo__lte=data_fim)
+        if data_inicio: registros = registros.filter(data_consumo__gte=data_inicio)
+        if data_fim: registros = registros.filter(data_consumo__lte=data_fim)
 
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
@@ -413,10 +397,8 @@ def exportar_pdf(request):
     if local_busca: registros = registros.filter(local=local_busca)
     if setor_busca: registros = registros.filter(setor__icontains=setor_busca)
 
-    # Ordenação importante para o agrupamento do PDF funcionar bem
     registros = registros.order_by('fazenda__nome', 'setor', 'data_consumo')
 
-    # Dicionário aninhado para agrupar Fazenda -> Setor
     dados_agrupados = defaultdict(lambda: defaultdict(list))
     total_geral = 0
 
@@ -427,17 +409,9 @@ def exportar_pdf(request):
             nome_fazenda = r.fazenda.nome if r.fazenda else "Sem Fazenda"
             dados_agrupados[nome_fazenda][nome_setor].append(r)
         else:
-            # Para o RH, não precisamos do título da fazenda, agrupamos direto no setor
             dados_agrupados[""][nome_setor].append(r)
 
-        valor_da_linha = (
-                (float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0) +
-                (float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0) +
-                (float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0) +
-                (float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0) +
-                (float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0)
-        )
-        total_geral += valor_da_linha
+        total_geral += float(r.valor_total or 0)
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=40, leftMargin=40, topMargin=40,
@@ -445,18 +419,15 @@ def exportar_pdf(request):
     elementos = []
     estilos = getSampleStyleSheet()
 
-    estilo_titulo = ParagraphStyle('TituloModerno', parent=estilos['Heading1'], alignment=TA_CENTER, fontSize=20,
-                                   textColor=colors.black, spaceAfter=5, fontName='Helvetica-Bold')
-    estilo_subtitulo = ParagraphStyle('Subtitulo', parent=estilos['Normal'], alignment=TA_CENTER, fontSize=11,
-                                      textColor=colors.black, spaceAfter=25)
-
-    # Novo estilo para o nome da Fazenda
+    estilo_titulo = ParagraphStyle('TituloModerno', parent=estilos['Heading1'], alignment=TA_CENTER,
+                                   fontSize=20, textColor=colors.black, spaceAfter=5, fontName='Helvetica-Bold')
+    estilo_subtitulo = ParagraphStyle('Subtitulo', parent=estilos['Normal'], alignment=TA_CENTER,
+                                      fontSize=11, textColor=colors.black, spaceAfter=25)
     estilo_nome_fazenda = ParagraphStyle('NomeFazenda', parent=estilos['Heading1'], fontSize=16,
                                          textColor=colors.HexColor('#1f2937'), spaceBefore=25, spaceAfter=10,
                                          fontName='Helvetica-Bold', alignment=TA_CENTER)
-
     estilo_nome_setor = ParagraphStyle('NomeSetor', parent=estilos['Heading2'], fontSize=14,
-                                       textColor=colors.black,spaceBefore=15, spaceAfter=10, fontName='Helvetica-Bold')
+                                textColor=colors.black,spaceBefore=15, spaceAfter=10, fontName='Helvetica-Bold')
 
     elementos.append(Paragraph("Relatório de Refeições", estilo_titulo))
     elementos.append(Paragraph("Extrato analítico gerado pelo sistema.", estilo_subtitulo))
@@ -466,29 +437,21 @@ def exportar_pdf(request):
             return f"R$ {float(valor):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
         return '-'
 
-    # Variável para controlar a quebra de página
     is_primeira_fazenda = True
 
-    # Percorre o dicionário agrupado para desenhar o PDF
     for fazenda_nome, setores in dados_agrupados.items():
-
-        # Se não for a primeira fazenda do laço, insere uma quebra de página
         if not is_primeira_fazenda:
             elementos.append(PageBreak())
 
-        # Só exibe o título grandão da fazenda se for o Admin
         if fazenda_nome != "":
             estilo_usado = estilo_nome_fazenda if is_primeira_fazenda else ParagraphStyle('NomeFazendaNova',
-                                                                                          parent=estilo_nome_fazenda,
-                                                                                          spaceBefore=0)
+                                                                    parent=estilo_nome_fazenda, spaceBefore=0)
             elementos.append(Paragraph(f"FAZENDA: {fazenda_nome.upper()}", estilo_usado))
 
-        # A partir daqui, já passamos pela primeira fazenda
         is_primeira_fazenda = False
 
         for setor_nome, lista_refeicoes in setores.items():
             elementos.append(Paragraph(f"Setor: {setor_nome}", estilo_nome_setor))
-
             cabecalho = ['Data', 'Cantina', 'Café', 'Buffet', 'Marm.', 'Janta', 'Lanche', 'Valor Total']
             dados_tabela = [cabecalho]
 
@@ -496,11 +459,12 @@ def exportar_pdf(request):
             v_cafe = v_buffet = v_marmita = v_janta = v_lanche = 0
 
             for r in lista_refeicoes:
-                c_v = float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
-                b_v = float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
-                m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
-                j_v = float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
-                l_v = float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
+                # Mantido apenas para o subtotal do rodapé do PDF
+                c_v = float(r.qtd_cafe * r.valor_cafe)
+                b_v = float(r.qtd_almoco_buffet * r.valor_almoco)
+                m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita)
+                j_v = float(r.qtd_janta * r.valor_janta)
+                l_v = float(r.qtd_lanche * r.valor_lanche)
 
                 v_cafe += c_v
                 v_buffet += b_v
@@ -508,30 +472,21 @@ def exportar_pdf(request):
                 v_janta += j_v
                 v_lanche += l_v
 
-                valor_linha = c_v + b_v + m_v + j_v + l_v
+                valor_linha = float(r.valor_total or 0)
                 total_deste_setor += valor_linha
 
                 linha = [
                     r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
                     r.get_local_display() if hasattr(r, 'get_local_display') else r.local,
-                    r.qtd_cafe or '-',
-                    r.qtd_almoco_buffet or '-',
-                    r.qtd_almoco_marmita or '-',
-                    r.qtd_janta or '-',
-                    r.qtd_lanche or '-',
+                    r.qtd_cafe or '-', r.qtd_almoco_buffet or '-', r.qtd_almoco_marmita or '-',
+                    r.qtd_janta or '-', r.qtd_lanche or '-',
                     formata_rs(valor_linha)
                 ]
                 dados_tabela.append(linha)
 
             linha_total = [
-                '',
-                'SUBTOTAL DO SETOR:',
-                formata_rs(v_cafe),
-                formata_rs(v_buffet),
-                formata_rs(v_marmita),
-                formata_rs(v_janta),
-                formata_rs(v_lanche),
-                formata_rs(total_deste_setor)
+                '', 'SUBTOTAL DO SETOR:', formata_rs(v_cafe), formata_rs(v_buffet),
+                formata_rs(v_marmita), formata_rs(v_janta), formata_rs(v_lanche), formata_rs(total_deste_setor)
             ]
             dados_tabela.append(linha_total)
 
@@ -552,15 +507,14 @@ def exportar_pdf(request):
 
             tabela = Table(dados_tabela, colWidths=[70, 160, 65, 65, 65, 65, 65, 90], repeatRows=1)
             tabela.setStyle(estilo_tabela_minimalista)
-
             elementos.append(tabela)
             elementos.append(Spacer(1, 20))
 
     elementos.append(Spacer(1, 10))
     estilo_total_geral = ParagraphStyle('TotalGeral', parent=estilos['Heading2'], alignment=TA_RIGHT,
-                                        textColor=colors.black, spaceTop=10, fontName='Helvetica-Bold', fontSize=14)
-    texto_total_geral = f"CUSTO TOTAL DO PERÍODO: R$ {total_geral:,.2f}".replace(',', 'X').replace('.', ',').replace(
-        'X', '.')
+                                    textColor=colors.black, spaceTop=10, fontName='Helvetica-Bold', fontSize=14)
+    texto_total_geral = (f"CUSTO TOTAL DO PERÍODO: R$ {total_geral:,.2f}"
+                         .replace(',', 'X').replace('.', ',').replace('X', '.'))
     elementos.append(Paragraph(texto_total_geral, estilo_total_geral))
 
     doc.build(elementos)
@@ -569,7 +523,6 @@ def exportar_pdf(request):
     hoje = date.today()
     nome_arquivo = f"Relatorio_Refeicoes_{hoje.strftime('%m_%Y')}.pdf"
     return FileResponse(buffer, as_attachment=True, filename=nome_arquivo)
-
 
 @login_required
 def exportar_refeicoes_excel(request):
@@ -581,7 +534,6 @@ def exportar_refeicoes_excel(request):
 
     registros = RegistroRefeicao.objects.all()
 
-    # Identifica o perfil do usuário
     is_dono = True
     fazenda_usuario = None
     if hasattr(request.user, 'perfil'):
@@ -592,7 +544,6 @@ def exportar_refeicoes_excel(request):
     if not is_dono and fazenda_usuario:
         registros = registros.filter(fazenda=fazenda_usuario)
 
-    # Aplica os Filtros
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
     fazenda_busca = request.GET.get('fazenda')
@@ -602,15 +553,10 @@ def exportar_refeicoes_excel(request):
 
     if not data_inicio and not data_fim:
         hoje = date.today()
-        registros = registros.filter(
-            data_consumo__year=hoje.year,
-            data_consumo__month=hoje.month
-        )
+        registros = registros.filter(data_consumo__year=hoje.year, data_consumo__month=hoje.month)
     else:
-        if data_inicio:
-            registros = registros.filter(data_consumo__gte=data_inicio)
-        if data_fim:
-            registros = registros.filter(data_consumo__lte=data_fim)
+        if data_inicio: registros = registros.filter(data_consumo__gte=data_inicio)
+        if data_fim: registros = registros.filter(data_consumo__lte=data_fim)
 
     local_busca = request.GET.get('local')
     setor_busca = request.GET.get('setor')
@@ -627,41 +573,28 @@ def exportar_refeicoes_excel(request):
         else:
             nome_fazenda = fazenda_usuario.nome if fazenda_usuario else "Lançamentos"
 
-        # O Excel limita o nome das abas a 31 caracteres
         nome_aba = str(nome_fazenda)[:31]
         dados_agrupados[nome_aba].append(r)
 
-    # Cria o arquivo Excel
     wb = openpyxl.Workbook()
-
-    # Remove a aba padrão ("Sheet") que o openpyxl cria automaticamente
     if 'Sheet' in wb.sheetnames:
         wb.remove(wb['Sheet'])
 
-    # Prevenção: se a busca não retornar nada, cria uma aba vazia para não dar erro
     if not dados_agrupados:
         wb.create_sheet(title="Sem Dados")
 
-    # Percorre cada fazenda e cria sua respectiva aba
     for nome_aba, lista_refeicoes in dados_agrupados.items():
         ws = wb.create_sheet(title=nome_aba)
 
-        cabecalho = ['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet', 'Almoço Marmita', 'Janta', 'Lanche',
-                     'Valor Total']
+        cabecalho = ['Data', 'Local', 'Setor', 'Café', 'Almoço Buffet',
+                     'Almoço Marmita', 'Janta', 'Lanche', 'Valor Total']
         ws.append(cabecalho)
 
-        # Coloca o cabeçalho em negrito
         for col_num in range(1, len(cabecalho) + 1):
             ws.cell(row=1, column=col_num).font = Font(bold=True)
 
         for r in lista_refeicoes:
-            c_v = float(r.qtd_cafe * r.valor_cafe) if r.qtd_cafe else 0
-            b_v = float(r.qtd_almoco_buffet * r.valor_almoco) if r.qtd_almoco_buffet else 0
-            m_v = float(r.qtd_almoco_marmita * r.valor_almoco_marmita) if r.qtd_almoco_marmita else 0
-            j_v = float(r.qtd_janta * r.valor_janta) if r.qtd_janta else 0
-            l_v = float(r.qtd_lanche * r.valor_lanche) if r.qtd_lanche else 0
-
-            valor_linha = c_v + b_v + m_v + j_v + l_v
+            valor_linha = float(r.valor_total or 0)
 
             linha = [
                 r.data_formatada() if hasattr(r, 'data_formatada') else r.data_consumo.strftime('%d/%m/%Y'),
@@ -676,20 +609,17 @@ def exportar_refeicoes_excel(request):
             ]
             ws.append(linha)
 
-        # Alarga um pouco as colunas mais importantes para caber o texto
         ws.column_dimensions['A'].width = 12
         ws.column_dimensions['B'].width = 20
         ws.column_dimensions['C'].width = 20
         ws.column_dimensions['I'].width = 15
 
-    # Configura a resposta para forçar o download do arquivo .xlsx
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     hoje_str = date.today().strftime('%m_%Y')
     response['Content-Disposition'] = f'attachment; filename="Relatorio_Refeicoes_{hoje_str}.xlsx"'
 
     wb.save(response)
     return response
-
 
 @login_required
 def configurar_precos(request):
@@ -720,7 +650,6 @@ def configurar_precos(request):
         'nome_fazenda': fazenda_usuario.nome if fazenda_usuario else "Matriz (Padrão)"
     }
     return render(request, 'refeicoes/configurar_precos.html', contexto)
-
 
 @login_required
 def gerenciar_usuarios(request):
@@ -754,7 +683,15 @@ def criar_usuario(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         fazenda_id = request.POST.get('fazenda')
-        nivel_acesso = request.POST.get('nivel_acesso')  # NOVO: Captura a escolha do Admin
+        nivel_acesso = request.POST.get('nivel_acesso')  # Captura a escolha do Admin
+
+
+        if nivel_acesso != 'admin' and not fazenda_id:
+            return render(request, 'refeicoes/criar_usuario.html', {
+                'fazendas': fazendas,
+                'erro': 'Obrigatório: Usuários comuns devem estar vinculados a uma Fazenda.',
+                'is_dono': True
+            })
 
         if User.objects.filter(username=username).exists():
             return render(request, 'refeicoes/criar_usuario.html', {
@@ -766,10 +703,12 @@ def criar_usuario(request):
         # Cria o usuário
         novo_user = User.objects.create_user(username=username, password=password)
 
-        # Define a fazenda apenas se foi selecionada alguma
-        fazenda = get_object_or_404(Fazenda, id=fazenda_id) if fazenda_id else None
 
-        # Grava o perfil com o nível de acesso escolhido
+        if nivel_acesso == 'admin':
+            fazenda = None
+        else:
+            fazenda = get_object_or_404(Fazenda, id=fazenda_id) if fazenda_id else None
+
         perfil, created = Perfil.objects.get_or_create(usuario=novo_user)
         perfil.fazenda_lotacao = fazenda
         perfil.is_dono = (nivel_acesso == 'admin')  # Se escolheu admin, fica True. Se não, False.
