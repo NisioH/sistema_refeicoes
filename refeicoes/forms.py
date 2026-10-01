@@ -1,5 +1,6 @@
 from django import forms
 from .models import RegistroRefeicao, TabelaPreco, LocalRefeicao, SetorColaborador
+from datetime import date
 
 
 class RegistroRefeicaoForm(forms.ModelForm):
@@ -24,6 +25,8 @@ class RegistroRefeicaoForm(forms.ModelForm):
 
         fazenda_nome = None
         is_dono = True
+
+        self.fields['data_consumo'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
 
         if self.usuario and hasattr(self.usuario, 'perfil'):
             is_dono = self.usuario.perfil.is_dono
@@ -82,6 +85,10 @@ class RegistroRefeicaoForm(forms.ModelForm):
         cleaned_data = super().clean()
         local = cleaned_data.get('local')
         setor = cleaned_data.get('setor')
+        data_consumo = cleaned_data.get('data_consumo')
+
+        if data_consumo and data_consumo > date.today():
+            self.add_error('data_consumo', "Data futura não é permitido!!")
 
         if local == LocalRefeicao.SECADOR and setor == SetorColaborador.TERCEIROS_FAZENDA:
             self.add_error('setor', "A opção 'Terceirizado Sede' não é permitida para a Cantina do Secador.")

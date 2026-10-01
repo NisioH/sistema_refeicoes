@@ -307,4 +307,27 @@ document.addEventListener('DOMContentLoaded', function() {
         campoCantina.addEventListener("change", filtrarSetores);
         filtrarSetores();
     }
+
+    const dataInput = document.getElementById("id_data_consumo");
+
+    if (dataInput) {
+        // O evento 'blur' dispara no exato momento que aperta Tab ou clica fora
+        dataInput.addEventListener("blur", function() {
+            const dataDigitada = this.value;
+            if (!dataDigitada) return;
+
+            const hojeString = new Date().toLocaleDateString('en-CA');
+
+            if (dataDigitada > hojeString) {
+                alert("Atenção: Você não pode lançar uma refeição no futuro.");
+                this.value = ""; // Apaga a data errada na hora
+
+                // Força o cursor a voltar para a data
+                setTimeout(() => {
+                    this.focus();
+                }, 10);
+            }
+        });
+    }
+
 });
