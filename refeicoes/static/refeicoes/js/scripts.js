@@ -102,12 +102,33 @@ function inicializarGraficosDashboard(dados) {
     }
 
     if (canvas3Meses) {
-        const labels3M = dados.mesesLabels.slice(-3);
-        const dColab3M = dados.dadosColaborador.slice(-3);
-        const dTerc3M = dados.dadosTerceirizado.slice(-3);
-        const qColab3M = dados.qtdsColab.slice(-3);
-        const qTerc3M = dados.qtdsTerc.slice(-3);
+        // 1. Descobre a etiqueta do mês atual (ex: 'Out/26')
+        const hoje = new Date();
+        const mesesNomes = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const labelAtual = mesesNomes[hoje.getMonth() + 1] + '/' + String(hoje.getFullYear()).slice(-2);
 
+        // 2. Procura a posição do mês atual no array de dados do backend
+        let indexFim = dados.mesesLabels.indexOf(labelAtual);
+
+        // 3. Segurança: se estiver visualizando uma safra onde o mês atual não existe, recua
+        if (indexFim === -1) {
+            indexFim = dados.mesesLabels.length - 1;
+            while (indexFim > 0 && dados.dadosColaborador[indexFim] === 0 && dados.dadosTerceirizado[indexFim] === 0) {
+                indexFim--;
+            }
+        }
+
+        // 4. Limita a janela a um máximo de 3 meses
+        let indexInicio = indexFim - 2;
+        if (indexInicio < 0) indexInicio = 0;
+
+        const labels3M = dados.mesesLabels.slice(indexInicio, indexFim + 1);
+        const dColab3M = dados.dadosColaborador.slice(indexInicio, indexFim + 1);
+        const dTerc3M = dados.dadosTerceirizado.slice(indexInicio, indexFim + 1);
+        const qColab3M = dados.qtdsColab.slice(indexInicio, indexFim + 1);
+        const qTerc3M = dados.qtdsTerc.slice(indexInicio, indexFim + 1);
+
+        // 5. DESENHA O GRÁFICO (A parte que estava faltando!)
         const config3M = gerarOpcoesBase();
         config3M.plugins.tooltip.callbacks.label = function(c) {
             let q = c.datasetIndex === 0 ? qColab3M[c.dataIndex] : qTerc3M[c.dataIndex];
